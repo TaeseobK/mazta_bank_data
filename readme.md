@@ -51,11 +51,11 @@ On the Databases section you see the database settings, here's the explaination 
 
 for Example :
 
-``` 'default': {```
-    ``` 'ENGINE': 'django.db.backends.mysql',```
-    ``` 'NAME': 'core',```
-    ``` 'USER': 'root',```
-    ``` 'PASSWORD': 'mypassword',```
-    ``` 'HOST': 'localhost',```
-    ``` 'PORT': '3306',```
-``` }```
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'core',
+        'USER': 'root',
+        'PASSWORD': 'mypassword',
+        'HOST': 'localhost,
+        'PORT': '3306,
+    }
