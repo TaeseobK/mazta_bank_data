@@ -1,0 +1,70 @@
+# Environments
+*.env
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Pipenv-specific files
+Pipfile.lock
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Django stuff:
+*.migrations/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+coverage.xml
+*.cover
+.hypothesis/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Pytest
+.pytest_cache/
+
+# IDE/Editor specific files
+.vscode/
+.idea/
+*.swp
+*~
+*.sublime-project
+*.sublime-workspace
+
+# MacOS
+.DS_Store
+
+# Backup files
+*.bak
+*.old
+*.orig
+*.tmp
