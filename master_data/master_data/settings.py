@@ -178,3 +178,25 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# #To Deploy u must change this to True
+
+# CSRF_COOKIE_SECURE = True
+
+# SESSION_COOKIE_SECURE = True
+
+# SECURE_SSL_REDIRECT = True
+
+# #Force all to HTTPS
+
+# SECURE_HSTS_SECONDS = 31536000
+
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+# SECURE_HSTS_PRELOAD = True
+
+# #Security for XSS and MIME
+
+# SECURE_BROWSER_XSS_FILTER = True
+
+# SECURE_CONTENT_TYPE_NOSNIFF = True
