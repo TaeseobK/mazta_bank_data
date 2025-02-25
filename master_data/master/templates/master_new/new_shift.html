@@ -1,0 +1,84 @@
+{% extends 'base_app/base.html' %}
+{% load static %}
+{% block home %}
+<section class="flex w-full p-4 rounded-md border-2 mt-16 mb-2 dark:border-gray-400 border-gray-800 backdrop-blur-sm bg-opacity-10 bg-gray-800 overflow-y-auto thin-scrollbar">
+    <div class="w-9/12">
+        <div class="flex gap-10">
+            <button onclick="document.getElementById('form-shift').submit();" class="rounded-sm hover:text-gray-800 hover:bg-gray-400 bg-gray-800 text-gray-400 border-2 border-gray-400 hover:border-gray-800 px-2 py-1 uppercase text-xs font-bold mb-2">submit</button>
+        </div>
+        <form id="form-shift" action="." method="post" class="rounded-md border-2 border-gray-400 backdrop-blur-sm bg-opacity-70 bg-gray-800">
+            {% csrf_token %}
+            <input type="hidden" name="metode" value="post">
+            <div class="p-4">
+                <p class="dark:text-gray-400 bg-transparent text-gray-800 font-bold text-lg flex justify-start uppercase">New Shift</p>
+                <div class="my-5 justify-start">
+                    <ul class="space-y-10">
+                        <li class="flex items-center dark:text-gray-400 text-gray-800 font-semibold">
+                            <label for="job-position-id" class="w-2/12 mt-1 dark:text-gray-400 text-gray-800 font-semibold">Name</label>
+                            <input type="text" name="job-position" id="job-position-id" autocomplete="off" class="w-[420px] justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                        </li>
+                        <li class="items-center dark:text-gray-400 text-gray-800 font-semibold">
+                            <p class="text-sm dark:text-gray-400 text-gray-800 font-semibold">Rules</p>
+                            <hr class="border-b border-gray-400 w-[580px]">
+                            <div class="flex gap-5 mt-3 items-center w-full">
+                                <div class="flex w-1/3 bg-transparent mt-5 items-center dark:text-gray-400 font-semibold">
+                                    <label for="start-time-id" class="w-3/12 dark:text-gray-400 text-gray-800 font-semibold text-sm capitalize">start time</label>
+                                    <input type="time" name="start-time" id="start-time-id" autocomplete="off" class="w-4/12 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                </div>
+                                <div class="flex w-1/3 bg-transparent mt-5 items-center dark:text-gray-400 font-semibold">
+                                    <label for="end-time-id" class="w-3/12 dark:text-gray-400 text-gray-800 font-semibold text-sm capitalize">end time</label>
+                                    <input type="time" name="end-time" id="end-time-id" autocomplete="off" class="w-4/12 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                </div>
+                            </div>
+                        </li>
+                        <li class="items-center dark:text-gray-400 text-gray-800 font-semibold">
+                            <div class="mt-8 items-center w-full">
+                                <p class="dark:text-gray-400 text-gray-800 font-semibold text-sm">Description</p>
+                                <hr class="border-b border-gray-400 w-[580px]">
+                                <textarea name="desc" id="desc-id" class="w-[580px] p-2 text-sm mt-2 bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800"></textarea>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="w-3/12">
+        <!-- Log Activity -->
+    </div>
+</section>
+<script>
+    $(document).ready(function() {
+        $('#entity-id').on('change', function() {
+            var entityId = $(this).find(':selected').val();
+            console.log(entityId);
+
+            if(entityId) {
+                $.ajax({
+                    url: window.location.href,
+                    data: {
+                        'entity_obj_id': entityId
+                    },
+                    type: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        var branches = response;
+                        console.log(branches);
+                        branches.forEach(function(branch) {
+                            $('#branch-id').append(`<option value="${branch.pk}" class="bg-gray-800 text-gray-400 font-semibold">${branch.branch}</option>`);
+                        })
+                    },
+                    error: function() {
+                        alert("Error Fetching Branches");
+                    }
+                });
+            } else {
+                $('#branch-id').empty().append(`<option value="" class="bg-gray-800 text-gray-400 font-semibold">Select Branch</option>`);
+            }
+        });
+    });
+</script>
+{% endblock %}

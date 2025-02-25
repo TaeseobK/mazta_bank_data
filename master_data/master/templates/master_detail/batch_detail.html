@@ -1,0 +1,60 @@
+{% extends 'base_app/base.html' %}
+{% load static %}
+{% block home %}
+<section class="flex w-full p-4 rounded-md border-2 mt-16 mb-2 dark:border-gray-400 border-gray-800 backdrop-blur-sm bg-opacity-10 bg-gray-800 overflow-y-auto thin-scrollbar">
+    <div class="w-9/12">
+        <div class="flex gap-3">
+            <button onclick="document.getElementById('form-batch').submit();" class="rounded-sm hover:text-gray-800 hover:bg-gray-400 bg-gray-800 text-gray-400 border-2 border-gray-400 hover:border-gray-800 px-2 py-1 uppercase text-xs font-bold mb-2">update</button>
+            <form action="." method="post" class="rounded-sm hover:text-gray-800 hover:bg-gray-400 bg-gray-800 text-gray-400 border-2 border-gray-400 hover:border-gray-800 px-2 py-1 uppercase text-xs font-bold mb-2">
+                {% csrf_token %}
+                <button type="submit" class="uppercase">Delete</button>
+                <input type="hidden" name="metode" value="delete">
+            </form>
+        </div>
+        <form id="form-batch" action="." method="post" class="rounded-md border-2 border-gray-400 backdrop-blur-sm bg-opacity-70 bg-gray-800">
+            {% csrf_token %}
+            <input type="hidden" name="metode" value="post">
+            <div class="p-4">
+                <p class="dark:text-gray-400 bg-transparent text-gray-800 font-bold text-lg flex justify-start uppercase">Detail Batch</p>
+                <div class="my-5 justify-start gap-5">
+                    <div class="w-full bg-transparent">
+                        <div class="w-full flex gap-10 bg-transparent">
+                            <ul class="space-y-10 justify-start w-full items-center dark:text-gray-400 font-semibold bg-transparent">
+                                <li class="w-full flex gap-5 mt-3 items-center">
+                                    <div class="w-full flex gap-5 items-center">
+                                        <label for="batch-code-id" class="w-4/12 capitalize justify-start">batch code</label>
+                                        <input type="text" name="batch-code" autocomplete="off" value="{{ data.0.batch.batch }}" id="batch-code-id" class="w-6/12 justify-start bg-transparent border-b-2 dark:text-gray-400 text-gray-800 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-600">
+                                    </div>
+                                    <div class="w-full flex gap-5 items-center">
+                                        <label for="product-id" class="w-4/12 capitalize justify-start">product</label>
+                                        <select name="product" autocomplete="off" id="product-id" class="w-6/12 justify-start bg-transparent border-b-2 dark:text-gray-400 text-gray-800 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-600">
+                                            <option value="" class="bg-gray-800 text-gray-800 dark:text-gray-400 capitalize font-bold"></option>
+                                            {% for d in data.0.products %}
+                                            <option value="{{ d.pk }}" class="bg-gray-800 text-gray-800 dark:text-gray-400 capitalize font-bold" {% if data.0.batch.product.pk == d.pk %} selected {% endif %} >{{ d.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </li>
+                                <li class="w-full flex gap-5 mt-3">
+                                    <div class="w-full flex gap-5 items-center">
+                                        <label for="exp-date-id" class="w-4/12 capitalize justify-start">exp date</label>
+                                        <input type="text" name="exp-date" autocomplete="off" value="{{ data.0.batch.exp_date }}" datepicker datepicker-autohide datepicker-buttons datepicker-autoselect-today datepicker-format="yyyy-mm-dd" id="exp-date-id" class="w-6/12 justify-start bg-transparent border-b-2 dark:text-gray-400 text-gray-800 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-600">
+                                    </div>
+                                    <div class="w-full items-center">
+                                        <label for="desc-id" class="dark:text-gray-400 text-gray-800 font-semibold capitalize text-md">description</label>
+                                        <hr class="border-b border-gray-400">
+                                        <textarea name="desc" id="desc-id" autocomplete="off" class="w-full mt-2 bg-transparent border-b-2 dark:text-gray-400 text-gray-800 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-600">{{ data.0.batch.description }}</textarea>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="w-3/12">
+        <!-- Log Activity -->
+    </div>
+</section>
+{% endblock %}

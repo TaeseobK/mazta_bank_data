@@ -13,7 +13,8 @@ import json
 def home(request) :
 
     return render(request, 'core/home.html', {
-        'title' : 'Dashboard'
+        'title' : 'Dashboard',
+        'page_name' : 'Home'
     })
 
 def login_view(request) :
@@ -72,6 +73,7 @@ def branch_list(request) :
 
     return render(request, 'master_pages/branch_list.html', {
         'title' : 'Branches',
+        'page_name' : 'Branches',
         'page_obj' : page_obj
     })
 
@@ -123,6 +125,7 @@ def new_branch(request) :
         
     return render(request, 'master_new/new_branch.html', {
         'title' : 'New Branch',
+        'page_name' : 'New Branch',
         'branches' : branches
     })
 
@@ -188,6 +191,7 @@ def branch_detail(request, b_id) :
 
     return render(request, 'master_detail/branch_detail.html', {
         'title' : 'Branch Detail',
+        'page_name' : f'Branch - {branch.name}',
         'branch' : branch,
         'branches' : branches
     })
@@ -243,6 +247,7 @@ def entity_list(request) :
 
     return render(request, 'master_pages/entity_list.html', {
         'title' : 'Entity Data',
+        'page_name' : 'Entities',
         'page_obj' : page_obj
     })
 
@@ -306,6 +311,7 @@ def new_entity(request) :
 
     return render(request, 'master_new/entity_new.html', {
         'title' : 'New Entity',
+        'page_name' : 'New Entity',
         'branches' : branches,
         'parents' : parents
     })
@@ -393,6 +399,7 @@ def detail_entity(request, e_id) :
     
     return render(request, 'master_detail/entity_detail.html', {
         'title' : 'Entity Detail',
+        'page_name' : f'Detail - {entity.name}',
         'entity' : entity,
         'branch' : branch,
         'branches' : branches,
@@ -427,6 +434,7 @@ def warehouse_list(request) :
 
     return render(request, 'master_pages/warehouse_list.html', {
         'title' : 'Warehouse List',
+        'page_name' : 'Warehouses',
         'page_obj' : page_obj
     })
 
@@ -496,6 +504,7 @@ def new_warehouse(request) :
 
     return render(request, 'master_new/new_warehouse.html', {
         'title' : 'New Warehouse',
+        'page_name' : 'New Warehouse',
         'data' : data
     })
 
@@ -590,6 +599,7 @@ def detail_warehouse(request, w_id) :
 
     return render(request, 'master_detail/warehouse_detail.html', {
         'title' : 'Detail Warehouse',
+        'page_name' : f'Detail - {warehouse.name}',
         'data' : data
     })
 
@@ -619,6 +629,7 @@ def product_category_list(request) :
 
     return render(request, 'master_pages/pc_list.html', {
         'title' : 'Product Category List',
+        'page_name' : 'Prod Cat List',
         'page_obj' : page_obj
     })
 
@@ -639,7 +650,8 @@ def new_product_category(request) :
             return redirect('master:product_c_list')
 
     return render(request, 'master_new/new_pc.html', {
-        'title' : 'New Product Category'
+        'title' : 'New Product Category',
+        'page_name' : 'New Prod Cat'
     })
 
 @login_required(login_url='/login/')
@@ -668,6 +680,7 @@ def detail_pc(request, pc_id) :
 
     return render(request, 'master_detail/pc_detail.html', {
         'title' : 'Detail Product Category',
+        'page_name' : f'Detail {pc.name}',
         'data' : pc
     })
 
@@ -696,6 +709,7 @@ def pcn_list(request) :
 
     return render(request, 'master_pages/pcn_list.html', {
         'title' : 'Product Category Sales List',
+        'page_name' : 'Prod Cat Sales',
         'page_obj' : page_obj
     })
 
@@ -719,7 +733,8 @@ def new_pcn(request) :
             return redirect('master:pcn_list')
 
     return render(request, 'master_new/new_pcn.html', {
-        'title' : 'New Product Category Sales'
+        'title' : 'New Product Category Sales',
+        'page_name' : 'New Prod Cat Sales'
     })
 
 @login_required(login_url='/login/')
@@ -749,6 +764,7 @@ def detail_pcn(request, pcn_id) :
 
     return render(request, 'master_detail/pcn_detail.html', {
         'title' : 'Product Category Sales Detail',
+        'page_name' : f'Detail - {pcn.short_name}',
         'pcn' : pcn
     })
 
@@ -801,6 +817,7 @@ def department_list(request) :
     
     return render(request, 'master_pages/department_list.html', {
         'title' : 'Department List',
+        'page_name' : 'Department List',
         'page_obj' : page_obj
     })
 
@@ -851,6 +868,7 @@ def new_department(request) :
 
     return render(request, 'master_new/new_department.html', {
         'title' : 'New Department',
+        'page_name' : 'New Department',
         'data' : data
     })
 
@@ -928,6 +946,7 @@ def detail_department(request, d_id) :
 
     return render(request, 'master_detail/department_detail.html', {
         'title' : 'Department Detail',
+        'page_name' : f'Detail - {department.short_name}',
         'department' : department,
         'data' : data
     })
@@ -977,6 +996,7 @@ def product_list(request) :
 
     return render(request, 'master_pages/product_list.html', {
         'title' : 'Product List',
+        'page_name' : 'Product List',
         'page_obj' : page_obj
     })
 
@@ -1058,6 +1078,7 @@ def new_product(request) :
 
     return render(request, 'master_new/new_product.html', {
         'title' : 'New Product',
+        'page_name' : 'New Product',
         'data' : data
     })
 
@@ -1122,5 +1143,318 @@ def detail_product(request, p_id) :
 
     return render(request, 'master_detail/product_detail.html', {
         'title' : 'Detail Product',
+        'page_name' : f'Detail - {product.sku}',
         'data' : data
+    })
+
+@login_required(login_url='/login/')
+def batch_list(request) :
+    search_query = request.GET.get('search', '')
+    data = []
+
+    batches = Batch.objects.using('master').filter(is_active=True).all().order_by('id')
+
+    for d in batches :
+        data.append({
+            'batch' : d
+        })
+
+    if search_query :
+        data = [
+            d for d in data
+            if (
+                search_query.lower() in str(d['batch'].product.name).lower() or
+                search_query.lower() in str(d['batch'].batch).lower() or
+                search_query.lower() in str(d['batch'].exp_date).lower()
+            )
+        ]
+
+    paginator = Paginator(data, 12)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+        return render(request, 'master_pages/batch_list.html', {
+            'page_obj' : page_obj
+        })
+
+    return render(request, 'master_pages/batch_list.html', {
+        'title' : 'Batch List',
+        'page_name' : 'Batch List',
+        'page_obj' : page_obj
+    })
+
+@login_required(login_url='/login/')
+def new_batch(request) :
+    data = []
+
+    products = Product.objects.using('master').filter(is_active=True).all()
+
+    data.append({
+        'products' : products
+    })
+
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            code = request.POST['batch-code']
+            p_id = request.POST['product']
+            exp = request.POST['exp-date']
+            desc = request.POST['desc']
+
+            product = Product.objects.using('master').get(id=int(p_id))
+
+            new_code = Batch.objects.using('master').create(
+                batch=code,
+                exp_date = exp,
+                product=product,
+                description=desc
+            )
+
+            new_code.save()
+
+            return redirect('master:batch_list')
+
+    return render(request, 'master_new/new_batch.html', {
+        'title' : 'New Batch',
+        'page_name' : 'New Batch',
+        'data' : data
+    })
+
+@login_required(login_url='/login/')
+def detail_batch(request, bat_id) :
+    data = []
+
+    batch = Batch.objects.using('master').get(id=int(bat_id))
+    batch.exp_date = batch.exp_date.strftime('%Y-%m-%d')
+    products = Product.objects.using('master').filter(is_active=True).all()
+
+    data.append({
+        'batch' : batch,
+        'products' : products
+    })
+
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            code = request.POST['batch-code']
+            p_id = request.POST['product']
+            exp = request.POST['exp-date']
+            desc = request.POST['desc']
+
+            product = Product.objects.using('master').get(id=int(p_id))
+
+            batch.exp_date = exp
+            batch.batch = code
+            batch.product = product
+            batch.description = desc
+
+            batch.save()
+
+            return redirect('master:batch_list')
+        
+        elif metode == 'delete' :
+            batch.is_active = False
+
+            batch.save()
+
+            return redirect('master:batch_list')
+
+    return render(request, 'master_detail/batch_detail.html', {
+        'title' : 'Detail Batch',
+        'page_name' : f'Detail - {batch.batch}',
+        'data' : data
+    })
+
+@login_required(login_url='/login/')
+def job_position_list(request) :
+    search_query = request.GET.get('search', '')
+
+    data = JobPosition.objects.using('master').filter(is_active=True).all().order_by('id')
+
+    if search_query :
+        data = [
+            d for d in data
+            if (
+                search_query.lower() in str(d.name).lower()
+            )
+        ]
+
+    paginator = Paginator(data, 12)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+        return render(request, 'master_pages/jb_list.html', {
+            'page_obj' : page_obj
+        })
+
+    return render(request, 'master_pages/jb_list.html', {
+        'title' : 'Job Position List',
+        'page_name' : 'Job Position',
+        'page_obj' : page_obj
+    })
+
+@login_required(login_url='/login/')
+def new_job_position(request) :
+    data = []
+
+    departments = Department.objects.using('master').filter(is_active=True).all()
+
+    data.append({
+        'departments' : departments
+    })
+
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            name = request.POST['job-position']
+            desc = request.POST['desc']
+
+            new_jb = JobPosition.objects.using('master').create(
+                name=name,
+                description=desc
+            )
+
+            new_jb.save()
+
+            return redirect('master:jb_list')
+
+    return render(request, 'master_new/new_jb.html', {
+        'title' : 'New Job Position',
+        'page_name' : 'New Job Position',
+        'data' : data
+    })
+
+@login_required(login_url='/login/')
+def detail_job_position(request, jb_id) :
+
+    jb = JobPosition.objects.using('master').get(id=int(jb_id))
+
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            name = request.POST['job-position']
+            desc = request.POST['desc']
+
+            jb.name = name
+            jb.description = desc
+
+            jb.save()
+
+            return redirect('master:jb_list')
+        
+        elif metode == 'delete' :
+            jb.is_active = False
+
+            jb.save()
+
+            return redirect('master:jb_list')
+
+    return render(request, 'master_detail/jb_detail.html', {
+        'title' : 'Detail Job Position',
+        'page_name' : f'Detail - {jb.name}',
+        'data' : jb
+    })
+
+@login_required(login_url='/login/')
+def shift(request) :
+    search_query = request.GET.get('search', '')
+
+    shifts = ShiftSchedule.objects.using('master').filter(is_active=True).all().order_by('id')
+
+    if search_query :
+        shifts = [
+            data for data in shifts
+            if (
+                search_query.lower() in str(data.shift).lower()
+            )
+        ]
+
+    paginator = Paginator(shifts, 12)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+        return render(request, 'master_pages/shift_list.html', {
+            'page_obj' : page_obj
+        })
+
+    return render(request, 'master_pages/shift_list.html', {
+        'title' : 'Shift',
+        'page_name' : 'Shift List',
+        'page_obj' : page_obj
+    })
+
+@login_required(login_url='/login/')
+def new_shift(request) :
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            name = request.POST['job-position']
+            start_time = request.POST['start-time']
+            end_time = request.POST['end-time']
+            desc = request.POST['desc']
+
+            new_shift = ShiftSchedule.objects.using('master').create(
+                shift=name,
+                start_time=start_time,
+                end_time=end_time,
+                description=desc
+            )
+
+            new_shift.save()
+
+            return redirect('master:shift_list')
+
+    return render(request, 'master_new/new_shift.html', {
+        'title' : 'New Shift',
+        'page_name' : 'New Shift'
+    })
+
+@login_required(login_url='/login/')
+def detail_shift(request, sh_id) :
+
+    shift = ShiftSchedule.objects.using('master').get(id=int(sh_id))
+    shift.start_time = shift.start_time.strftime('%H:%M')
+    shift.end_time = shift.end_time.strftime('%H:%M')
+
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            name = request.POST['job-position']
+            start_time = request.POST['start-time']
+            end_time = request.POST['end-time']
+            desc = request.POST['desc']
+
+            shift.shift = name
+            shift.start_time = start_time
+            shift.end_time = end_time
+            shift.description = desc
+
+            shift.save()
+
+            return redirect('master:shift_list')
+        
+        elif metode == 'delete' :
+            
+            shift.is_active = False
+
+            shift.save()
+
+            return redirect('master:shift_list')
+
+    return render(request, 'master_detail/shift_detail.html', {
+        'title' : 'Shift Detail',
+        'page_name' : f'Detail - Shift {shift.shift}',
+        'data' : shift
     })

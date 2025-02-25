@@ -13,6 +13,8 @@ Then just run ```bash deploy.sh``` if you're using linux, run ```.\deploy.ps1```
 ## Settings
 
 ### Domain
+__*Use Staticfiles*__ for Media or folder static
+
 On the master_data/master_data/settings.py there's some block code that i commented on it like :
 
 #### This Will Allow the Server To Run At HTTPS

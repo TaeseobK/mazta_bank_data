@@ -18,6 +18,9 @@ urlpatterns = [
     path('product-c-n-list/', views.pcn_list, name='pcn_list'),
     path('product-list/', views.product_list, name='product_list'),
     path('department-list/', views.department_list, name='department_list'),
+    path('batch-list/', views.batch_list, name='batch_list'),
+    path('job-position-list/', views.job_position_list, name='jb_list'),
+    path('shift-list/', views.shift, name='shift_list'),
 
     #New Page
     path('entity-list/new/', views.new_entity, name='new_entity'),
@@ -27,6 +30,9 @@ urlpatterns = [
     path('product-c-n-list/new/', views.new_pcn, name='new_pcn'),
     path('product-list/new/', views.new_product, name='new_product'),
     path('department-list/new/', views.new_department, name='new_department'),
+    path('batch-list/new/', views.new_batch, name='new_batch'),
+    path('job-position-list/new/', views.new_job_position, name='new_jb'),
+    path('shift-list/new/', views.new_shift, name='new_shift'),
     
     #Detail Page
     path('branch-list/detail/<int:b_id>/', views.branch_detail, name='detail_branch'),
@@ -36,6 +42,9 @@ urlpatterns = [
     path('product-c-n-list/detail/<int:pcn_id>/', views.detail_pcn, name='detail_pcn'),
     path('department-list/detail/<int:d_id>/', views.detail_department, name='detail_department'),
     path('product-list/detail/<int:p_id>/', views.detail_product, name='detail_product'),
+    path('batch-list/detail/<int:bat_id>/', views.detail_batch, name='detail_batch'),
+    path('job-position-list/detail/<int:jb_id>/', views.detail_job_position, name='detail_jb'),
+    path('shift-list/detail/<int:sh_id>/', views.detail_shift, name='detail_shift'),
 ]
 if settings.DEBUG :
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

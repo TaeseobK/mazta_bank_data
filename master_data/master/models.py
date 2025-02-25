@@ -111,7 +111,7 @@ class ProductCategorySales(models.Model) :
         super().delete(*args, **kwargs)
 
 class Product(models.Model) :
-    sku = models.TextField(null=True, blank=True)
+    sku = models.CharField(max_length=64, unique=True)
     code_accurate = models.TextField(null=True, blank=True)
     name = models.CharField(max_length=64)
     category = models.ForeignKey(ProductCategory, on_delete=models.CASCADE)
@@ -141,6 +141,7 @@ class Batch(models.Model) :
     batch = models.CharField(max_length=64)
     exp_date = models.DateField()
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -187,8 +188,7 @@ class Department(models.Model) :
 
 class JobPosition(models.Model) :
     name = models.CharField(max_length=64)
-    short_name = models.CharField(max_length=12, null=True, blank=True)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -207,8 +207,9 @@ class JobPosition(models.Model) :
 
 class ShiftSchedule(models.Model) :
     shift = models.CharField(max_length=24)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.TimeField(null=True, blank=True)
+    end_time = models.TimeField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
