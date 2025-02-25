@@ -218,7 +218,7 @@ def entity_list(request) :
             
         data.append({
             'entity' : d,
-            'branches' : branch_data
+            'branches' : branch_data[:3]
         })
 
     if search_query :

@@ -57,7 +57,7 @@
                     <td class="px-6 py-3 whitespace-nowrap text-xs dark:text-gray-300 text-gray-800">
                         {% if data.entity.parent %} {{ data.entity.parent.name }} {% else %} Parent {% endif %}
                     </td>
-                    <td class="px-6 py-3 whitespace-nowrap text-xs dark:text-gray-300 text-gray-800 flex gap-2">
+                    <td class="px-6 py-3 whitespace-nowrap text-xs dark:text-gray-300 text-gray-800 flex gap-2 justify-center">
                         {% for d in data.branches %}
                         <div class="rounded-sm border-2 dark:border-white border-gray-400 dark:text-gray-800 text-gray-400 font-bold text-xs py-1 px-2 dark:bg-gray-400 bg-gray-800">{{ d.branch.name }}</div>
                         {% endfor %}
