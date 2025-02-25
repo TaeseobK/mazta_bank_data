@@ -8,7 +8,7 @@ pip install pipenv
 
 # Install dependencies
 echo "Installing dependencies..."
-pipenv install --deploy --ignore-pipfile
+pipenv install
 
 # Activate virtual environment
 echo "Activating virtual environment..."
