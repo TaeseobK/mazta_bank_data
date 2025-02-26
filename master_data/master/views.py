@@ -1458,3 +1458,407 @@ def detail_shift(request, sh_id) :
         'page_name' : f'Detail - Shift {shift.shift}',
         'data' : shift
     })
+
+@login_required(login_url='/login/')
+def timeoff_list(request) :
+    search_query = request.GET.get('search', '')
+
+    timeoffs = []
+
+    timeoff = TimeOffType.objects.using('master').filter(is_active=True).all().order_by('id')
+
+    for d in timeoff :
+        if d.is_absent == False :
+            d.is_absent = "Dihitung Masuk"
+        else :
+            d.is_absent = "Tidak Dihitung Masuk"
+
+        timeoffs.append({
+            'timeoff' : d
+        })
+        
+
+    if search_query :
+        timeoffs = [
+            data for data in timeoffs
+            if (
+                search_query.lower() in str(data['timeoff'].name).lower() or
+                search_query.lower() in str(data['timeoff'].is_absent).lower()
+            )
+        ]
+
+    paginator = Paginator(timeoffs, 12)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+        return render(request, 'master_pages/timeoff_list.html', {
+            'page_obj' : page_obj
+        })
+
+    return render(request, 'master_pages/timeoff_list.html', {
+        'title' : 'Time Off',
+        'page_name' : 'Time Off',
+        'page_obj' : page_obj
+    })
+
+@login_required(login_url='/login/')
+def new_timeoff(request) :
+
+    if request.method == 'POST' :
+        name = request.POST['timeoff']
+        attendance = request.POST['attendance']
+
+        if int(attendance) == 0 :
+            att = True
+        else :
+            att = False
+
+        new_timeoff = TimeOffType.objects.using('master').create(
+            name=name,
+            is_absent=att
+        )
+
+        new_timeoff.save()
+
+        return redirect('master:timeoff_list')
+
+    return render(request, 'master_new/new_timeoff.html', {
+        'title' : 'New Time Off',
+        'page_name' : 'New Time Off'
+    })
+
+@login_required(login_url='/login/')
+def detail_timeoff(request, to_id) :
+
+    timeoff = TimeOffType.objects.using('master').get(id=int(to_id))
+
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            name = request.POST['timeoff']
+            attendance = request.POST['attendance']
+
+            if int(attendance) == 0 :
+                att = True
+            else :
+                att = False
+
+            timeoff.name = name
+            timeoff.is_absent = att
+
+            timeoff.save()
+
+            return redirect('master:timeoff_list')
+        
+        elif metode == 'delete' :
+            timeoff.is_active = False
+
+            timeoff.save()
+
+            return redirect('master:timeoff_list')
+
+    return render(request, 'master_detail/timeoff_detail.html', {
+        'title' : 'Time Off',
+        'page_name' : f'Time Off - {timeoff.name}',
+        'data' : timeoff
+    })
+
+@login_required(login_url='/login/')
+def disciplinary(request) :
+    search_query = request.GET.get('search', '')
+
+    data = []
+
+    discs = DisciplinaryAction.objects.using('master').filter(is_active=True).all().order_by('id')
+
+    for d in discs :
+
+        if d.duration_measure == "D" :
+            d.duration_measure = "Days"
+        elif d.duration_measure == "M" :
+            d.duration_measure = "Months"
+        elif d.duration_measure == "Y" :
+            d.duration_measure = "Years"
+
+        data.append({
+            'disciplinary' : d
+        })
+
+    if search_query :
+        data = [
+            d for d in data
+            if (
+                search_query.lower() in str(d['disciplinary'].name).lower() or
+                search_query.lower() in str(d['disciplinary'].duration_measure).lower() or
+                search_query.lower() in str(d['disciplinary'].duration).lower()
+            )
+        ]
+
+    paginator = Paginator(data, 12)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+        return render(request, 'master_pages/disc_list.html', {
+            'page_obj' : page_obj
+        })
+
+    return render(request, 'master_pages/disc_list.html', {
+        'title' : 'Disciplinary List',
+        'page_name' : 'Disciplinary Type List',
+        'page_obj' : page_obj
+    })
+
+@login_required(login_url='/login/')
+def new_disciplinary(request) :
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            name = request.POST['disciplinary-name']
+            duraton = request.POST['duration']
+            measure = request.POST['measure']
+
+            new_disc = DisciplinaryAction.objects.using('master').create(
+                name=name,
+                duration=int(duraton),
+                duration_measure=measure
+            )
+
+            new_disc.save()
+
+            return redirect('master:disc_list')
+
+    return render(request, 'master_new/new_disc.html', {
+        'title' : 'New Disciplinary',
+        'page_name' : 'New Disciplinary Type'
+    })
+
+@login_required(login_url='/login/')
+def detail_disc(request, disc_id) :
+    disc = DisciplinaryAction.objects.using('master').get(id=int(disc_id))
+
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            name = request.POST['disciplinary-name']
+            duraton = request.POST['duration']
+            measure = request.POST['measure']
+
+            disc.name = name
+            disc.duration = duraton
+            disc.duration_measure = measure
+
+            disc.save()
+
+            return redirect('master:disc_list')
+        
+        elif metode == 'delete' :
+            disc.is_active = False
+
+            disc.save()
+
+            return redirect('master:disc_list')
+
+    return render(request, 'master_detail/disc_detail.html', {
+        'title' : 'Detail Disciplinary Action',
+        'page_name' : f'Detail - {disc.name}',
+        'data' : disc
+    })
+
+@login_required(login_url='/login/')
+def deduction_list(request) :
+    search_query = request.GET.get('page')
+
+    deducs = DeductionType.objects.using('master').filter(is_active=True).all().order_by('id')
+
+    if search_query :
+        deducs = [
+            data for data in deducs
+            if (
+                search_query.lower() in str(data.name).lower()
+            )
+        ]
+
+    paginator = Paginator(deducs, 12)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+        return render(request, 'master_pages/deduction_list.html', {
+            'page_obj' : page_obj
+        })
+
+    return render(request, 'master_pages/deduction_list.html', {
+        'title' : 'Deduction List',
+        'page_name' : 'Deduction Type List',
+        'page_obj' : page_obj
+    })
+
+@login_required(login_url='/login/')
+def new_deduction(request) :
+
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            name = request.POST['deduction-name']
+
+            new_ded = DeductionType.objects.using('master').create(
+                name=name
+            )
+
+            new_ded.save()
+
+            return redirect('master:deduc_list')
+
+    return render(request, 'master_new/new_deduction.html', {
+        'title' : 'New Deduction Type',
+        'page_name' : 'New Deduction Type'
+    })
+
+@login_required(login_url='/login/')
+def detail_deduction(request, ded_id) :
+    deduction = DeductionType.objects.using('master').get(id=int(ded_id))
+
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            name = request.POST['deduction-name']
+
+            deduction.name = name
+
+            deduction.save()
+
+            return redirect('master:deduc_list')
+        
+        elif metode == 'delete' :
+            deduction.is_active = False
+
+            deduction.save()
+
+            return redirect('master:deduc_list')
+
+    return render(request, 'master_detail/deduction_detail.html', {
+        'title' : 'Detail Deduction',
+        'page_name' : f'Detail',
+        'data' : deduction
+    })
+
+@login_required(login_url='/login/')
+def work_locations(request) :
+    search_query = request.GET.get('search', '')
+
+    wls = WorkLocation.objects.using('master').filter(is_active=True).all().order_by('id')
+
+    if search_query :
+        wls = [
+            data for data in wls
+            if (
+                search_query.lower() in str(data.name).lower()
+            )
+        ]
+
+    paginator = Paginator(wls, 12)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+        return render(request, 'master_pages/work_location_list.html', {
+            'page_obj' : page_obj
+        })
+
+    return render(request, 'master_pages/work_location_list.html', {
+        'title' : 'Work Location List',
+        'page_name' : 'Work Location List',
+        'page_obj' : page_obj
+    })
+
+@login_required(login_url='/login/')
+def new_work_location(request) :
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            name = request.POST['location-name']
+            street_1 = request.POST['street-1']
+            street_2 = request.POST['street-2']
+            state = request.POST['state']
+            city = request.POST['city']
+            country = request.POST['country']
+
+            address = {
+                'street_1' : street_1,
+                'street_2' : street_2,
+                'state' : state,
+                'city' : city,
+                'country' : country
+            }
+
+            new_wl = WorkLocation.objects.using('master').create(
+                name=name,
+                address=json.dumps(address)
+            )
+
+            new_wl.save()
+
+            return redirect('master:work_location_list')
+
+    return render(request, 'master_new/new_work_location.html', {
+        'title' : 'New Work Location',
+        'page_name' : 'New Work Location'
+    })
+
+@login_required(login_url='/login/')
+def detail_work_location(request, dwk_id) :
+
+    wl = WorkLocation.objects.using('master').get(id=int(dwk_id))
+    wl.address = json.loads(wl.address)
+
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            name = request.POST['location-name']
+            street_1 = request.POST['street-1']
+            street_2 = request.POST['street-2']
+            state = request.POST['state']
+            city = request.POST['city']
+            country = request.POST['country']
+
+            address_1 = {
+                'street_1' : street_1,
+                'street_2' : street_2,
+                'state' : state,
+                'city' : city,
+                'country' : country
+            }
+
+            wl.name = name
+            wl.address = json.dumps(address_1)
+
+            wl.save()
+
+            return redirect('master:work_location_list')
+        
+        if metode == 'delete' :
+            wl.address = json.dumps(wl.address)
+            wl.is_active = False
+
+            wl.save()
+
+            return redirect('master:work_location_list')
+
+    return render(request, 'master_detail/detail_work_location.html', {
+        'title' : 'Detail Work Location',
+        'page_name' : f'Detail - {wl.name}',
+        'data' : wl
+    })

@@ -248,6 +248,7 @@ class TimeOffType(models.Model) :
 class DisciplinaryAction(models.Model) :
     name = models.CharField(max_length=24)
     duration = models.IntegerField()
+    duration_measure = models.CharField(max_length=64)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

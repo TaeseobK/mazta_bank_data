@@ -31,6 +31,7 @@
         }
     </style>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{% static 'icon/icon.png' %}" class="rounded-full">
     <title>{% block title %}Mazta Data Bank - {{ title }}{% endblock %}</title>
 </head>
 <body class="thin-scrollbar bg-[url('{% static 'bg/bg-light-login.jpg' %}')] dark:bg-[url('{% static 'bg/bg-dark-login.jpg' %}')] bg-fixed">
@@ -184,7 +185,7 @@
                             </a>
                         </li>
                         <li class="mt-2">
-                            <a href="#" class="flex items-center gap-5">
+                            <a href="{% url 'master:timeoff_list' %}" class="flex items-center gap-5">
                                 <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                 </svg>                                                                                                                                                                                          
@@ -195,7 +196,7 @@
                             </a>
                         </li>
                         <li class="mt-2">
-                            <a href="#" class="flex items-center gap-5">
+                            <a href="{% url 'master:disc_list' %}" class="flex items-center gap-5">
                                 <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m6 6 12 12m3-6a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                 </svg>                                                                                                                                                                                               
@@ -206,7 +207,7 @@
                             </a>
                         </li>
                         <li class="mt-2">
-                            <a href="#" class="flex items-center gap-5">
+                            <a href="{% url 'master:deduc_list' %}" class="flex items-center gap-5">
                                 <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M4 5v2H3a1 1 0 0 0 0 2h1v10a1 1 0 1 0 2 0V9h2v5.586c0 1.782 2.154 2.674 3.414 1.414l.586-.586.586.586a2 2 0 0 0 2.828 0l.586-.586.586.586c.411.411.918.593 1.414.59V19a1 1 0 1 0 2 0V9h1a1 1 0 1 0 0-2h-1V6a2 2 0 0 0-2-2h-8a2 2 0 0 0-2 2v1H6V5a1 1 0 0 0-2 0Z"/>
                                 </svg>                                                                                                                                                                                                                      
@@ -217,7 +218,7 @@
                             </a>
                         </li>
                         <li class="mt-2">
-                            <a href="#" class="flex items-center gap-5">
+                            <a href="{% url 'master:work_location_list' %}" class="flex items-center gap-5">
                                 <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                                     <path fill-rule="evenodd" d="M11.906 1.994a8.002 8.002 0 0 1 8.09 8.421 7.996 7.996 0 0 1-1.297 3.957.996.996 0 0 1-.133.204l-.108.129c-.178.243-.37.477-.573.699l-5.112 6.224a1 1 0 0 1-1.545 0L5.982 15.26l-.002-.002a18.146 18.146 0 0 1-.309-.38l-.133-.163a.999.999 0 0 1-.13-.202 7.995 7.995 0 0 1 6.498-12.518ZM15 9.997a3 3 0 1 1-5.999 0 3 3 0 0 1 5.999 0Z" clip-rule="evenodd"/>
                                 </svg>                                                                                                                                                                                                                                             

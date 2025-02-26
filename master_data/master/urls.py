@@ -21,6 +21,10 @@ urlpatterns = [
     path('batch-list/', views.batch_list, name='batch_list'),
     path('job-position-list/', views.job_position_list, name='jb_list'),
     path('shift-list/', views.shift, name='shift_list'),
+    path('time-off-list/', views.timeoff_list, name='timeoff_list'),
+    path('disciplinary-action-list/', views.disciplinary, name='disc_list'),
+    path('deduction-type-list/', views.deduction_list, name='deduc_list'),
+    path('work_location-list/', views.work_locations, name='work_location_list'),
 
     #New Page
     path('entity-list/new/', views.new_entity, name='new_entity'),
@@ -33,6 +37,10 @@ urlpatterns = [
     path('batch-list/new/', views.new_batch, name='new_batch'),
     path('job-position-list/new/', views.new_job_position, name='new_jb'),
     path('shift-list/new/', views.new_shift, name='new_shift'),
+    path('time-off-list/new/', views.new_timeoff, name='new_timeoff'),
+    path('disciplinary-action-list/new/', views.new_disciplinary, name='new_disc'),
+    path('deduction-type-list/new/', views.new_deduction, name='new_ded'),
+    path('work-location-list/new/', views.new_work_location, name='new_work_location'),
     
     #Detail Page
     path('branch-list/detail/<int:b_id>/', views.branch_detail, name='detail_branch'),
@@ -45,6 +53,10 @@ urlpatterns = [
     path('batch-list/detail/<int:bat_id>/', views.detail_batch, name='detail_batch'),
     path('job-position-list/detail/<int:jb_id>/', views.detail_job_position, name='detail_jb'),
     path('shift-list/detail/<int:sh_id>/', views.detail_shift, name='detail_shift'),
+    path('time-off-list/detail/<int:to_id>/', views.detail_timeoff, name='detail_timeoff'),
+    path('disciplinary-action-list/detail/<int:disc_id>/', views.detail_disc, name='detail_disc'),
+    path('deduction-type-list/detail/<int:ded_id>/', views.detail_deduction, name='detail_deduc'),
+    path('work-location-list/detail/<int:dwk_id>/', views.detail_work_location, name='detail_work_location'),
 ]
 if settings.DEBUG :
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
