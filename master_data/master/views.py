@@ -1862,3 +1862,250 @@ def detail_work_location(request, dwk_id) :
         'page_name' : f'Detail - {wl.name}',
         'data' : wl
     })
+
+@login_required(login_url='/login/')
+def gc_list(request) :
+    search_query = request.GET.get('search', '')
+
+    data = []
+
+    grades = ClinicGrade.objects.using('master').filter(is_active=True).all().order_by('id')
+    
+    for d in grades :
+        d.description = json.loads(d.description)
+        d.range_clinic = json.loads(d.range_clinic)
+
+        data.append({
+            'grade' : d
+        })
+
+    if search_query :
+        data = [
+            g for g in data
+            if (
+                search_query.lower() in str(g['grade'].description.description).lower() or
+                search_query.lower() in str(g['grade'].description.alias).lower()
+            )
+        ]
+
+    paginator = Paginator(data, 12)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+        return render(request, 'master_pages/gc_list.html', {
+            'page_obj' : page_obj
+        })
+
+    return render(request, 'master_pages/gc_list.html', {
+        'title' : 'Grade Clinic',
+        'page_name' : 'Grade Clinic',
+        'page_obj' : page_obj
+    })
+
+@login_required(login_url='/login/')
+def new_gc(request) :
+    
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            name = request.POST['name']
+            alias = request.POST['alias']
+            min_v = request.POST['min']
+            max_v = request.POST['max']
+            desc = request.POST['desc']
+
+            range = {
+                'min' : int(min_v),
+                'max' : int(max_v)
+            }
+
+            descrip = {
+                'alias' : alias,
+                'description' : desc
+            }
+
+            new_clinic = ClinicGrade.objects.using('master').create(
+                name=name,
+                range_clinic=json.dumps(range),
+                description = json.dumps(descrip)
+            )
+
+            new_clinic.save()
+
+            return redirect('master:gc_list')
+
+    return render(request, 'master_new/new_gc.html', {
+        'title' : 'New Grade Clinic',
+        'page_name' : 'New Grade Clinic'
+    })
+
+@login_required(login_url='/login/')
+def detail_gc(request, gc_id) :
+
+    grade = ClinicGrade.objects.using('master').get(id=int(gc_id))
+    grade.range_clinic = json.loads(grade.range_clinic)
+    grade.description = json.loads(grade.description)
+
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            name = request.POST['name']
+            alias = request.POST['alias']
+            min_v = request.POST['min']
+            max_v = request.POST['max']
+            desc = request.POST['desc']
+
+            range = {
+                'min' : int(min_v),
+                'max' : int(max_v)
+            }
+
+            descrip = {
+                'alias' : alias,
+                'description' : desc
+            }
+
+            grade.name = name
+            grade.range_clinic = json.dumps(range)
+            grade.description = json.dumps(descrip)
+
+            grade.save()
+
+            return redirect('master:gc_list')
+        
+        elif metode == 'delete' :
+            grade.range_clinic = json.dumps(grade.range_clinic)
+            grade.description = json.dumps(grade.description)
+            grade.is_active = False
+            
+            grade.save()
+
+            return redirect('master:gc_list')
+
+    return render(request, 'master_detail/gc_detail.html', {
+        'title' : 'Grade Clinic Detail',
+        'page_name' : f'Detail Clinic Grade - {grade.description.get('alias')}',
+        'data' : grade
+    })
+
+def convert(value) :
+    if value == "M" :
+        measure = "Juta"
+    elif value == "B" :
+        measure = "Milyar"
+    elif  value == "T" :
+        measure = "Ribu"
+    
+    return measure
+
+@login_required(login_url='/login/')
+def gu_list(request) :
+    search_query = request.GET.get('search', '')
+
+    data = []
+
+    gus = UserGrade.objects.using('master').filter(is_active=True).all().order_by('id')
+
+    for d in gus :
+        d.description = json.loads(d.description)
+        d.range_user = json.loads(d.range_user)
+        measure_max = convert(d.range_user.get('max').get('measure'))
+        measure_min = convert(d.range_user.get('min').get('measure'))
+
+        data.append({
+            'user' : d,
+            'measure' : {
+                'max' : measure_max,
+                'min' : measure_min
+            }
+        })
+
+    if search_query :
+        data = [
+            r for r in data
+            if (
+                search_query.lower() in str(r['measure'].get('max')).lower() or
+                search_query.lower() in str(r['measure'].get('min')).lower() or
+                search_query.lower() in str(r['user'].description.get('alias')).lower() or
+                search_query.lower() in str(r['user'].description.get('description')).lower() or
+                search_query.lower() in str(r['user'].name).lower()
+            )
+        ]
+
+    paginator = Paginator(data, 12)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+        return render(request, 'master_pages/gu_list.html', {
+            'page_obj' : page_obj
+        })
+        
+
+    return render(request, 'master_pages/gu_list.html', {
+        'title' : 'Grade User List',
+        'page_name' : 'Grade User List',
+        'page_obj' : page_obj
+    })
+
+@login_required(login_url='/login/')
+def new_gu(request) :
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            name = request.POST['name']
+            alias = request.POST['alias']
+            min_v = request.POST['min']
+            max_v = request.POST['max']
+            desc = request.POST['desc']
+            min_m = request.POST['min-measure']
+            max_m = request.POST['max-measure']
+
+            range = {
+                'min' : {
+                    'value' : int(min_v),
+                    'measure' : min_m
+                },
+                'max' : {
+                    'value' : int(max_v),
+                    'measure' : max_m
+                }
+            }
+
+            descp = {
+                'alias' : alias,
+                'description' : desc
+            }
+
+            gu_new = UserGrade.objects.using('master').create(
+                name=name,
+                range_user=json.dumps(range),
+                description=json.dumps(descp)
+            )
+
+            gu_new.save()
+
+            return redirect('master:gu_list')
+
+    return render(request, 'master_new/new_gu.html', {
+        'title' : 'New Grade User',
+        'page_name' : 'New Grade User'
+    })
+
+@login_required(login_url='/login/')
+def detail_gu(request, gu_id) :
+    gu = UserGrade.objects.using('master').get(id=int(gu_id))
+    gu.description = json.loads(gu.description)
+    gu.range_user = json.loads(gu.range_user)
+
+    return render(request, 'master_detail/gu_detail.html', {
+        'title' : 'Detail Grade User',
+        'page_name' : f'Detail User Grade - {gu.name}',
+        'data' : gu
+    })

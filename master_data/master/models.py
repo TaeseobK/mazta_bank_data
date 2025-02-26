@@ -302,40 +302,16 @@ class WorkLocation(models.Model) :
         kwargs['using'] = 'master'
         super().delete(*args, **kwargs)
 
-class DoctorInformation(models.Model) :
-    full_name = models.CharField(max_length=255)
-    code = models.TextField(null=True, blank=True)
-    is_individual = models.BooleanField(default=True)
-    is_focused = models.BooleanField(default=False)
-    private_information = models.TextField(null=True, blank=True)
-    public_information = models.TextField(null=True, blank=True)
-    work_information = models.TextField(null=True, blank=True)
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta :
-        app_label = 'master'
-        db_table = 'doctor_information'
-        managed = True
-
-    def save(self, *args, **kwargs) :
-        kwargs['using'] = 'master'
-        super().save(*args, **kwargs)
-    
-    def delete(self, *args, **kwargs) :
-        kwargs['using'] = 'master'
-        super().delete(*args, **kwargs)
-
-class SalesRole(models.Model) :
+class ClinicGrade(models.Model) :
     name = models.CharField(max_length=64)
-    parent = models.IntegerField()
-    sub_role = models.BooleanField(default=False)
+    range_clinic = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta :
         app_label = 'master'
-        db_table = 'sales_role'
+        db_table = 'clinic_grade'
         managed = True
 
     def save(self, *args, **kwargs) :
@@ -346,15 +322,16 @@ class SalesRole(models.Model) :
         kwargs['using'] = 'master'
         super().delete(*args, **kwargs)
 
-class Specialist(models.Model) :
-    short_name = models.CharField(max_length=12, null=True, blank=True)
-    name = models.CharField(max_length=86, null=True, blank=True)
+class UserGrade(models.Model) :
+    name = models.CharField(max_length=64)
+    range_user = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta :
         app_label = 'master'
-        db_table = 'specialist'
+        db_table = 'user_grade'
         managed = True
 
     def save(self, *args, **kwargs) :
@@ -366,7 +343,9 @@ class Specialist(models.Model) :
         super().delete(*args, **kwargs)
 
 class Title(models.Model) :
-    name = models.CharField(max_length=12)
+    name = models.TextField()
+    short_name = models.CharField(max_length=64, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -383,32 +362,15 @@ class Title(models.Model) :
         kwargs['using'] = 'master'
         super().delete(*args, **kwargs)
 
-class TypeVisits(models.Model) :
-    name = models.CharField(max_length=64)
+class Salutation(models.Model) :
+    salutation = models.CharField(max_length=12)
+    description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta :
         app_label = 'master'
-        db_table = 'type_visits'
-        managed = True
-
-    def save(self, *args, **kwargs) :
-        kwargs['using'] = 'master'
-        super().save(*args, **kwargs)
-    
-    def delete(self, *args, **kwargs) :
-        kwargs['using'] = 'master'
-        super().delete(*args, **kwargs)
-
-class TypeComplaint(models.Model) :
-    name = models.CharField(max_length=64)
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta :
-        app_label = 'master'
-        db_table = 'type_complaint'
+        db_table = 'salutation'
         managed = True
 
     def save(self, *args, **kwargs) :

@@ -25,6 +25,8 @@ urlpatterns = [
     path('disciplinary-action-list/', views.disciplinary, name='disc_list'),
     path('deduction-type-list/', views.deduction_list, name='deduc_list'),
     path('work_location-list/', views.work_locations, name='work_location_list'),
+    path('grade-clinic-list/', views.gc_list, name='gc_list'),
+    path('grade-user-list/', views.gu_list, name='gu_list'),
 
     #New Page
     path('entity-list/new/', views.new_entity, name='new_entity'),
@@ -41,6 +43,8 @@ urlpatterns = [
     path('disciplinary-action-list/new/', views.new_disciplinary, name='new_disc'),
     path('deduction-type-list/new/', views.new_deduction, name='new_ded'),
     path('work-location-list/new/', views.new_work_location, name='new_work_location'),
+    path('grade-clinic-list/new/', views.new_gc, name='new_gc'),
+    path('grade-user-list/new/', views.new_gu, name='new_gu'),
     
     #Detail Page
     path('branch-list/detail/<int:b_id>/', views.branch_detail, name='detail_branch'),
@@ -57,6 +61,8 @@ urlpatterns = [
     path('disciplinary-action-list/detail/<int:disc_id>/', views.detail_disc, name='detail_disc'),
     path('deduction-type-list/detail/<int:ded_id>/', views.detail_deduction, name='detail_deduc'),
     path('work-location-list/detail/<int:dwk_id>/', views.detail_work_location, name='detail_work_location'),
+    path('grade-clinic-list/detail/<int:gc_id>/', views.detail_gc, name='detail_gc'),
+    path('grade-user-list/detail/<int:gu_id>/', views.detail_gu, name='detail_gu'),
 ]
 if settings.DEBUG :
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

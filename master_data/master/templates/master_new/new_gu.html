@@ -1,0 +1,102 @@
+{% extends 'base_app/base.html' %}
+{% load static %}
+{% block home %}
+<section class="flex w-full p-4 rounded-md border-2 mt-16 mb-2 dark:border-gray-400 border-gray-800 backdrop-blur-sm bg-opacity-10 bg-gray-800 overflow-y-auto thin-scrollbar">
+    <div class="w-9/12">
+        <div class="flex gap-10">
+            <button onclick="document.getElementById('form-grade-clinic').submit();" class="rounded-sm hover:text-gray-800 hover:bg-gray-400 bg-gray-800 text-gray-400 border-2 border-gray-400 hover:border-gray-800 px-2 py-1 uppercase text-xs font-bold mb-2">submit</button>
+        </div>
+        <form id="form-grade-clinic" action="." method="post" class="rounded-md border-2 border-gray-400 backdrop-blur-sm bg-opacity-70 bg-gray-800">
+            {% csrf_token %}
+            <input type="hidden" name="metode" value="post">
+            <div class="p-4">
+                <p class="dark:text-gray-400 bg-transparent text-gray-800 font-bold text-lg flex justify-start uppercase">New Grade User</p>
+                <div class="my-5 justify-start">
+                    <ul class="space-y-7">
+                        <li class="flex items-center dark:text-gray-400 text-gray-800 font-semibold">
+                            <div class="w-1/2 flex items-center">
+                                <label for="name-id" class="w-3/12 mt-1 dark:text-gray-400 text-gray-800 font-semibold">Grade Name</label>
+                                <input type="text" name="name" id="name-id" autocomplete="off" class="w-6/12 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                            </div>
+                            <div class="w-1/2 flex items-center">
+                                <label for="alias-id" class="w-3/12 mt-1 dark:text-gray-400 text-gray-800 font-semibold">Grade Alias</label>
+                                <input type="text" name="alias" id="alias-id" autocomplete="off" class="w-6/12 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                            </div>
+                        </li>
+                        <li>
+                            <p class="dark:text-gray-400 text-gray-800 font-semibold mt-12">Value for Range Clinic</p>
+                            <hr class="border-b border-gray-400 w-[840px]">
+                        </li>
+                        <li class="flex items-center w-[840px] dark:text-gray-400 text-gray-800 font-semibold">
+                            <div class="w-1/2 flex items-center">
+                                <label for="min-id" class="w-4/12 mt-1 dark:text-gray-400 text-gray-800 font-semibold">Min Value</label>
+                                <div class="w-full flex items-center justify-start text-md">
+                                    <input type="text" name="min" id="min-id" autocomplete="off" class="w-auto justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                    <select name="min-measure" id="min-measure-id" class="w-auto rounded-r-md border-2 border-gray-400 bg-gray-800 cursor-pointer focus:outline-none">
+                                        <option value="T" class="bg-gray-800 text-gray-400 font-semibold">Thousand</option>
+                                        <option value="M" class="bg-gray-800 text-gray-400 font-semibold">Million</option>
+                                        <option value="B" class="bg-gray-800 text-gray-400 font-semibold">Billion</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="w-1/2 flex items-center">
+                                <label for="max-id" class="w-4/12 mt-1 dark:text-gray-400 text-gray-800 font-semibold">Max Value</label>
+                                <div class="w-full flex items-center justify-start text-md">
+                                    <input type="text" name="max" id="max-id" autocomplete="off" class="w-auto justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                    <select name="max-measure" id="max-measure-id" class="w-auto rounded-r-md border-2 border-gray-400 bg-gray-800 cursor-pointer focus:outline-none">
+                                        <option value="T" class="bg-gray-800 text-gray-400 font-semibold">Thousand</option>
+                                        <option value="M" class="bg-gray-800 text-gray-400 font-semibold">Million</option>
+                                        <option value="B" class="bg-gray-800 text-gray-400 font-semibold">Billion</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="w-full dark:text-gray-400 text-gray-800 font-semibold">
+                            <p class="capitalize mt-5">description</p>
+                            <hr class="border-b border-gray-400 w-[840px]">
+                            <textarea name="desc" id="desc-id" autocomplete="off" class="w-[840px] p-2 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800"></textarea>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="w-3/12">
+        <!-- Log Activity -->
+    </div>
+</section>
+<script>
+    $(document).ready(function() {
+        $('#entity-id').on('change', function() {
+            var entityId = $(this).find(':selected').val();
+            console.log(entityId);
+
+            if(entityId) {
+                $.ajax({
+                    url: window.location.href,
+                    data: {
+                        'entity_obj_id': entityId
+                    },
+                    type: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        var branches = response;
+                        console.log(branches);
+                        branches.forEach(function(branch) {
+                            $('#branch-id').append(`<option value="${branch.pk}" class="bg-gray-800 text-gray-400 font-semibold">${branch.branch}</option>`);
+                        })
+                    },
+                    error: function() {
+                        alert("Error Fetching Branches");
+                    }
+                });
+            } else {
+                $('#branch-id').empty().append(`<option value="" class="bg-gray-800 text-gray-400 font-semibold">Select Branch</option>`);
+            }
+        });
+    });
+</script>
+{% endblock %}
