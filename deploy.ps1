@@ -7,6 +7,9 @@ pipenv install
 Write-Host "Activating virtual environment..."
 pipenv shell
 
+Write-Host "Running internal migrations..."
+pipenv run py master_data/manage.py makemigrations
+
 Write-Host "Running database migrations..."
 pipenv run py master_data/manage.py migrate
 pipenv run py master_data/manage.py migrate master --database=master

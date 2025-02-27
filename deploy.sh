@@ -15,6 +15,10 @@ echo "Activating virtual environment..."
 pipenv shell
 
 # Run migrations
+echo "Running internal migrations..."
+pipenv run python master_data/manage.py makemigrations
+
+# Run migrations
 echo "Running migrations..."
 pipenv run python master_data/manage.py migrate
 pipenv run python master_data/manage.py migrate master --database=master
