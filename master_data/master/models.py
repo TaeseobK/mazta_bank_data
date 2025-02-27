@@ -3,10 +3,9 @@ from django.db import models
 class Entity(models.Model) :
     name = models.CharField(max_length=64)
     established_date = models.DateField(null=True, blank=True)
-    parent = models.IntegerField(default=0)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     website = models.URLField(null=True, blank=True)
     address = models.TextField(null=True, blank=True)
-    sub_entity = models.BooleanField(default=False)
     branches = models.TextField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
@@ -28,12 +27,18 @@ class Entity(models.Model) :
         kwargs['using'] = 'master'
         super().delete(*args, **kwargs)
 
+    def get_hierarchy(self) :
+        hierarchy = []
+        current = self
+        while current :
+            hierarchy.append(current)
+            current = current.parent
+        return hierarchy[::-1]
 
 class Branch(models.Model) :
     name = models.CharField(max_length=64)
     address = models.TextField()
-    sub_branch = models.BooleanField(default=False)
-    parent = models.IntegerField(default=0)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -50,6 +55,14 @@ class Branch(models.Model) :
     def delete(self, *args, **kwargs) :
         kwargs['using'] = 'master'
         super().delete(*args, **kwargs)
+
+    def get_hierarchy(self) :
+        hierarchy = []
+        current = self
+        while current :
+            hierarchy.append(current)
+            current = current.parent
+        return hierarchy[::-1]
 
 class Warehouse(models.Model) :
     name = models.CharField(max_length=124)
@@ -166,8 +179,7 @@ class Batch(models.Model) :
 class Department(models.Model) :
     name = models.CharField(max_length=64)
     short_name = models.CharField(max_length=5, null=True, blank=True)
-    is_sub_department = models.BooleanField(default=False)
-    parent = models.IntegerField(null=True, blank=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     entity = models.IntegerField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
@@ -185,6 +197,14 @@ class Department(models.Model) :
     def delete(self, *args, **kwargs) :
         kwargs['using'] = 'master'
         super().delete(*args, **kwargs)
+
+    def get_hierarchy(self) :
+        hierarchy = []
+        current = self
+        while current :
+            hierarchy.append(current)
+            current = current.parent
+        return hierarchy[::-1]
 
 class JobPosition(models.Model) :
     name = models.CharField(max_length=64)
