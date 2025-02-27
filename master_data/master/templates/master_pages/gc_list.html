@@ -52,7 +52,7 @@
                         {{ d.grade.description.alias }}
                     </td>
                     <td class="px-6 py-3 whitespace-nowrap dark:text-gray-400 text-gray-800 font-semibold">
-                        >= {{ d.grade.range_clinic.max }} Clinic / <= {{ d.grade.range_clinic.min }} Clinic
+                        <= {{ d.grade.range_clinic.max }} Clinic / >= {{ d.grade.range_clinic.min }} Clinic
                     </td>
                 </tr>
                 {% endfor %}

@@ -80,7 +80,7 @@ def branch_list(request) :
 @login_required(login_url='/login/')
 def new_branch(request) :
 
-    branches = Branch.objects.using('master').filter(sub_branch=False, is_active=True).all()
+    branches = Branch.objects.using('master').filter(is_active=True).all()
 
     if request.method == 'POST' :
         metode = request.POST['metode']
@@ -103,19 +103,12 @@ def new_branch(request) :
                 'country' : country
             }
 
-            if parent == None or parent == '' or parent == "" :
-                parent = 0
-                sub_branch = False
-
-            else :
-                parent = Branch.objects.using('master').get(id=int(parent)).pk
-                sub_branch = True
+            parent = Branch.objects.using('master').get(id=int(parent)) if parent else None
 
             new_branch = Branch.objects.using('master').create(
                 name=name,
                 address=json.dumps(address),
                 parent=parent,
-                sub_branch=sub_branch,
                 description=desc
             )
 
@@ -133,13 +126,7 @@ def new_branch(request) :
 def branch_detail(request, b_id) :
     branch = Branch.objects.using('master').get(id=int(b_id))
     branch.address = json.loads(branch.address)
-    branches = Branch.objects.using('master').filter(is_active=True, sub_branch=False).exclude(pk=int(b_id)).all()
-
-    if branch.sub_branch == True :
-        branch.parent = Branch.objects.using('master').get(id=int(branch.parent)).pk
-    
-    else :
-        branch.parent = branch.parent
+    branches = Branch.objects.using('master').filter(is_active=True).exclude(pk=int(b_id)).all()
 
     if request.method == 'POST' :
         metode = request.POST['metode']
@@ -163,19 +150,12 @@ def branch_detail(request, b_id) :
                 'country' : country
             }
 
-            if parent == None or parent == '' or parent == "" :
-                parent = 0
-                sub_branch = False
-
-            else :
-                parent = Branch.objects.using('master').get(id=int(parent))
-                sub_branch = True
+            parent = Branch.objects.using('master').get(id=int(parent)) if parent else None
 
             branch.name = name
             branch.address = json.dumps(address)
             branch.description = desc
             branch.parent = parent
-            branch.sub_branch = sub_branch
 
             branch.save()
 
@@ -205,13 +185,6 @@ def entity_list(request) :
     data = []
 
     for d in entity :
-        
-        if d.sub_entity == True :
-            d.parent = Entity.objects.using('master').get(id=int(d.parent))
-        
-        else :
-            d.parent = d.parent
-
         branch_data = []
 
         for r in json.loads(d.branches) :
@@ -277,13 +250,7 @@ def new_entity(request) :
             'country' : country
         }
 
-        if parent == None or parent == '' :
-            parent = 0
-            sub_entity = False
-
-        else :
-            parent = Entity.objects.using('master').get(id=int(parent)).pk
-            sub_entity = True
+        parent = Entity.objects.using('master').get(id=int(parent)) if parent else None
 
         b_id = []
 
@@ -300,7 +267,6 @@ def new_entity(request) :
             parent=parent,
             website=website,
             address=json.dumps(address),
-            sub_entity=sub_entity,
             branches=json.dumps(b_id),
             description=description
         )
@@ -359,13 +325,7 @@ def detail_entity(request, e_id) :
                 'country' : country
             }
 
-            if parent == None or parent == '' :
-                parent = 0
-                sub_entity = False
-
-            else :
-                parent = Entity.objects.using('master').get(id=int(parent)).pk
-                sub_entity = True
+            parent = Entity.objects.using('master').get(id=int(parent)) if parent else None
 
             b_id = []
 
@@ -382,7 +342,6 @@ def detail_entity(request, e_id) :
             entity.description = description
             entity.address = json.dumps(address)
             entity.branches = json.dumps(b_id)
-            entity.sub_entity = sub_entity
             entity.parent = parent
 
             entity.save()
@@ -777,11 +736,6 @@ def department_list(request) :
     deps = Department.objects.using('master').filter(is_active=True).all().order_by('id')
 
     for d in deps :
-        if d.is_sub_department :
-            d.parent = Department.objects.using('master').get(id=int(d.parent))
-        else :
-            d.parent = d.parent
-        
         entity = Entity.objects.using('master').get(id=int(d.entity)).name
 
         words = entity.split()
@@ -845,18 +799,11 @@ def new_department(request) :
 
             ent = Entity.objects.using('master').get(id=int(ent_id))
 
-            if parent == '' or parent == None :
-                prt = 0
-                sub_department = False
-            
-            else :
-                prt = Department.objects.using('master').get(id=int(parent)).pk
-                sub_department = True
+            prt = Department.objects.using('master').get(id=int(parent)) if parent else None
 
             new_dep = Department.objects.using('master').create(
                 name=name,
                 short_name=short_name,
-                is_sub_department=sub_department,
                 parent=prt,
                 entity=ent.pk,
                 description=desc
@@ -886,11 +833,6 @@ def detail_department(request, d_id) :
 
     department = Department.objects.using('master').get(id=int(d_id))
     department.entity = Entity.objects.using('master').get(id=int(department.entity))
-    
-    if department.is_sub_department :
-        department.parent = Department.objects.using('master').get(id=int(department.parent))
-    else :
-        department.parent = department.parent
 
     if request.method == 'POST' :
         metode = request.POST['metode']
@@ -904,39 +846,20 @@ def detail_department(request, d_id) :
 
             ent = Entity.objects.using('master').get(id=int(ent_id))
 
-            if parent == '' or parent == None :
-                prt = 0
-                sub_department = False
-            
-            else :
-                prt = Department.objects.using('master').get(id=int(parent)).pk
-                sub_department = True
+            prt = Department.objects.using('master').get(id=int(parent)) if parent else None
             
             department.name = name
             department.short_name = short_name
             department.description = desc
             department.entity = ent.pk
             department.parent = prt
-            department.is_sub_department = sub_department
 
             department.save()
 
             return redirect('master:department_list')
         
         elif metode == 'delete' :
-            ent_id = Entity.objects.using('master').get(id=int(department.entity.pk)).pk
-
-            if department.is_sub_department == False :
-                prt = 0
-                sub_department = False
-            
-            else :
-                prt = Department.objects.using('master').get(id=int(parent)).pk
-                sub_department = True
-
-            department.entity = ent_id
-            department.parent = prt
-            department.is_sub_department = sub_department
+            department.entity = department.entity.pk
             department.is_active = False
 
             department.save()
@@ -2104,8 +2027,269 @@ def detail_gu(request, gu_id) :
     gu.description = json.loads(gu.description)
     gu.range_user = json.loads(gu.range_user)
 
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            name = request.POST['name']
+            alias = request.POST['alias']
+            min_v = request.POST['min']
+            max_v = request.POST['max']
+            desc = request.POST['desc']
+            min_m = request.POST['min-measure']
+            max_m = request.POST['max-measure']
+
+            range = {
+                'min' : {
+                    'value' : int(min_v),
+                    'measure' : min_m
+                },
+                'max' : {
+                    'value' : int(max_v),
+                    'measure' : max_m
+                }
+            }
+
+            descp = {
+                'alias' : alias,
+                'description' : desc
+            }
+
+            gu.name=name
+            gu.range_user=json.dumps(range)
+            gu.description=json.dumps(descp)
+
+            gu.save()
+
+            return redirect('master:gu_list')
+        
+        elif metode == 'delete' :
+            gu.range_user = json.dumps(gu.range_user)
+            gu.description = json.dumps(gu.description)
+            gu.is_active = False
+
+            gu.save()
+
+            return redirect('master:gu_list')
+
     return render(request, 'master_detail/gu_detail.html', {
         'title' : 'Detail Grade User',
         'page_name' : f'Detail User Grade - {gu.name}',
         'data' : gu
+    })
+
+@login_required(login_url='/login/')
+def title_list(request) :
+    search_query = request.GET.get('search', '')
+
+    titles = Title.objects.using('master').filter(is_active=True).all().order_by('id')
+
+    if search_query :
+        titles = [
+            data for data in titles
+            if (
+                search_query.lower() in str(data.name).lower() or
+                search_query.lower() in str(data.short_name).lower()
+            )
+        ]
+
+    paginator = Paginator(titles, 12)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+        return render(request, 'master_pages/title_list.html', {
+            'page_obj' : page_obj
+        })
+
+    return render(request, 'master_pages/title_list.html', {
+        'title' : 'Title List',
+        'page_name' : 'Title List',
+        'page_obj' : page_obj
+    })
+
+@login_required(login_url='/login/')
+def new_title(request) :
+
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            short_name = request.POST['short']
+            full_name = request.POST['full']
+            desc = request.POST['desc']
+
+            if Title.objects.using('master').filter(name=full_name).exists() or Title.objects.using('master').filter(short_name=short_name).exists() :
+                return redirect('master:new_title')
+            
+            else :
+
+                new_title = Title.objects.using('master').create(
+                    name=full_name,
+                    short_name=short_name,
+                    description=desc
+                )
+
+                new_title.save()
+
+                return redirect('master:title_list')
+        
+    return render(request, 'master_new/new_title.html', {
+        'title' : 'New Title',
+        'page_name' : 'New Title'
+    })
+
+@login_required(login_url='/login/')
+def detail_title(request, title_id) :
+    title = Title.objects.using('master').get(id=int(title_id))
+
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            short_name = request.POST['short']
+            full_name = request.POST['full']
+            desc = request.POST['desc']
+
+            if Title.objects.using('master').filter(name=full_name).exclude(id=int(title_id)).exists() or Title.objects.using('master').filter(short_name=short_name).exclude(id=int(title_id)).exists() :
+                return redirect('master:detail_title', title_id=title.pk)
+            
+            else :
+                title.name = full_name
+                title.short_name = short_name
+                title.description = desc
+
+                title.save()
+
+                return redirect('master:title_list')
+        
+        elif metode == 'delete' :
+            title.is_active = False
+
+            title.save()
+
+            return redirect('master:title_list')
+
+    return render(request, 'master_detail/title_detail.html', {
+        'title' : 'Detail Title',
+        'page_name' : f'Detail - {title.short_name}',
+        'data' : title
+    })
+
+@login_required(login_url='/login/')
+def salutation_list(request) :
+    search_query = request.GET.get('search', '')
+
+    data = []
+
+    salutations = Salutation.objects.using('master').filter(is_active=True).all().order_by('id')
+
+    for d in salutations :
+        d.description = json.loads(d.description)
+
+        data.append({
+            'salutation' : d
+        })
+
+    if search_query :
+        data = [
+            s for s in data
+            if (
+                search_query.lower() in str(s['salutation'].description.get('short_name')).lower() or
+                search_query.lower() in str(s['salutation'].salutation).lower()
+            )
+        ]
+
+    paginator = Paginator(data, 12)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+        return render(request, 'master_pages/salutation_list.html', {
+            'page_obj' : page_obj
+        })
+    
+    return render(request, 'master_pages/salutation_list.html', {
+        'title' : 'Salutations',
+        'page_name' : 'Salutations',
+        'page_obj' : page_obj
+    })
+
+@login_required(login_url='/login/')
+def new_salutation(request) :
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            full_name = request.POST['full']
+            short_name = request.POST['short']
+            desc = request.POST['desc']
+
+            descr = {
+                'short_name' : short_name,
+                'description' : desc
+            }
+
+            if Salutation.objects.using('master').filter(salutation=short_name).exists() :
+                return redirect('master:new_salutation')
+            
+            else :
+                new_salutation = Salutation.objects.using('master').create(
+                    salutation=full_name,
+                    description=json.dumps(descr)
+                )
+
+                new_salutation.save()
+
+                return redirect('master:salutation_list')
+            
+    return render(request, 'master_new/new_salutation.html', {
+        'title' : 'New Salutation',
+        'page_name' : 'New Salutation'
+    })
+
+@login_required(login_url='/login/')
+def detail_salutation(request, sal_id) :
+
+    salutation = Salutation.objects.using('master').get(id=int(sal_id))
+    salutation.description = json.loads(salutation.description)
+
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            full_name = request.POST['full']
+            short_name = request.POST['short']
+            desc = request.POST['desc']
+
+            descr = {
+                'short_name' : short_name,
+                'description' : desc
+            }
+
+            if Salutation.objects.using('master').filter(salutation=short_name).exclude(id=int(sal_id)).exists() :
+                return redirect('master:new_salutation')
+            
+            else :
+                salutation.salutation = full_name
+                salutation.description = json.dumps(descr)
+
+                salutation.save()
+
+                return redirect('master:salutation_list')
+            
+        elif metode == 'delete' :
+            salutation.description = json.dumps(salutation.description)
+            salutation.is_active = False
+
+            salutation.save()
+
+            return redirect('master:salutation_list')
+
+    return render(request, 'master_detail/salutation_detail.html', {
+        'title' : 'Detail Salutation',
+        'page_name' : f'Detail - {salutation.description.get('short_name')}',
+        'data' : salutation
     })

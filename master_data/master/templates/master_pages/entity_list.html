@@ -36,7 +36,7 @@
                         established date
                     </th>
                     <th scope="col" class="px-6 py-3 uppercase text-xs dark:text-gray-400 text-gray-800 font-bold">
-                        sub entity
+                        parent
                     </th>
                     <th scope="col" class="px-6 py-3 uppercase text-xs dark:text-gray-400 text-gray-800 font-bold">
                         branches
@@ -55,7 +55,13 @@
                         {{ data.entity.established_date }}
                     </td>
                     <td class="px-6 py-3 whitespace-nowrap text-xs dark:text-gray-300 text-gray-800">
-                        {% if data.entity.parent %} {{ data.entity.parent.name }} {% else %} Parent {% endif %}
+                        {% if data.entity.parent %} 
+                        <a href="{% url 'master:detail_entity' data.entity.parent.pk %}" class="hover:text-blue-600 hover:underline">
+                            {{ data.entity.parent.name }}
+                        </a>
+                        {% else %} 
+                        Parent 
+                        {% endif %}
                     </td>
                     <td class="px-6 py-3 whitespace-nowrap text-xs dark:text-gray-300 text-gray-800 flex gap-2 justify-center">
                         {% for d in data.branches %}

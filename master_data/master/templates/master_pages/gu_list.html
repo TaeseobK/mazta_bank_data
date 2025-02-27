@@ -52,7 +52,7 @@
                         {{ d.user.description.alias }}
                     </td>
                     <td class="px-6 py-3 whitespace-nowrap dark:text-gray-400 text-gray-800 font-semibold">
-                        >= {{ d.user.range_user.max.value }} {{ d.measure.max }} <= {{ d.user.range_user.min.value }} {{ d.measure.min }}
+                        <= {{ d.user.range_user.max.value }} {{ d.measure.max }} / >= {{ d.user.range_user.min.value }} {{ d.measure.min }}
                     </td>
                 </tr>
                 {% endfor %}

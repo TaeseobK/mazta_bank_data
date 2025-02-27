@@ -400,3 +400,23 @@ class Salutation(models.Model) :
     def delete(self, *args, **kwargs) :
         kwargs['using'] = 'master'
         super().delete(*args, **kwargs)
+
+class Specialist(models.Model) :
+    full = models.CharField(max_length=86)
+    short_name = models.CharField(max_length=12)
+    description = models.TextField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta :
+        app_label = 'master'
+        db_table = 'specialist'
+        managed = True
+
+    def save(self, *args, **kwargs) :
+        kwargs['using'] = 'master'
+        super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs) :
+        kwargs['using'] = 'master'
+        super().delete(*args, **kwargs)
