@@ -270,6 +270,16 @@
                                 </div>
                             </a>
                         </li>
+                        <li class="mt-2">
+                            <a href="{% url 'master:specialists' %}" class="flex items-center gap-5">
+                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.6144 7.19994c.3479.48981.5999 1.15357.5999 1.80006 0 1.6569-1.3432 3-3 3-1.6569 0-3.00004-1.3431-3.00004-3 0-.67539.22319-1.29865.59983-1.80006M6.21426 6v4m0-4 6.00004-3 6 3-6 2-2.40021-.80006M6.21426 6l3.59983 1.19994M6.21426 19.8013v-2.1525c0-1.6825 1.27251-3.3075 2.95093-3.6488l3.04911 2.9345 3-2.9441c1.7026.3193 3 1.9596 3 3.6584v2.1525c0 .6312-.5373 1.1429-1.2 1.1429H7.41426c-.66274 0-1.2-.5117-1.2-1.1429Z"/>
+                                </svg>                                                                                                                                                                                                                                                                                                 
+                                <div class="bg-transparent">
+                                    <p class="text-gray-400 font-bold text-xs uppercase">Specialist</p>
+                                </div>
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <h2 id="accordion-open-transaction">
@@ -283,7 +293,7 @@
                 <div id="transaction-database" class="flex mt-2 items-center justify-center hidden" aria-labelledby="accordion-open-master">
                     <ul class="space-y-3">
                         <li class="mt-2">
-                            <a href="#" class="flex items-center gap-5">
+                            <a href="{% url 'sales:doctor_list' %}" class="flex items-center gap-5">
                                 <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                 </svg>

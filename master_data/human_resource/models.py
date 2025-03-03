@@ -5,6 +5,7 @@ class Employee(models.Model) :
     code = models.CharField(max_length=24)
     full_name = models.CharField(max_length=64)
     entity = models.IntegerField(null=True, blank=True)
+    superior = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     branch = models.IntegerField(null=True, blank=True)
     public_information = models.TextField(null=True, blank=True)
     work_information = models.TextField(null=True, blank=True)
@@ -25,6 +26,14 @@ class Employee(models.Model) :
     def delete(self, *args, **kwargs) :
         kwargs['using'] = 'human_resource'
         super().delete(*args, **kwargs)
+
+    def get_hierarchy(self) :
+        hierarchy = []
+        current = self
+        while current :
+            hierarchy.append(current)
+            current = current.parent
+        return hierarchy[::-1]
 
 class Attendance(models.Model) :
     employee = models.ForeignKey(Employee, on_delete=models.CASCADE)

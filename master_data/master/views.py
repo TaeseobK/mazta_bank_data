@@ -2293,3 +2293,101 @@ def detail_salutation(request, sal_id) :
         'page_name' : f'Detail - {salutation.description.get('short_name')}',
         'data' : salutation
     })
+
+@login_required(login_url='/login/')
+def specialists(request) :
+    search_query = request.GET.get('search', '')
+
+    specialists = Specialist.objects.using('master').filter(is_active=True).all().order_by('id')
+
+    if search_query :
+        specialists = [
+            data for data in specialists
+            if (
+                search_query.lower() in str(data.full).lower() or
+                search_query.lower() in str(data.short_name).lower()
+            )
+        ]
+
+    paginator = Paginator(specialists, 12)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+        return render(request, 'master_pages/specialists.html', {
+            'page_obj' : page_obj
+        })
+    
+    return render(request, 'master_pages/specialists.html', {
+        'title' : 'Specialists',
+        'page_name' : 'Specialists',
+        'page_obj' : page_obj
+    })
+
+@login_required(login_url='/login/')
+def new_specialist(request) :
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            full_name = request.POST['full']
+            short_name = request.POST['short']
+            desc = request.POST['desc']
+
+            if Specialist.objects.using('master').filter(short_name=short_name).exists() or Specialist.objects.using('master').filter(full=full_name).exists() :
+                return redirect('master:new_specialist')
+            
+            else :
+                new_specialist = Specialist.objects.using('master').create(
+                    full=full_name,
+                    short_name=short_name,
+                    description=desc
+                )
+
+                new_specialist.save()
+
+                return redirect('master:specialists')
+            
+    return render(request, 'master_new/new_specialist.html', {
+        'title' : 'New Specialist',
+        'page_name' : 'New Specialist'
+    })
+
+@login_required(login_url='/login/')
+def detail_specialist(request, sp_id) :
+
+    specialist = Specialist.objects.using('master').get(id=int(sp_id))
+
+    if request.method == 'POST' :
+        metode = request.POST['metode']
+
+        if metode == 'post' :
+            full_name = request.POST['full']
+            short_name = request.POST['short']
+            desc = request.POST['desc']
+
+            if Specialist.objects.using('master').filter(short_name=short_name).exclude(id=int(sp_id)).exists() or Specialist.objects.using('master').filter(full=full_name).exclude(id=int(sp_id)).exists() :
+                return redirect('master:detail_specialist', sp_id=specialist.pk)
+            
+            else :
+                specialist.full = full_name
+                specialist.short_name = short_name
+                specialist.description = desc
+
+                specialist.save()
+
+                return redirect('master:specialists')
+            
+        elif metode == 'delete' :
+            specialist.is_active = False
+
+            specialist.save()
+
+            return redirect('master:specialists')
+
+    return render(request, 'master_detail/specialist_detail.html', {
+        'title' : 'Detail Specialist',
+        'page_name' : f'Detail - {specialist.short_name}',
+        'data' : specialist
+    })

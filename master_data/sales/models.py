@@ -33,7 +33,7 @@ class SalesReport(models.Model) :
 
 class Visits(models.Model) :
     sales = models.IntegerField()
-    type_visits = models.IntegerField(null=True, blank=True)
+    perent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     customer = models.IntegerField(null=True, blank=True)
     products = models.TextField(null=True, blank=True)
     c_in_date = models.DateTimeField(null=True, blank=True)
@@ -60,6 +60,14 @@ class Visits(models.Model) :
     def delete(self, *args, **kwargs) :
         kwargs['using'] = 'sales'
         super().delete(*args, **kwargs)
+
+    def get_hierarchy(self) :
+        hierarchy = []
+        current = self
+        while current :
+            hierarchy.append(current)
+            current = current.parent
+        return hierarchy[::-1]
 
 class Target(models.Model) :
     sales = models.IntegerField(null=True, blank=True)
@@ -91,6 +99,30 @@ class Complaints(models.Model) :
     class Meta :
         app_label = 'sales'
         db_table = 'complaints'
+        managed = True
+
+    def save(self, *args, **kwargs) :
+        kwargs['using'] = 'sales'
+        super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs) :
+        kwargs['using'] = 'sales'
+        super().delete(*args, **kwargs)
+
+class DoctorDetail(models.Model) :
+    code = models.CharField(max_length=64)
+    accurate_code = models.CharField(max_length=64)
+    focused = models.BooleanField(default=False)
+    system_information = models.TextField()
+    public_information = models.TextField()
+    work_information = models.TextField()
+    private_information = models.TextField()
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta :
+        app_label = 'sales'
+        db_table = 'doctor_detail'
         managed = True
 
     def save(self, *args, **kwargs) :

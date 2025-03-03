@@ -29,6 +29,7 @@ urlpatterns = [
     path('grade-user-list/', views.gu_list, name='gu_list'),
     path('title-list/', views.title_list, name='title_list'),
     path('salutation-list/', views.salutation_list, name='salutation_list'),
+    path('specialists/', views.specialists, name='specialists'),
 
     #New Page
     path('entity-list/new/', views.new_entity, name='new_entity'),
@@ -49,6 +50,7 @@ urlpatterns = [
     path('grade-user-list/new/', views.new_gu, name='new_gu'),
     path('title-list/new/', views.new_title, name='new_title'),
     path('salutation-list/new/', views.new_salutation, name='new_salutation'),
+    path('specialists/new/', views.new_specialist, name='new_specialist'),
     
     #Detail Page
     path('branch-list/detail/<int:b_id>/', views.branch_detail, name='detail_branch'),
@@ -69,6 +71,7 @@ urlpatterns = [
     path('grade-user-list/detail/<int:gu_id>/', views.detail_gu, name='detail_gu'),
     path('title-list/detail/<int:title_id>/', views.detail_title, name='detail_title'),
     path('salutation-list/detail/<int:sal_id>/', views.detail_salutation, name='detail_salutation'),
+    path('specialists/detail/<int:sp_id>/', views.detail_specialist, name='detail_specialist'),
 ]
 if settings.DEBUG :
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
