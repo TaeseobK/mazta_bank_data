@@ -383,7 +383,7 @@ class Title(models.Model) :
         super().delete(*args, **kwargs)
 
 class Salutation(models.Model) :
-    salutation = models.CharField(max_length=12)
+    salutation = models.CharField(max_length=64)
     description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

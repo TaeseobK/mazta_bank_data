@@ -10,120 +10,631 @@
             {% csrf_token %}
             <input type="hidden" name="metode" value="post">
             <div class="p-4">
-                <p class="dark:text-gray-400 bg-transparent text-gray-800 font-bold text-lg flex justify-start uppercase">New Entity</p>
-                <div class="mt-10 flex justify-center gap-5">
-                    <div class="w-1/2 bg-transparent">
-                        <p class="dark:text-gray-400 text-gray-800 text-md font-bold border-b border-gray-400 w-full">Public Information</p>
-                        <div class="flex gap-10 items-center bg-transparent mt-3">
-                            <ul class="space-y-5 w-1/4 dark:text-gray-400 text-gray-800 font-semibold text-sm justify-start">
-                                <li class="mt-2">
-                                    <label for="entity-name-id">Entity Name</label>
-                                </li>
-                                <li class="mt-2">
-                                    <label for="established-date-id">Established Date</label>
-                                </li>
-                                <li class="mt-2">
-                                    <label for="website-id">Website</label>
-                                </li>
-                            </ul>
-                            <ul class="space-y-5 w-3/4 dark:text-gray-400 text-gray-800 font-semibold text-sm justify-start">
-                                <li class="mt-2">
-                                    <input type="text" autocomplete="off" id="entity-name-id" name="entity-name" class="w-full bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                </li>
-                                <li class="mt-2">
-                                    <input type="text" autocomplete="off" id="established-date-id" datepicker datepicker-autoselect-today datepicker-buttons datepicker-autohide name="established-date" datepicker-format="yyyy-mm-dd" class="w-full bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                </li>
-                                <li class="mt-2">
-                                    <input type="url" autocomplete="off" id="website-id" name="website" class="w-full bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="w-1/2 bg-transparent">
-                        <p class="dark:text-gray-400 text-gray-800 text-md font-bold border-b border-gray-400 w-full">Description</p>
-                        <div class="flex gap-10 items-center bg-transparent mt-3">
-                            <textarea name="description" id="description-id" class="w-full bg-transparent border-b-2 dark:border-gray-400 border-gray-800 dark:text-gray-400 text-gray-800 font-semibold text-sm thin-scrollbar focus:outline-none focus:border-blue-600 hover:border-red-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800"></textarea>
-                        </div>
+                <p class="dark:text-gray-400 bg-transparent text-gray-800 font-bold text-lg flex justify-start uppercase select-none">New Doctor</p>
+                <div class="flex justify-start gap-5">
+                    <div class="mt-3 bg-gray-800 w-full p-2 border-2 border-gray-500 flex gap-5 rounded-md text-gray-800 dark:text-gray-400">
+                        <ul class="space-y-5 w-1/2 mb-2">
+                            <li>
+                                <div class="flex gap-5 items-center w-full">
+                                    <label for="firstname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-1/4 mt-1">First Name</label>
+                                    <input type="text" name="firstname" id="firstname-id" autocomplete="off" class="w-2/4 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                </div>
+                            </li>
+                            <li>
+                                <div class="flex gap-5 items-center w-full">
+                                    <label for="middlename-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-1/4 mt-1">Middle Name</label>
+                                    <input type="text" name="middlename" id="middlename-id" autocomplete="off" class="w-2/4 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                </div>
+                            </li>
+                            <li>
+                                <div class="flex gap-5 items-center w-full">
+                                    <label for="lastname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-1/4 mt-1">Last Name</label>
+                                    <input type="text" name="lastname" id="lastname-id" autocomplete="off" class="w-2/4 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                </div>
+                            </li>
+                        </ul>
+                        <ul class="space-y-5 w-1/2 mb-2">
+                            <li>
+                                <div class="flex gap-5 items-center w-full">
+                                    <label for="fullname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-1/4 mt-1">Full Name</label>
+                                    <input type="text" name="fullname" id="fullname-id" autocomplete="off" class="w-2/4 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                </div>
+                            </li>
+                            <li>
+                                <div class="flex gap-5 items-center w-full">
+                                    <label for="salutation-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-1/4 mt-1">Salutation</label>
+                                    <select name="" id="" class="w-2/4 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                        <option value="" class="bg-gray-800 text-gray-400 font-semibold"></option>
+                                    </select>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="flex gap-5 items-center w-full">
+                                    <label for="title-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-1/4 mt-1">Title</label>
+                                    <select name="" id="" class="w-2/4 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                        <option value="" class="bg-gray-800 text-gray-400 font-semibold"></option>
+                                    </select>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-                <div class="mt-10 flex justify-center gap-5">
-                    <div class="w-1/2 bg-transparent">
-                        <p class="dark:text-gray-400 text-gray-800 text-md font-bold border-b border-gray-400 w-full">Entity Information</p>
-                        <div class="flex gap-10 bg-transparent mt-3">
-                            <ul class="space-y-5 w-1/4 dark:text-gray-400 text-gray-800 font-semibold text-sm justify-start">
-                                <li class="mt-2">
-                                    <label for="parent-id">Parent</label>
-                                </li>
-                                <li class="mt-2">
-                                    <p>Address</p>
-                                </li>
-                            </ul>
-                            <ul class="space-y-5 w-3/4 dark:text-gray-400 text-gray-800 font-semibold text-sm justify-start">
-                                <li class="mt-2">
-                                    <select name="parent" id="parent-id" class="w-full bg-transparent border-b-2 bg-transparent dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                        <option value="" class="bg-gray-800 text-gray-400 font-semibold"></option>
-                                        {% for data in parents %}
-                                        <option value="{{ data.pk }}" class="bg-gray-800 text-gray-400 font-semibold">{{ data.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </li>
-                                <li class="mt-2 space-y-3">
-                                    <input type="text" name="street-1" id="street-1-id" class="w-full bg-transparent border-b-2 dark:text-gray-400 text-gray-800 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-600" placeholder="Street 1...">
-                                    <input type="text" name="street-2" id="street-2-id" class="w-full bg-transparent border-b-2 dark:text-gray-400 text-gray-800 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-600" placeholder="Street 2...">
-                                    <div class="w-full bg-transparent flex gap-5">
-                                        <input type="text" name="state" id="state-id" class="w-full bg-transparent border-b-2 dark:text-gray-400 text-gray-800 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-600" placeholder="State...">
-                                        <input type="text" name="city" id="city-id" class="w-full bg-transparent border-b-2 dark:text-gray-400 text-gray-800 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-600" placeholder="City...">
-                                        <input type="text" name="country" id="country-id" class="w-full bg-transparent border-b-2 dark:text-gray-400 text-gray-800 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-600" placeholder="Country...">
-                                    </div>
-                                </li>
-                            </ul>
+                <div class="border-b border-gray-200 dark:border-gray-600">
+                    <ul data-tabs-toggle="#profile-tab-content" role="tablist" class="flex flex-wrap -mb-px text-xs font-medium text-center text-gray-500 dark:text-gray-400">
+                        <li class="me-2" role="presentation">
+                            <button type="button" aria-selected="false" role="tab" id="pi-id" data-tabs-target="#public-information" class="inline-flex items-center justify-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group">
+                                <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 9h3m-3 3h3m-3 3h3m-6 1c-.306-.613-.933-1-1.618-1H7.618c-.685 0-1.312.387-1.618 1M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm7 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"/>
+                                </svg>                                                                   
+                                Work Information
+                            </button>
+                        </li>
+                        <li class="me-2" role="presentation">
+                            <button type="button" aria-selected="false" id="wi-id" data-tabs-target="#work-information" role="tab" class="inline-flex items-center justify-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group">
+                                <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v5m-3 0h6M4 11h16M5 15h14a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1Z"/>
+                                </svg>                                  
+                                Private Information
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div id="profile-tab-content">
+                    <div id="public-information" role="tabpanel" aria-labelledby="pi-id" class="hidden p-1 my-5 space-y-10 rounded-sm bg-transparent text-gray-800 dark:text-gray-400 font-semibold">
+                        <div class="flex gap-10">
+                            <div class="bg-transparent space-y-5 w-1/2">
+                                <p class="text-gray-800 dark:text-gray-400 font-semibold uppercase border-b border-gray-400 text-sm">Work Location</p>
+                                <div class="flex gap-10">
+                                    <ul class="w-3/12 justify-start space-y-3">
+                                        <li>
+                                            <p class="text-gray-800 dark:text-gray-400 font-semibold text-sm">
+                                                Address
+                                            </p>
+                                        </li>
+                                    </ul>
+                                    <ul class="w-9/12 justify-start space-y-3">
+                                        <li>
+                                            <input type="text" id="" name="work-street-1" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="Street 1...">
+                                        </li>
+                                        <li>
+                                            <input type="text" id="" name="work-street-2" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="Street 2...">
+                                        </li>
+                                        <li>
+                                            <input type="text" id="" name="work-city" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="City...">
+                                        </li>
+                                        <li>
+                                            <div class="flex gap-5">
+                                                <input type="text" id="" name="work-state" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="State...">
+                                                <input type="text" id="" name="work-country" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="Country...">
+                                                <input type="text" id="" name="work-zip" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="Zip...">
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-800 dark:text-gray-400 font-semibold w-full border-b border-gray-400">Full Work Address</p>
+                                    <textarea name="" id="" autocomplete="off" class="w-full thin-scrollbar p-1 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700"></textarea>
+                                </div>
+                            </div>
+                            <div class="bg-transparent w-1/2 space-y-5">
+                                <p class="text-gray-800 dark:text-gray-400 font-semibold uppercase border-b border-gray-400 text-sm">Job Information</p>
+                                <div class="flex gap-10">
+                                    <ul class="w-4/12 justify-start space-y-4 items-center">
+                                        <li>
+                                            <label for="workspace-name-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">workspace name</label>
+                                        </li>
+                                        <li>
+                                            <label for="job-position-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">job position</label>
+                                        </li>
+                                        <li>
+                                            <label for="work-phone-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">work phone</label>
+                                        </li>
+                                        <li>
+                                            <label for="work-mobile-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">work mobile</label>
+                                        </li>
+                                        <li>
+                                            <label for="work-email-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">work email</label>
+                                        </li>
+                                    </ul>
+                                    <ul class="w-7/12 justify-start space-y-4 items-center">
+                                        <li>
+                                            <input type="text" name="workspace-name" id="workspace-name-id" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">
+                                        </li>
+                                        <li>
+                                            <input type="text" name="job-position" id="job-position-id" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">
+                                        </li>
+                                        <li>
+                                            <input type="text" name="work-phone" id="work-phone-id" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">
+                                        </li>
+                                        <li>
+                                            <input type="text" name="work-mobile" id="work-mobile-id" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">
+                                        </li>
+                                        <li>
+                                            <input type="text" name="work-email" id="work-email-id" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-10">
+                            <div class="bg-transparent space-y-5 w-1/2">
+                                <p class="text-gray-800 dark:text-gray-400 font-semibold uppercase border-b border-gray-400 text-sm">Sales Information</p>
+                                <ul class="space-y-4 items-center">
+                                    <li>
+                                        <div class="flex gap-10 items-center">
+                                            <label for="grade-user-id" class="w-4/12 text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">Grade User</label>
+                                            <select name="grade-user" id="grade-user-id" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">
+                                                <option value="" class="bg-gray-800 text-gray-400 font-semibold text-sm"></option>
+                                            </select>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="flex gap-10 items-center">
+                                            <label for="grade-clinic-id" class="w-4/12 text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">Grade clinic</label>
+                                            <select name="grade-clinic" id="grade-clinic-id" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">
+                                                <option value="" class="bg-gray-800 text-gray-400 font-semibold text-sm"></option>
+                                            </select>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="flex gap-10 items-center">
+                                            <label for="grade-clinic-id" class="w-4/12 text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">User Priority</label>
+                                            <div class="w-8/12">
+                                                <ul class="space-y-3">
+                                                    <li>
+                                                        <div class="flex gap-5 items-center">
+                                                            <input type="radio" value="1" name="ispriority" class="cursor-pointer" id="priority">
+                                                            <label for="priority" class="text-gray-800 dark:text-gray-400 font-semibold cursor-pointer text-sm">Priority</label>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="flex gap-5 items-center">
+                                                            <input type="radio" value="0" name="ispriority" class="cursor-pointer" id="notpriority">
+                                                            <label for="notpriority" class="text-gray-800 dark:text-gray-400 font-semibold cursor-pointer text-sm">Not Priority</label>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                    <div class="w-1/2 bg-transparent">
-                        <p class="dark:text-gray-400 text-gray-800 text-md font-bold border-b border-gray-400 w-full">Branches</p>
-                        <div class="flex gap-10 items-center bg-transparent mt-3">
-                            <ul id="branches-id" class="space-y-12 w-3/4 dark:text-gray-400 text-gray-800 font-semibold text-sm justify-start">
-                                <li class="mt-2">
-                                    <button type="button" id="button-branches" class="mt-2 dark:text-gray-400 text-gray-800 font-semibold hover:text-blue-600 hover:underline">Add Branch</button>
-                                </li>
-                            </ul>
+                    <div id="work-information" role="tabpanel" aria-labelledby="wi-id" class="hidden p-1 my-5 space-y-10 rounded-sm bg-transparent text-gray-800 dark:text-gray-400 font-semibold">
+                        <div class="flex gap-10">
+                            <div class="bg-transparent space-y-5 w-1/2">
+                                <p class="text-gray-800 dark:text-gray-400 font-semibold uppercase border-b border-gray-400 text-sm">Private Contact</p>
+                                <div class="flex gap-10">
+                                    <ul class="w-3/12 justify-start space-y-3">
+                                        <li>
+                                            <p class="text-gray-800 dark:text-gray-400 font-semibold text-sm">
+                                                Private Address
+                                            </p>
+                                        </li>
+                                    </ul>
+                                    <ul class="w-9/12 justify-start space-y-3">
+                                        <li>
+                                            <input type="text" id="" name="private-street-1" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="Street 1...">
+                                        </li>
+                                        <li>
+                                            <input type="text" id="" name="private-street-2" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="Street 2...">
+                                        </li>
+                                        <li>
+                                            <input type="text" id="" name="private-city" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="City...">
+                                        </li>
+                                        <li>
+                                            <div class="flex gap-5">
+                                                <input type="text" id="" name="private-state" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="State...">
+                                                <input type="text" id="" name="private-country" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="Country...">
+                                                <input type="text" id="" name="private-zip" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="Zip...">
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="flex gap-10 items-center">
+                                    <ul class="w-full justify-start space-y-3 items-center">
+                                        <li>
+                                            <div class="flex gap-10 items-center">
+                                                <label for="private-email-id" class="text-gray-800 w-3/12 dark:text-gray-400 font-semibold text-sm">Private Email</label>
+                                                <input type="email" id="private-email-id" name="private-email" autocomplete="off" class="w-9/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="flex gap-10 items-center">
+                                                <label for="private-phone-id" class="text-gray-800 w-3/12 dark:text-gray-400 font-semibold text-sm">Private Phone</label>
+                                                <input type="tel" id="private-phone-id" name="private-phone" autocomplete="off" class="w-9/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="flex gap-10 items-center">
+                                                <label for="private-carplate-id" class="text-gray-800 w-3/12 dark:text-gray-400 font-semibold text-sm">Private Car Plate</label>
+                                                <input type="tel" id="private-carplate-id" name="private-carplate" autocomplete="off" class="w-9/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="bg-transparent space-y-5 w-1/2">
+                                <p class="text-gray-800 dark:text-gray-400 font-semibold uppercase border-b border-gray-400 text-sm">citizenship</p>
+                                <ul class="space-y-4 items-center">
+                                    <li>
+                                        <div class="flex gap-10 items-center">
+                                            <label for="nationality-id" class="text-gray-800 w-3/12 dark:text-gray-400 font-semibold text-sm">Nationality</label>
+                                            <input type="text" id="nationality-id" name="nationality" autocomplete="off" class="w-9/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="flex gap-10 items-center">
+                                            <label for="gender-id" class="text-gray-800 w-3/12 dark:text-gray-400 font-semibold text-sm">Gender</label>
+                                            <select name="gender" id="gender-id" class="w-9/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                                <option value="M" class="bg-gray-800 text-gray-400 font-semibold text-sm">Male</option>
+                                                <option value="F" class="bg-gray-800 text-gray-400 font-semibold text-sm">Female</option>
+                                            </select>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="flex gap-10 items-center">
+                                            <label for="birthdate-id" class="text-gray-800 w-3/12 dark:text-gray-400 font-semibold text-sm">Date of Birth</label>
+                                            <input type="text" id="birthdate-id" name="birthdate" autocomplete="off" datepicker datepicker-autoselect-today datepicker-buttons datepicker-autohide datepicker-format="yyyy-mm-dd" class="w-9/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="flex gap-10 items-center">
+                                            <label for="birthplace-id" class="text-gray-800 w-3/12 dark:text-gray-400 font-semibold text-sm">Place of Birth</label>
+                                            <input type="text" id="birthplace-id" name="birthplace" autocomplete="off" class="w-9/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="flex gap-10">
+                            <div class="bg-transparent w-1/2 space-y-5">
+                                <p class="text-gray-800 dark:text-gray-400 font-semibold uppercase border-b border-gray-400 text-sm">education</p>
+                                <ul class="space-y-4 items-center">
+                                    <li>
+                                        <div class="flex gap-10 items-center">
+                                            <label for="certification-id" class="text-gray-800 w-4/12 dark:text-gray-400 font-semibold text-sm">Certification Level</label>
+                                            <select name="certification" id="certification-id" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                                <option value="Graduate" class="bg-gray-800 text-gray-400 font-semibold text-sm">Graduate</option>
+                                                <option value="Bachelor" class="bg-gray-800 text-gray-400 font-semibold text-sm">Bachelor</option>
+                                                <option value="Master" class="bg-gray-800 text-gray-400 font-semibold text-sm">Master</option>
+                                                <option value="Doctor" class="bg-gray-800 text-gray-400 font-semibold text-sm">Doctor</option>
+                                                <option value="Other" class="bg-gray-800 text-gray-400 font-semibold text-sm">Other</option>
+                                            </select>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="flex gap-10 items-center">
+                                            <label for="field-study-id" class="text-gray-800 w-4/12 dark:text-gray-400 font-semibold text-sm">Field of Study</label>
+                                            <input type="text" id="field-study-id" name="field-study" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="flex gap-10 items-center">
+                                            <label for="school-name-id" class="text-gray-800 w-4/12 dark:text-gray-400 font-semibold text-sm">School Name</label>
+                                            <input type="text" id="school-name-id" name="school-name" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="bg-transparent w-1/2 space-y-5">
+                                <p class="text-gray-800 dark:text-gray-400 font-semibold uppercase border-b border-gray-400 text-sm">Family Status</p>
+                                <ul class="space-y-4 items-center">
+                                    <li>
+                                        <div class="flex gap-10 items-center">
+                                            <label for="marital-id" class="text-gray-800 w-4/12 dark:text-gray-400 font-semibold text-sm">Marital Status</label>
+                                            <select name="marital" id="marital-id" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                                                <option value="Single" class="bg-gray-800 text-gray-400 font-semibold text-sm">Single</option>
+                                                <option value="Married" class="bg-gray-800 text-gray-400 font-semibold text-sm">Married</option>
+                                                <option value="Legal Cohabit" class="bg-gray-800 text-gray-400 font-semibold text-sm">Legal Cohabit</option>
+                                                <option value="Widower" class="bg-gray-800 text-gray-400 font-semibold text-sm">Widower</option>
+                                                <option value="Divorced" class="bg-gray-800 text-gray-400 font-semibold text-sm">Divorced</option>
+                                            </select>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <p class="text-sm font-semibold border-b border-gray-400 text-gray-800 dark:text-gray-400 text-sm">Children and Spouse</p>
+                                <div class="flex gap-10">
+                                    <ul class="w-1/2 space-y-5" id="spouse-id">
+                                        <li>
+                                            <button data-modal-target="spouse-modal" data-modal-toggle="spouse-modal" type="button" class="text-gray-800 dark:text-gray-400 font-semibold text-sm hover:underline hover:text-blue-600">Add Spouse</button>
+                                        </li>
+                                    </ul>
+                                    <ul class="w-1/2 space-y-5" id="children-id">
+                                        <li>
+                                            <button type="button" data-modal-target="children-modal" data-modal-toggle="children-modal" class="text-gray-800 dark:text-gray-400 font-semibold text-sm hover:underline hover:text-blue-600">Add Children</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-10">
+                            <div class="bg-transparent w-1/2 space-y-5">
+                                <p class="text-gray-800 dark:text-gray-400 font-semibold uppercase border-b border-gray-400 text-sm">Additional Information</p>
+                                <ul class="space-y-5">
+                                    <li>
+                                        <div class="gap-5">
+                                            <p class="text-gray-800 w-4/12 dark:text-gray-400 font-semibold text-sm border-b border-gray-400">Hobbies</p>
+                                            <ul class="w-8/12 space-y-3 my-5" id="hobbies-id">
+                                                <li>
+                                                    <button type="button" id="add-hobby" class="text-gray-800 dark:text-gray-400 font-semibold text-sm hover:underline hover:text-blue-600">Add Hobby</button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </form>
     </div>
-    <div class="w-3/12">
-        <!-- Log Activity -->
-    </div>
 </section>
+<div id="spouse-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-3xl max-h-full">
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+            <!-- Modal header -->
+            <div class="flex items-center justify-center p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    New Spouse
+                </h3>
+            </div>
+            <!-- Modal body -->
+            <div class="p-4 md:p-5 flex gap-10">
+                <ul class="space-y-4 w-1/2 items-center">
+                    <li>
+                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
+                            <label for="wife-firstname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">First Name</label>
+                            <input type="text" id="wife-firstname-id" name="wife-firstname" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
+                            <label for="wife-middlename-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Middle Name</label>
+                            <input type="text" id="wife-middlename-id" name="wife-middlename" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
+                            <label for="wife-lastname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Last Name</label>
+                            <input type="text" id="wife-lastname-id" name="wife-lastname" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                        </div>
+                    </li>
+                </ul>
+                <ul class="space-y-4 w-1/2 items-center">
+                    <li>
+                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
+                            <label for="wife-fullname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Full Name</label>
+                            <input type="text" id="wife-fullname-id" name="wife-fullname" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
+                            <label for="wife-birthday-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Birth Day</label>
+                            <input type="text" id="wife-birthday-id" name="wife-birthday" datepicker datepicker-autohide datepicker-buttons datepicker-autoselect-today datepicker-format="yyyy-mm-dd" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
+                            <label for="wife-phone-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Phone</label>
+                            <input type="tel" id="wife-phone-id" name="wife-phone" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!-- Modal footer -->
+            <div class="flex items-center justify-start gap-5 p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                <button type="button" id="spouse-modal-submit" data-modal-hide="spouse-modal" class="border-2 border-gray-400 text-gray-800 dark:text-gray-400 font-semibold text-sm py-1 px-2 rounded-md bg-gray-700 hover:bg-gray-400 hover:border-gray-800 hover:text-gray-800">Submit</button>
+                <button type="button" id="spouse-modal-cancel" data-modal-hide="spouse-modal" class="border-2 border-gray-400 text-gray-800 dark:text-gray-400 font-semibold text-sm py-1 px-2 rounded-md bg-gray-700 hover:bg-red-500 hover:border-gray-800 hover:text-gray-800">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="children-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-3xl max-h-full">
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+            <!-- Modal header -->
+            <div class="flex items-center justify-center p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                    New Children
+                </h3>
+            </div>
+            <!-- Modal body -->
+            <div class="p-4 md:p-5 flex gap-10">
+                <ul class="space-y-4 w-1/2 items-center">
+                    <li>
+                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
+                            <label for="children-firstname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">First Name</label>
+                            <input type="text" id="children-firstname-id" name="children-firstname" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
+                            <label for="children-middlename-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Middle Name</label>
+                            <input type="text" id="children-middlename-id" name="children-middlename" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
+                            <label for="children-lastname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Last Name</label>
+                            <input type="text" id="children-lastname-id" name="children-lastname" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                        </div>
+                    </li>
+                </ul>
+                <ul class="space-y-4 w-1/2 items-center">
+                    <li>
+                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
+                            <label for="children-fullname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Full Name</label>
+                            <input type="text" id="children-fullname-id" name="children-fullname" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
+                            <label for="children-birthday-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Birth Day</label>
+                            <input type="text" id="children-birthday-id" name="children-birthday" datepicker datepicker-autohide datepicker-buttons datepicker-autoselect-today datepicker-format="yyyy-mm-dd" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                        </div>
+                    </li>
+                    <li>
+                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
+                            <label for="children-phone-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Phone</label>
+                            <input type="tel" id="children-phone-id" name="children-phone" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!-- Modal footer -->
+            <div class="flex items-center justify-start gap-5 p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                <button type="button" id="children-modal-submit" data-modal-hide="children-modal" class="border-2 border-gray-400 text-gray-800 dark:text-gray-400 font-semibold text-sm py-1 px-2 rounded-md bg-gray-700 hover:bg-gray-400 hover:border-gray-800 hover:text-gray-800">Submit</button>
+                <button type="button" id="children-modal-cancel" data-modal-hide="children-modal" class="border-2 border-gray-400 text-gray-800 dark:text-gray-400 font-semibold text-sm py-1 px-2 rounded-md bg-gray-700 hover:bg-red-500 hover:border-gray-800 hover:text-gray-800">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     $(document).ready(function() {
-        let count = 1;
-        $('#button-branches').click(function() {
-            let NewListItem = 
-            `
-            <li class="flex gap-5 mt-2">
-                <select name="branches-name" id="branches-name-id" class="w-full bg-transparent border-b-2 bg-transparent dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                    <option value="" class="bg-gray-800 text-gray-400 font-semibold">Choose Branches</option>
-                    {% for data in branches %}
-                    <option value="{{ data.pk }}" class="bg-gray-800 text-gray-400 font-semibold">{{ data.name }}</option>
-                    {% endfor %}
-                </select>
-                <button type="button" id="remove-row-branch" class="mt-1 dark:text-gray-400 text-gray-800 hover:underline hover:text-blue-600">Remove</button>
+        let rowCount = $('#spouse-id li').length - 1;
+        console.log(rowCount);
+
+        $('#spouse-modal-submit').on('click', function() {
+            rowCount++;
+            console.log(rowCount);
+
+            var s_firstname = $('#wife-firstname-id').val();
+            var s_middlename = $('#wife-middlename-id').val();
+            var s_lastname = $('#wife-lastname-id').val();
+            var s_fullname = $('#wife-fullname-id').val();
+            var s_birthday = $('#wife-birthday-id').val();
+            var s_phone = $('#wife-phone-id').val();
+
+            let newItem = `
+            <li class="text-gray-800 dark:text-gray-400 font-semibold text-sm border-b border-gray-400">
+                <input type="hidden" name="spouse-firstname" value="${s_firstname}">
+                <input type="hidden" name="spouse-middlename" value="${s_middlename}">
+                <input type="hidden" name="spouse-lastname" value="${s_lastname}">
+                <input type="hidden" name="spouse-fullname" value="${s_fullname}">
+                <input type="hidden" name="spouse-birthday" value="${s_birthday}">
+                <input type="hidden" name="spouse-birthday" value="${s_phone}">
+                <div class="flex gap-5">
+                    <p class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-1/2">
+                    ${s_fullname}
+                    </p>
+                    <button id="remove-spouse" type="button" class="text-gray-800 dark:text-gray-400 font-semibold text-sm hover:underline hover:text-blue-600">Remove Row</button>
+                </div>
             </li>
             `;
 
-            $(NewListItem).insertBefore('#button-branches').hide().fadeIn();
-            count++;
-            console.log(count);
+            let lastItem = $('#spouse-id li').last();
+
+            if (lastItem.length) {
+                $(newItem).insertBefore(lastItem);
+            } else {
+                $('#spouse-id').append(newItem);
+            }
+
+            $('#wife-firstname-id').val('');
+            $('#wife-middlename-id').val('');
+            $('#wife-lastname-id').val('');
+            $('#wife-fullname-id').val('');
+            $('#wife-birthday-id').val('');
+            $('#wife-phone-id').val('');
+
         });
 
-        $(document).on('click', '#remove-row-branch', function() {
-            $(this).parent().remove();
-            count--;
-            console.log(count);
+        $(document).on('click', '#remove-spouse', function() {
+            $(this).closest('li').remove();
+            rowCount--;
         });
+    });
+
+    $(document).ready(function() {
+        let crowCount = $('#children-id li').length - 1;
+        console.log(crowCount);
+
+        $('#children-modal-submit').on('click', function() {
+            crowCount++;
+            console.log(crowCount);
+
+            var c_firstname = $('#children-firstname-id').val();
+            var c_middlename = $('#children-middlename-id').val();
+            var c_lastname = $('#children-lastname-id').val();
+            var c_fullname = $('#children-fullname-id').val();
+            var c_birthday = $('#children-birthday-id').val();
+            var c_phone = $('#children-phone-id').val();
+
+            let newItem = `
+            <li class="text-gray-800 dark:text-gray-400 font-semibold text-sm border-b border-gray-400">
+                <input type="hidden" name="children-firstname" value="${c_firstname}">
+                <input type="hidden" name="children-middlename" value="${c_middlename}">
+                <input type="hidden" name="children-lastname" value="${c_lastname}">
+                <input type="hidden" name="children-fullname" value="${c_fullname}">
+                <input type="hidden" name="children-birthday" value="${c_birthday}">
+                <input type="hidden" name="children-birthday" value="${c_phone}">
+                <div class="flex gap-5">
+                    <p class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-1/2">
+                    ${c_fullname}
+                    </p>
+                    <button id="remove-children" type="button" class="text-gray-800 dark:text-gray-400 font-semibold text-sm hover:underline hover:text-blue-600">Remove Row</button>
+                </div>
+            </li>
+            `;
+
+            let lastItem = $('#children-id li').last();
+
+            if (lastItem.length) {
+                $(newItem).insertBefore(lastItem);
+            } else {
+                $('#children-id').append(newItem);
+            }
+
+            $('#children-firstname-id').val('');
+            $('#children-middlename-id').val('');
+            $('#children-lastname-id').val('');
+            $('#children-fullname-id').val('');
+            $('#children-birthday-id').val('');
+            $('#children-phone-id').val('');
+
+        });
+
+        $(document).on('click', '#remove-children', function() {
+            $(this).closest('li').remove();
+            crowCount--;
+        });
+    });
+
+    $(document).ready(function() {
+        let hrowCount = $('#hobbies-id li').length - 1;
+        console.log(hrowCount);
+
+        $('#add-hobby').on('click', function() {
+            hrowCount++;
+            console.log(hrowCount);
+
+            let newItem = `
+            <li>
+                <div class="flex gap-5 items-center">
+                    <input type="text" id="hobbies-id" name="hobbies" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
+                    <button class="text-gray-800 dark:text-gray-400 font-semibold hover:underline hover:text-blue-600 text-sm" id="remove-hobby">Remove</button>
+                </div>
+            </li>
+            `;
+
+            let lastItem = $('#hobbies-id li').last();
+            if (lastItem.length) {
+                $(newItem).insertBefore(lastItem);
+            } else {
+                $('#hobbies-id').append(newItem);
+            }
+        });
+
+        $(document).on('click', '#remove-hobby', function() {
+            $(this).closest('li').remove();
+            hrowCount--;
+        });
+
     });
 </script>
 {% endblock %}

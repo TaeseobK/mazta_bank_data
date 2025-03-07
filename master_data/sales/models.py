@@ -110,14 +110,15 @@ class Complaints(models.Model) :
         super().delete(*args, **kwargs)
 
 class DoctorDetail(models.Model) :
-    code = models.CharField(max_length=64)
-    accurate_code = models.CharField(max_length=64)
-    focused = models.BooleanField(default=False)
-    system_information = models.TextField()
-    public_information = models.TextField()
-    work_information = models.TextField()
-    private_information = models.TextField()
+    code = models.CharField(max_length=64, unique=True)
+    jamet_id = models.IntegerField()
+    info = models.TextField(null=True, blank=True)
+    work_information = models.TextField(null=True, blank=True)
+    private_information = models.TextField(null=True, blank=True)
+    additional_information = models.TextField(null=True, blank=True)
+    branch_information = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta :

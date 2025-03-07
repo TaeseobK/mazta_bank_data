@@ -5,15 +5,15 @@
     <div class="m-1 bg-transparent w-full flex flex-wrap">
         <input type="text" id="search" name="search" autocomplete="off" class="w-2/12 border-2 border-gray-400 rounded-md dark:bg-gray-800 bg-gray-400 text-gray-800 dark:text-gray-400 text-sm font-semibold focus:outline-none px-3 py-2 placeholder:text-gray-500 justify-start" placeholder="Search...">
         <div class="w-9/12 flex justify-end items-center">
-            <p class="float-start gap-1 bg-transparent font-semibold text-lg text-gray-400 mr-5 text-center justify-center mt-1">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</p>
-            <a {% if page_obj.has_previous %} href="?page={{ page_obj.previous_page_number }}" {% endif %}>
+            <p class="float-start gap-1 bg-transparent font-semibold text-lg text-gray-400 mr-5 text-center justify-center mt-1">{{ current_page }} / {{ last_page }}</p>
+            <a {% if current_page > 1  %} href="?page={{ current_page|add:-1 }}" {% endif %}>
                 <button class="float-end gap-1 bg-gray-700 px-1 rounded-l py-1 hover:bg-gray-600">
                     <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>                                                                                        
                     </svg>
                 </button>
             </a>
-            <a {% if page_obj.has_next %} href="?page={{ page_obj.next_page_number }}" {% endif %}>
+            <a {% if current_page < last_page  %} href="?page={{ current_page|add:1 }}" {% endif %}>
                 <button class="float-end gap-1 bg-gray-700 px-1 rounded-r py-1 hover:bg-gray-600">
                     <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
@@ -30,16 +30,13 @@
             <thead class="backdrop-blur-sm bg-opacity-80 bg-gray-800 text-gray-800 dark:text-gray-400 text-md font-bold border-b border-gray-400">
                 <tr>
                     <th scope="col" class="px-6 py-3 uppercase text-xs dark:text-gray-400 text-gray-800 font-bold">
-                        entity name
+                        doctor name
                     </th>
                     <th scope="col" class="px-6 py-3 uppercase text-xs dark:text-gray-400 text-gray-800 font-bold">
-                        established date
+                        old code
                     </th>
                     <th scope="col" class="px-6 py-3 uppercase text-xs dark:text-gray-400 text-gray-800 font-bold">
-                        parent
-                    </th>
-                    <th scope="col" class="px-6 py-3 uppercase text-xs dark:text-gray-400 text-gray-800 font-bold">
-                        branches
+                        update at
                     </th>
                 </tr>
             </thead>
@@ -47,26 +44,15 @@
                 {% for data in page_obj %}
                 <tr class="border-b text-center dark:border-gray-700 border-gray-200 backdrop-blur-sm bg-opacity-60 bg-gray-800">
                     <th scope="row" class="px-6 py-3 whitespace-nowrap">
-                        <a href="{% url 'master:detail_entity' data.entity.pk %}" class="font-medium text-xs text-gray-800 dark:text-gray-200 hover:underline hover:text-blue-600">
-                            {{ data.entity.name }}
+                        <a href="{% url 'sales:doctor_detail' data.data.id_dokter data.data.nama_dokter|slugify %}" class="font-medium text-xs text-gray-800 dark:text-gray-200 hover:underline hover:text-blue-600">
+                            {{ data.data.nama_dokter }}
                         </a>
                     </th>
                     <td class="px-6 py-3 whitespace-nowrap text-xs dark:text-gray-300 text-gray-800">
-                        {{ data.entity.established_date }}
+                        {{ data.data.kode_pelanggan_old }}
                     </td>
                     <td class="px-6 py-3 whitespace-nowrap text-xs dark:text-gray-300 text-gray-800">
-                        {% if data.entity.parent %} 
-                        <a href="{% url 'master:detail_entity' data.entity.parent.pk %}" class="hover:text-blue-600 hover:underline">
-                            {{ data.entity.parent.name }}
-                        </a>
-                        {% else %} 
-                        Parent 
-                        {% endif %}
-                    </td>
-                    <td class="px-6 py-3 whitespace-nowrap text-xs dark:text-gray-300 text-gray-800 flex gap-2 justify-center">
-                        {% for d in data.branches %}
-                        <div class="rounded-sm border-2 dark:border-white border-gray-400 dark:text-gray-800 text-gray-400 font-bold text-xs py-1 px-2 dark:bg-gray-400 bg-gray-800">{{ d.branch.name }}</div>
-                        {% endfor %}
+                        {{ data.last_update }}
                     </td>
                 </tr>
                 {% endfor %}

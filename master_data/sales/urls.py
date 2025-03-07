@@ -13,7 +13,7 @@ urlpatterns = [
     path('transaction/doctor-list/new/', views.doctor_new, name='doctor_new'),
     
     #Detail
-    path('transaction/doctor-list/detail/<int:doc_id>/', views.doctor_detail, name='doctor_detail'),
+    path('transaction/doctor-list/detail/<int:doc_id>/<slug:doc_name>/', views.doctor_detail, name='doctor_detail'),
 ]
 if settings.DEBUG :
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

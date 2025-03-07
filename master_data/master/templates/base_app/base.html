@@ -50,10 +50,10 @@
             <button type="button" id="button-database" class="bg-transparent dark:text-gray-300 text-gray-800 hover:text-blue-600 focus:outline-none hover:underline text-sm font-bold uppercase">Database</button>
         </div>
         <div class="flex w-2/12 py-2 px-3 justify-center">
-            <button type="button" id="button-profile" data-dropdown-toggle="profile-dropdown" class="z-10 bg-transparent dark:text-gray-300 text-gray-800 hover:text-blue-600 focus:outline-none text-sm font-bold">ようこそ　{{ request.user.username }}ーさん</button>
+            <button type="button" id="button-profile" data-dropdown-toggle="profile-dropdown" class="bg-transparent dark:text-gray-300 text-gray-800 hover:text-blue-600 focus:outline-none text-sm font-bold">ようこそ　{{ request.user.username }}ーさん</button>
         </div>
     </nav>
-    <div id="profile-dropdown" class="flex z-10 items-center justify-center hidden w-auto py-1 px-4 font-normal rounded-md shadow-sm backdrop-blur-sm bg-opacity-30 bg-gray-800">
+    <div id="profile-dropdown" class="flex items-center justify-center hidden z-10 w-auto py-1 px-4 font-normal rounded-md shadow-sm backdrop-blur-sm bg-opacity-30 bg-gray-800">
         <ul class="space-y-1 my-1">
             <li>
                 <a href="#" class="bg-transparent text-gray-300 font-semibold hover:text-blue-500">Settings</a>
