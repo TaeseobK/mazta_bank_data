@@ -55,13 +55,6 @@ def doctor_list(request) :
     })
 
 @login_required(login_url='/login/')
-def doctor_new(request) :
-    return render(request, 'sales_new/doctor_new.html', {
-        'title' : 'New Doctor',
-        'page_name' : 'New Doctor'
-    })
-
-@login_required(login_url='/login/')
 def doctor_detail(request, doc_id, doc_name) :
     data = []
 

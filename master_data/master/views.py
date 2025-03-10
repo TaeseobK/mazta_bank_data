@@ -70,7 +70,7 @@ def branch_list(request) :
         return render(request, 'master_pages/branch_list.html', {
             'page_obj' : page_obj
         })
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
     return render(request, 'master_pages/branch_list.html', {
         'title' : 'Branches',
         'page_name' : 'Branches',

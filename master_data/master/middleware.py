@@ -14,7 +14,7 @@ class AutoLogout :
         if not request.user.is_authenticated :
             return self.get_response(request)
         
-        max_idle_time = getattr(settings, 'AUTO_LOGOUT_TIME', int(60 * 5))
+        max_idle_time = getattr(settings, 'AUTO_LOGOUT_TIME', int(60 * 60 * 2))
 
         last_activity = request.session.get('last_activity')
         if last_activity :
