@@ -30,7 +30,7 @@ def login_view(request) :
             if user is not None :
                 auth.login(request, user)
                 messages.success(request, f"Login Successfull, Welcome Back {user.username}...")
-                next_url = request.POST.get('next') or request.GET.get('next') or '/'
+                next_url = request.POST.get('next') or request.GET.get('next') or '/master/'
                 return redirect(next_url)
             
             else :

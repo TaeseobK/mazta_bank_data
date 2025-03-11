@@ -1,0 +1,25 @@
+{% extends 'base_app/base.html' %}
+{% load static %}
+{% block home %}
+<section class="bg-cover bg-center bg-[url('{% static 'bg/bg-light-login.jpg' %}')] dark:bg-[url('{% static 'bg/bg-dark-login.jpg' %}')] thin-scrollbar h-screen">
+    <form action="" method="post" class="flex items-center justify-center min-h-screen max-w-sm mx-auto">
+        {% csrf_token %}
+        <input type="hidden" name="metode" value="post">
+        <div class="mt-5 border-2 dark:border-gray-400 border-gray-800 rounded-md p-4 px-10 py-8 backdrop-blur-sm bg-opacity-30 bg-gray-800">
+            <p class="block flex items-center justify-center dark:text-gray-400 text-2xl font-semibold text-gray-800 mb-10 select-none">ようこそ　会長ーさん</p>
+            <div class="w-full mt-5 flex items-center justify-center bg-transparent gap-5">
+                <ul class="space-y-16 w-full">
+                    <li class="mt-2">
+                        <input type="email" id="email-id" name="email" autocomplete="off" class="border-b-2 w-full border-gray-400 dark:text-gray-400 text-gray-800 font-semibold text-md bg-transparent focus:border-blue-600 hover:border-red-600 focus:outline-none placeholder:text-gray-600" placeholder="Email" required>
+                    </li>
+                    <li class="mt-2">
+                        <input type="password" id="password-id" name="password" autocomplete="off" class="border-b-2 w-full border-gray-400 dark:text-gray-400 text-gray-800 font-semibold text-md bg-transparent focus:border-blue-600 hover:border-red-600 focus:outline-none placeholder:text-gray-600" placeholder="Password" required>
+                    </li>
+                </ul>
+            </div>
+            <p class="text-sm dark:text-gray-400 text-gray-800 mt-4 font-semibold">Can't Login? Please Contact Our <a href="https://helpdesk-it.maztafarma.com/" target="_blank" class="hover:text-blue-600 text-md hover:underline underline text-gray-500">Support Team</a></p>
+            <button type="submit" class="mt-10 py-1 px-2 mx-auto w-2/4 rounded-md hover:bg-gray-300 flex items-center justify-center dark:bg-gray-400 bg-gray-800 text-gray-400 dark:text-gray-800 border-2 dark:border-gray-800 border-gray-400 font-semibold text-md">Log In</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

@@ -128,7 +128,7 @@ DATABASE_ROUTERS = [
     'sales.routers.SalesRouter',
 ]
 
-AUTO_LOGOUT_TIME = int(60 * 5)
+AUTO_LOGOUT_TIME = int(60 * 60)
 
 
 # Password validation
@@ -155,7 +155,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Jakarta'
 
 USE_I18N = True
 
@@ -179,7 +179,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 LOGIN_URL = '/login/'
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = 'transaction/doctor-list/'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 

@@ -6,11 +6,15 @@ from django.conf.urls.static import static
 app_name = 'sales'
 
 urlpatterns = [
+    #Login Sementara
+    path('login/', views.login_2, name='login_2'),
+    path('logout/', views.logout_2, name='logout_2'),
+
     #Pages Sales
     path('transaction/doctor-list/', views.doctor_list, name='doctor_list'),
     
     #Detail
-    path('transaction/doctor-list/detail/<int:doc_id>/<slug:doc_name>/', views.doctor_detail, name='doctor_detail'),
+    path('transaction/doctor-list/detail/<int:user_id>/<int:doc_id>/', views.doctor_detail, name='doctor_detail'),
 ]
 if settings.DEBUG :
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
