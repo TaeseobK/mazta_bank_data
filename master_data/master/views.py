@@ -9,7 +9,7 @@ from .models import *
 from datetime import datetime
 import json
 
-@login_required(login_url='/login/')
+@login_required(login_url='/master/login/')
 def home(request) :
 
     return render(request, 'core/home.html', {
@@ -33,7 +33,7 @@ def login_view(request) :
                 next_url = request.POST.get('next') or request.GET.get('next') or '/master/'
                 return redirect(next_url)
             
-            else :
+            elif user is None :
                 messages.error(request, f"Invalid Login Credential With {username}, Please Check your username and password.")
                 return redirect('master:login')
             

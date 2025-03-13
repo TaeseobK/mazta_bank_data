@@ -14,6 +14,9 @@ from human_resource.models import *
 API_LOGIN_URL = "https://dev-bco.businesscorporateofficer.com/api/login/"
 API_LOGOUT_URL = "https://dev-bco.businesscorporateofficer.com/api/logout/"
 
+def index_sales(request) :
+    return redirect('sales:login_2')
+
 def api_login_required(view_func) :
     @wraps(view_func)
     def wrapper(request, *args, **kwargs) :
@@ -87,12 +90,22 @@ def doctor_list(request) :
             if DoctorDetail.objects.using('sales').filter(jamet_id=d.get('id_dokter')).exists() :
                 dd = DoctorDetail.objects.using('sales').get(jamet_id=d.get('id_dokter'))
                 last_update = dd.updated_at
+                i = json.loads(dd.work_information).get('sales_information').get('priority')
+
+                if i == 1 :
+                    priority = "Prioritas"
+                
+                else :
+                    priority = "Not Priority"
+
             else :
                 last_update = "Not Found"
+                priority = "Not Set"
             
             data.append({
                 'data' : d,
-                'last_update' : last_update
+                'last_update' : last_update,
+                'priority' : priority
             })
 
         if search_query :
@@ -100,7 +113,8 @@ def doctor_list(request) :
                 d for d in data
                 if (
                     search_query.lower() in str(d['data'].get('nama_dokter')).lower() or
-                    search_query.lower() in str(d['data'].get('kode_pelanggan')).lower()
+                    search_query.lower() in str(d['data'].get('kode_pelanggan')).lower() or
+                    search_query.lower() in str(d['priority']).lower()
                 )
             ]
 
@@ -180,10 +194,10 @@ def doctor_detail(request, user_id, doc_id) :
                     title = Title.objects.using('master').get(id=int(title_id))
 
                     info = {
-                        'first_name' : first_name,
-                        'middle_name' : middle_name,
-                        'last_name' : last_name,
-                        'full_name' : full_name,
+                        'first_name' : str(first_name).upper().strip(),
+                        'middle_name' : str(middle_name).upper().strip(),
+                        'last_name' : str(last_name).upper().strip(),
+                        'full_name' : str(full_name).upper().strip(),
                         'salutation' : salutation.pk,
                         'title' : title.pk
                     }
@@ -225,20 +239,20 @@ def doctor_detail(request, user_id, doc_id) :
 
                     work_information = {
                         'address' : {
-                            'street_1' : work_street_1,
-                            'street_2' : work_street_2,
-                            'city' : work_city,
-                            'state' : work_state,
-                            'country' : work_country,
-                            'zip' : work_zip,
-                            'fulladdress' : work_fulladdress
+                            'street_1' : str(work_street_1).upper().strip(),
+                            'street_2' : str(work_street_2).upper().strip(),
+                            'city' : str(work_city).upper().strip(),
+                            'state' : str(work_state).upper().strip(),
+                            'country' : str(work_country).upper().strip(),
+                            'zip' : str(work_zip).upper().strip(),
+                            'fulladdress' : str(work_fulladdress).upper().strip()
                         },
                         'job_information' : {
-                            'workspace_name' : workspace_name,
-                            'job_position' : job_position,
-                            'work_phone' : work_phone,
-                            'work_mobile' : work_mobile,
-                            'work_email' : work_email
+                            'workspace_name' : str(workspace_name).upper().strip(),
+                            'job_position' : str(job_position).upper().strip(),
+                            'work_phone' : str(work_phone).upper().strip(),
+                            'work_mobile' : str(work_mobile).upper().strip(),
+                            'work_email' : str(work_email).upper().strip()
                         },
                         'sales_information' : {
                             'grade_user' : grade_user.pk,
@@ -247,7 +261,7 @@ def doctor_detail(request, user_id, doc_id) :
                             'specialist_id' : specialist.pk if specialist else None
                         },
                         'system_information' : {
-                            'accurate_code' : accurate_code
+                            'accurate_code' : str(accurate_code).upper().stripstr(()).upper().strip()
                         }
                     }
 
@@ -303,55 +317,55 @@ def doctor_detail(request, user_id, doc_id) :
                     spouses = []
                     for s_firstname, s_middlename, s_lastname, s_fullname, s_birthdate, s_phone, s_mariage in zip(spouse_firstnames, spouse_middlenames, spouse_lastnames, spouse_fullnames, spouse_birthdates, spouse_phone, mariage_date) :
                         spouses.append({
-                            'firstname' : s_firstname,
-                            'middlename' : s_middlename,
-                            'lastname' : s_lastname,
-                            'fullname' : s_fullname,
-                            'birthdate' : s_birthdate,
-                            'phone' : s_phone,
-                            'mariage_date' : s_mariage
+                            'firstname' : str(s_firstname).upper().strip(),
+                            'middlename' : str(s_middlename).upper().strip(),
+                            'lastname' : str(s_lastname).upper().strip(),
+                            'fullname' : str(s_fullname).upper().strip(),
+                            'birthdate' : str(s_birthdate).upper().strip(),
+                            'phone' : str(s_phone).upper().strip(),
+                            'mariage_date' : str(s_mariage).upper().strip()
                         })
 
                     childrens = []
                     for c_firstname, c_middlename, c_lastname, c_fullname, c_birthdate, c_phone in zip(children_firstnames, children_middlenames, children_lastnames, children_fullnames, children_birthdates, children_phone) :
                         childrens.append({
-                            'firstname' : c_firstname,
-                            'middlename' : c_middlename,
-                            'lastname' : c_lastname,
-                            'fullname' : c_fullname,
-                            'birthdate' : c_birthdate,
-                            'phone' : c_phone
+                            'firstname' : str(c_firstname).upper().strip(),
+                            'middlename' : str(c_middlename).upper().strip(),
+                            'lastname' : str(c_lastname).upper().strip(),
+                            'fullname' : str(c_fullname).upper().strip(),
+                            'birthdate' : str(c_birthdate).upper().strip(),
+                            'phone' : str(c_phone).upper().strip()
                         })
 
                     private_information = {
                         'private_contact' : {
                             'address' : {
-                                'street_1' : private_street_1,
-                                'street_2' : private_street_2,
-                                'city' : private_city,
-                                'state' : private_state,
-                                'country' : private_country,
-                                'zip' : private_zip
+                                'street_1' : str(private_street_1).upper().strip(),
+                                'street_2' : str(private_street_2).upper().strip(),
+                                'city' : str(private_city).upper().strip(),
+                                'state' : str(private_state).upper().strip(),
+                                'country' : str(private_country).upper().strip(),
+                                'zip' : str(private_zip).upper().strip()
                             },
-                            'email' : private_email,
-                            'phone' : private_phone
+                            'email' : str(private_email).upper().strip(),
+                            'phone' : str(private_phone).upper().strip()
                         },
                         'citizenship' : {
-                            'nationality' : nationality,
-                            'gender' : gender,
-                            'birth_date' : birth_date,
-                            'birth_place' : birth_place,
-                            'religion' : religion
+                            'nationality' : str(nationality).upper().strip(),
+                            'gender' : str(gender).upper().strip(),
+                            'birth_date' : str(birth_date).upper().strip(),
+                            'birth_place' : str(birth_place).upper().strip(),
+                            'religion' : str(religion).upper().strip()
                         },
                         'education' : {
-                            'certification' : certification,
-                            'field_study' : field_study,
-                            'school_name' : school_name
+                            'certification' : str(certification).upper().strip(),
+                            'field_study' : str(field_study).upper().strip(),
+                            'school_name' : str(school_name).upper().strip()
                         },
                         'family' : {
-                            'marital_status' : marital_status,
-                            'spouse' : spouses,
-                            'children' : childrens
+                            'marital_status' : str(marital_status).upper().strip(),
+                            'spouse' : str(spouses).upper().strip(),
+                            'children' : str(childrens).upper().strip()
                         }
                     }
 
@@ -373,22 +387,22 @@ def doctor_detail(request, user_id, doc_id) :
                     hobby_data = []
                     for category_hobby, hobby in zip(category_hobbies, hobbies) :
                         hobby_data.append({
-                            'category' : category_hobby,
-                            'hobby' : hobby
+                            'category' : str(category_hobby).upper().strip(),
+                            'hobby' : str(hobby).upper().strip()
                         })
 
                     interest_data = []
                     for category_interest, interest in zip(category_interest, interests) :
                         interest_data.append({
-                            'category' : category_interest,
-                            'interest' : interest
+                            'category' : str(category_interest).upper().strip(),
+                            'interest' : str(interest).upper().strip()
                         })
 
                     socmed_data = []
                     for socmed_name, account_name in zip(category_socmed, socmeds) :
                         socmed_data.append({
-                            'name' : socmed_name,
-                            'account_name' : account_name
+                            'name' : str(socmed_name).upper().strip(),
+                            'account_name' : str(account_name).upper().strip()
                         })
 
                     additional_information = {
