@@ -457,7 +457,8 @@ def doctor_detail(request, user_id, doc_id) :
                             work_information = json.dumps(work_information),
                             private_information = json.dumps(private_information),
                             additional_information = json.dumps(additional_information),
-                            branch_information = json.dumps(branches)
+                            branch_information = json.dumps(branches),
+                            rayon_id = int(request.session['detail'].get('id_user'))
                         )
 
                         dr.save()

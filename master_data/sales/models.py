@@ -112,6 +112,7 @@ class Complaints(models.Model) :
 class DoctorDetail(models.Model) :
     code = models.CharField(max_length=64, unique=True)
     jamet_id = models.IntegerField()
+    rayon_id = models.IntegerField()
     info = models.TextField(null=True, blank=True)
     work_information = models.TextField(null=True, blank=True)
     private_information = models.TextField(null=True, blank=True)
