@@ -3,7 +3,8 @@
 {% block home %}
 <section class="w-full p-4 rounded-md border-2 mt-16 mb-2 dark:border-gray-400 border-gray-800 backdrop-blur-sm bg-opacity-10 bg-gray-800 thin-scrollbar">
     <div class="m-1 bg-transparent w-full flex flex-wrap">
-        <input type="text" id="search" name="search" autocomplete="off" class="w-2/12 border-2 border-gray-400 rounded-md dark:bg-gray-800 bg-gray-400 text-gray-800 dark:text-gray-400 text-sm font-semibold focus:outline-none px-3 py-2 placeholder:text-gray-500 justify-start" placeholder="Search...">
+        <input type="text" id="keyword-id" name="keyword" autocomplete="off" class="w-2/12 border-2 border-gray-400 rounded-md dark:bg-gray-800 bg-gray-400 text-gray-800 dark:text-gray-400 text-sm font-semibold focus:outline-none px-3 py-2 placeholder:text-gray-500 justify-start" placeholder="Search...">
+        {% if api == "False" %}
         <div class="w-9/12 flex justify-end items-center">
             <p class="float-start gap-1 bg-transparent font-semibold text-lg text-gray-400 mr-5 text-center justify-center mt-1">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</p>
             <a {% if page_obj.has_previous %} href="?page={{ page_obj.previous_page_number }}" {% endif %}>
@@ -21,6 +22,25 @@
                 </button>
             </a>
         </div>
+        {% elif api == "True" %}
+        <div class="w-9/12 flex justify-end items-center">
+            <p class="float-start gap-1 bg-transparent font-semibold text-lg text-gray-400 mr-5 text-center justify-center mt-1">{{ current_page }} / {{ last_page }}</p>
+            <a {% if prev_page %} href="?page={{ current_page|add:-1 }}" {% endif %}>
+                <button class="float-end gap-1 bg-gray-700 px-1 rounded-l py-1 hover:bg-gray-600">
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 19-7-7 7-7"/>                                                                                        
+                    </svg>
+                </button>
+            </a>
+            <a {% if next_page %} href="?page={{ current_page|add:1 }}" {% endif %}>
+                <button class="float-end gap-1 bg-gray-700 px-1 rounded-r py-1 hover:bg-gray-600">
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9 5 7 7-7 7"/>
+                    </svg>                                                                
+                </button>
+            </a>
+        </div>
+        {% endif %}
         <div class="w-1/12 flex items-center justify-end px-3">
             <a href="#" class="hidden w-auto rounded-md dark:bg-gray-700 bg-gray-400 text-gray-800 dark:text-gray-400 border-2 border-gray-400 text-sm font-bold focus:outline-none px-2 py-1 placeholder:text-gray-500 flex justify-end items-center uppercase hover:text-blue-600 hover:bg-gray-800 hover:text-gray-300">New</a>
         </div>
@@ -51,7 +71,7 @@
                             {{ data.data.nama_dokter }}
                         </a>
                     </th>
-                    <td class="px-6 py-3 whitespace-nowrap text-xs dark:text-gray-300 text-gray-800">
+                    <td class="px-6 py-3 whitespace-nowrap text-xs dark:text-gray-300 text-gray-800 flex justify-center items-center">
                         {{ data.data.kode_pelanggan_old }}
                     </td>
                     <td class="px-6 py-3 whitespace-nowrap text-xs dark:text-gray-300 text-gray-800">
@@ -68,7 +88,7 @@
 </section>
 <script>
     $(document).ready(function() {
-        $('#search').on('keyup', function() {
+        $('#keyword-id').on('keyup', function() {
             var searchQuery = $(this).val();
 
             $.ajax({

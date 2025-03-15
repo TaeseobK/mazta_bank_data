@@ -6,9 +6,6 @@ from django.conf.urls.static import static
 app_name = 'sales'
 
 urlpatterns = [
-    #Login Sementara
-    path('login/', views.login_2, name='login_2'),
-    path('logout/', views.logout_2, name='logout_2'),
     path('', views.index_sales, name='index'),
 
     #Pages Sales

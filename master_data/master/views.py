@@ -4,12 +4,44 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate
 from django.core.paginator import Paginator
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from .models import *
+import requests
+from functools import wraps
 from datetime import datetime
 import json
 
-@login_required(login_url='/master/login/')
+API_LOGIN_URL = "https://dev-bco.businesscorporateofficer.com/api/login/"
+API_LOGOUT_URL = "https://dev-bco.businesscorporateofficer.com/api/logout/"
+
+def api_login_required(view_func) :
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs) :
+        if not request.session.get('token') :
+            return redirect('master:login')
+        
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+def admin_required(view_func) :
+    @wraps(view_func)
+    def _wrapped_view(request, *args, **kwargs) :
+        detail = request.session.get('detail')
+
+        if not detail :
+            raise Http404("Not Found!")
+        
+        if int(detail.get('id_user')) != 7 :
+            raise Http404("Admin Access Required!")
+        
+        else :
+            pass
+        
+        return view_func(request, *args, **kwargs)
+    
+    return _wrapped_view
+
+@api_login_required
 def home(request) :
 
     return render(request, 'core/home.html', {
@@ -19,35 +51,55 @@ def home(request) :
 
 def login_view(request) :
     if request.method == 'POST' :
-        metode = request.POST['metode']
+        email = request.POST.get('email')
+        password = request.POST.get('password')
 
-        if metode == 'post' :
-            username = request.POST['username']
-            password = request.POST['password']
+        response = requests.post(API_LOGIN_URL, data={
+            'email' : email,
+            'password' : password
+        })
 
-            user = authenticate(username=username, password=password)
+        if response.status_code == 200 :
+            token = response.json().get('token')
+            detail = response.json().get('data')
+            request.session['token'] = token
+            request.session['detail'] = detail
+            print(request.session['detail'].get('id_user'))
 
-            if user is not None :
-                auth.login(request, user)
-                messages.success(request, f"Login Successfull, Welcome Back {user.username}...")
-                next_url = request.POST.get('next') or request.GET.get('next') or '/master/'
+            if request.session['detail'].get('id_user') == 7 :
+                next_url = request.POST.get('next') or request.GET.get('next') or '/'
                 return redirect(next_url)
             
-            elif user is None :
-                messages.error(request, f"Invalid Login Credential With {username}, Please Check your username and password.")
-                return redirect('master:login')
+            else :
+                next_url = request.POST.get('next') or request.GET.get('next') or '/transaction/doctor-list/'
+                return redirect(next_url)
+        
+        else :
+            return JsonResponse({'error' : 'Login Gagal, Periksa Username atau Password...'})
             
     return render(request, 'core/login.html', {
         'title' : 'Login'
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def logout(request) :
-    auth.logout(request)
-    messages.success(request, f"Logout Successfully. Have a Great Day {request.user.username}")
-    return redirect('master:login')
+    token = request.session.get('token')
+    if token :
+        headers = {
+            'Authorization' : f"Token {token}"
+        }
+        response = requests.post(API_LOGOUT_URL, headers=headers)
 
-@login_required(login_url='/login/')
+        if response.status_code == 200 :
+            del request.session['token']
+            del request.session['detail']
+
+            return redirect('master:login')
+        
+        else :
+            return JsonResponse({'error' : 'Logout Gagal, Coba lagi nanti...'})
+
+@api_login_required
 def branch_list(request) :
     search_query = request.GET.get('search', '')
 
@@ -77,7 +129,7 @@ def branch_list(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_branch(request) :
 
     branches = Branch.objects.using('master').filter(is_active=True).all()
@@ -122,7 +174,7 @@ def new_branch(request) :
         'branches' : branches
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def branch_detail(request, b_id) :
     branch = Branch.objects.using('master').get(id=int(b_id))
     branch.address = json.loads(branch.address)
@@ -176,7 +228,7 @@ def branch_detail(request, b_id) :
         'branches' : branches
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def entity_list(request) :
     search_query = request.GET.get('search', '')
 
@@ -224,7 +276,7 @@ def entity_list(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_entity(request) :
     branches = Branch.objects.using('master').filter(is_active=True).all()
     parents = Entity.objects.using('master').filter(is_active=True).all()
@@ -282,7 +334,7 @@ def new_entity(request) :
         'parents' : parents
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_entity(request, e_id) :
 
     entity = Entity.objects.using('master').get(id=int(e_id))
@@ -365,7 +417,7 @@ def detail_entity(request, e_id) :
         'parents' : parents
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def warehouse_list(request) :
     search_query = request.GET.get('search', '')
 
@@ -397,7 +449,7 @@ def warehouse_list(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_warehouse(request) :
     data = []
 
@@ -467,7 +519,7 @@ def new_warehouse(request) :
         'data' : data
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_warehouse(request, w_id) :
     data = []
     warehouse = Warehouse.objects.using('master').get(id=int(w_id))
@@ -562,7 +614,7 @@ def detail_warehouse(request, w_id) :
         'data' : data
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def product_category_list(request) :
     search_query = request.GET.get('search', '')
 
@@ -592,7 +644,7 @@ def product_category_list(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_product_category(request) :
     if request.method == 'POST' :
         metode = request.POST['metode']
@@ -613,7 +665,7 @@ def new_product_category(request) :
         'page_name' : 'New Prod Cat'
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_pc(request, pc_id) :
     pc = ProductCategory.objects.using('master').get(id=int(pc_id))
 
@@ -643,7 +695,7 @@ def detail_pc(request, pc_id) :
         'data' : pc
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def pcn_list(request) :
     search_query = request.GET.get('search', '')
     pcn_list = ProductCategorySales.objects.using('master').filter(is_active=True).all().order_by('id')
@@ -672,7 +724,7 @@ def pcn_list(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_pcn(request) :
 
     if request.method == 'POST' :
@@ -696,7 +748,7 @@ def new_pcn(request) :
         'page_name' : 'New Prod Cat Sales'
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_pcn(request, pcn_id) :
     pcn = ProductCategorySales.objects.using('master').get(id=int(pcn_id))
 
@@ -727,7 +779,7 @@ def detail_pcn(request, pcn_id) :
         'pcn' : pcn
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def department_list(request) :
     search_query = request.GET.get('search', '')
 
@@ -775,7 +827,7 @@ def department_list(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_department(request) :
     data = []
 
@@ -819,7 +871,7 @@ def new_department(request) :
         'data' : data
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_department(request, d_id) :
     data = []
 
@@ -874,7 +926,7 @@ def detail_department(request, d_id) :
         'data' : data
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def product_list(request) :
     search_query = request.GET.get('search', '')
 
@@ -923,7 +975,7 @@ def product_list(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_product(request) :
     data = []
 
@@ -1005,7 +1057,7 @@ def new_product(request) :
         'data' : data
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_product(request, p_id) :
     data = []
 
@@ -1070,7 +1122,7 @@ def detail_product(request, p_id) :
         'data' : data
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def batch_list(request) :
     search_query = request.GET.get('search', '')
     data = []
@@ -1108,7 +1160,7 @@ def batch_list(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_batch(request) :
     data = []
 
@@ -1146,7 +1198,7 @@ def new_batch(request) :
         'data' : data
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_batch(request, bat_id) :
     data = []
 
@@ -1192,7 +1244,7 @@ def detail_batch(request, bat_id) :
         'data' : data
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def job_position_list(request) :
     search_query = request.GET.get('search', '')
 
@@ -1222,7 +1274,7 @@ def job_position_list(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_job_position(request) :
     data = []
 
@@ -1254,7 +1306,7 @@ def new_job_position(request) :
         'data' : data
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_job_position(request, jb_id) :
 
     jb = JobPosition.objects.using('master').get(id=int(jb_id))
@@ -1286,7 +1338,7 @@ def detail_job_position(request, jb_id) :
         'data' : jb
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def shift(request) :
     search_query = request.GET.get('search', '')
 
@@ -1316,7 +1368,7 @@ def shift(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_shift(request) :
     if request.method == 'POST' :
         metode = request.POST['metode']
@@ -1343,7 +1395,7 @@ def new_shift(request) :
         'page_name' : 'New Shift'
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_shift(request, sh_id) :
 
     shift = ShiftSchedule.objects.using('master').get(id=int(sh_id))
@@ -1382,7 +1434,7 @@ def detail_shift(request, sh_id) :
         'data' : shift
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def timeoff_list(request) :
     search_query = request.GET.get('search', '')
 
@@ -1426,7 +1478,7 @@ def timeoff_list(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_timeoff(request) :
 
     if request.method == 'POST' :
@@ -1452,7 +1504,7 @@ def new_timeoff(request) :
         'page_name' : 'New Time Off'
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_timeoff(request, to_id) :
 
     timeoff = TimeOffType.objects.using('master').get(id=int(to_id))
@@ -1489,7 +1541,7 @@ def detail_timeoff(request, to_id) :
         'data' : timeoff
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def disciplinary(request) :
     search_query = request.GET.get('search', '')
 
@@ -1536,7 +1588,7 @@ def disciplinary(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_disciplinary(request) :
     if request.method == 'POST' :
         metode = request.POST['metode']
@@ -1561,7 +1613,7 @@ def new_disciplinary(request) :
         'page_name' : 'New Disciplinary Type'
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_disc(request, disc_id) :
     disc = DisciplinaryAction.objects.using('master').get(id=int(disc_id))
 
@@ -1594,7 +1646,7 @@ def detail_disc(request, disc_id) :
         'data' : disc
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def deduction_list(request) :
     search_query = request.GET.get('page')
 
@@ -1624,7 +1676,7 @@ def deduction_list(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_deduction(request) :
 
     if request.method == 'POST' :
@@ -1646,7 +1698,7 @@ def new_deduction(request) :
         'page_name' : 'New Deduction Type'
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_deduction(request, ded_id) :
     deduction = DeductionType.objects.using('master').get(id=int(ded_id))
 
@@ -1675,7 +1727,7 @@ def detail_deduction(request, ded_id) :
         'data' : deduction
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def work_locations(request) :
     search_query = request.GET.get('search', '')
 
@@ -1705,7 +1757,7 @@ def work_locations(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_work_location(request) :
     if request.method == 'POST' :
         metode = request.POST['metode']
@@ -1740,7 +1792,7 @@ def new_work_location(request) :
         'page_name' : 'New Work Location'
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_work_location(request, dwk_id) :
 
     wl = WorkLocation.objects.using('master').get(id=int(dwk_id))
@@ -1786,7 +1838,7 @@ def detail_work_location(request, dwk_id) :
         'data' : wl
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def gc_list(request) :
     search_query = request.GET.get('search', '')
 
@@ -1827,7 +1879,7 @@ def gc_list(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_gc(request) :
     
     if request.method == 'POST' :
@@ -1865,7 +1917,7 @@ def new_gc(request) :
         'page_name' : 'New Grade Clinic'
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_gc(request, gc_id) :
 
     grade = ClinicGrade.objects.using('master').get(id=int(gc_id))
@@ -1925,7 +1977,7 @@ def convert(value) :
     
     return measure
 
-@login_required(login_url='/login/')
+@api_login_required
 def gu_list(request) :
     search_query = request.GET.get('search', '')
 
@@ -1976,7 +2028,7 @@ def gu_list(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_gu(request) :
     if request.method == 'POST' :
         metode = request.POST['metode']
@@ -2021,7 +2073,7 @@ def new_gu(request) :
         'page_name' : 'New Grade User'
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_gu(request, gu_id) :
     gu = UserGrade.objects.using('master').get(id=int(gu_id))
     gu.description = json.loads(gu.description)
@@ -2078,7 +2130,7 @@ def detail_gu(request, gu_id) :
         'data' : gu
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def title_list(request) :
     search_query = request.GET.get('search', '')
 
@@ -2109,7 +2161,7 @@ def title_list(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_title(request) :
 
     if request.method == 'POST' :
@@ -2140,7 +2192,7 @@ def new_title(request) :
         'page_name' : 'New Title'
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_title(request, title_id) :
     title = Title.objects.using('master').get(id=int(title_id))
 
@@ -2177,7 +2229,7 @@ def detail_title(request, title_id) :
         'data' : title
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def salutation_list(request) :
     search_query = request.GET.get('search', '')
 
@@ -2217,7 +2269,7 @@ def salutation_list(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_salutation(request) :
     if request.method == 'POST' :
         metode = request.POST['metode']
@@ -2250,7 +2302,7 @@ def new_salutation(request) :
         'page_name' : 'New Salutation'
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_salutation(request, sal_id) :
 
     salutation = Salutation.objects.using('master').get(id=int(sal_id))
@@ -2294,7 +2346,7 @@ def detail_salutation(request, sal_id) :
         'data' : salutation
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def specialists(request) :
     search_query = request.GET.get('search', '')
 
@@ -2325,7 +2377,7 @@ def specialists(request) :
         'page_obj' : page_obj
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def new_specialist(request) :
     if request.method == 'POST' :
         metode = request.POST['metode']
@@ -2354,7 +2406,7 @@ def new_specialist(request) :
         'page_name' : 'New Specialist'
     })
 
-@login_required(login_url='/login/')
+@api_login_required
 def detail_specialist(request, sp_id) :
 
     specialist = Specialist.objects.using('master').get(id=int(sp_id))
