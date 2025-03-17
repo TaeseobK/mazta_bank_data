@@ -2,10 +2,6 @@
 
 set -e
 
-# Check if pipenv is installed, if not, install it
-echo "Installing pipenv..."
-pip install pipenv
-
 # Install dependencies
 echo "Installing dependencies..."
 pipenv install
