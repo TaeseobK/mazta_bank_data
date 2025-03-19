@@ -61,10 +61,11 @@ def doctor_list(request) :
                 if DoctorDetail.objects.using('sales').filter(jamet_id=int(t.get('id_dokter'))).exists() :
                     dr = DoctorDetail.objects.using('sales').get(jamet_id=int(t.get('id_dokter')))
                     last_update = dr.updated_at
+                    rayon = json.loads(dr.rayon)
                     i = json.loads(dr.work_information).get('sales_information').get('priority')
 
                     if int(i) == 1 :
-                        priority = "Prioritas"
+                        priority = "Priority"
 
                     else :
                         priority = "Bukan Prioritas"
@@ -72,11 +73,13 @@ def doctor_list(request) :
                 else :
                     last_update = "Not Found"
                     priority = "Not Set"
+                    rayon = None
                 
                 page_obj.append({
                     'data' : t,
                     'last_update' : last_update,
-                    'priority' : priority
+                    'priority' : priority,
+                    'rayon' : rayon
                 })
 
         return render(request, 'sales_pages/doctor_list.html', {
@@ -106,10 +109,11 @@ def doctor_list(request) :
                 if DoctorDetail.objects.using('sales').filter(jamet_id=d.get('id_dokter')).exists() :
                     dd = DoctorDetail.objects.using('sales').get(jamet_id=d.get('id_dokter'))
                     last_update = dd.updated_at
+                    rayon = json.loads(dd.rayon)
                     i = json.loads(dd.work_information).get('sales_information').get('priority')
 
                     if i == 1 :
-                        priority = "Prioritas"
+                        priority = "Priority"
                     
                     else :
                         priority = "Not Priority"
@@ -117,11 +121,13 @@ def doctor_list(request) :
                 else :
                     last_update = "Not Found"
                     priority = "Not Set"
+                    rayon = None
                 
                 data.append({
                     'data' : d,
                     'last_update' : last_update,
-                    'priority' : priority
+                    'priority' : priority,
+                    'cover' : rayon
                 })
 
             if search_query :
@@ -284,7 +290,7 @@ def doctor_detail(request, user_id, doc_id) :
                                 'specialist_id' : specialist.pk if specialist else None
                             },
                             'system_information' : {
-                                'accurate_code' : str(accurate_code).upper().stripstr(()).upper().strip()
+                                'accurate_code' : str(accurate_code).upper().strip() if accurate_code else None
                             }
                         }
 
@@ -455,6 +461,11 @@ def doctor_detail(request, user_id, doc_id) :
                         random_number = ''.join(random.choices(string.digits, k=4))
                         code = f"{salutation_code}/{initial_first}/{initial_last}/{random_number}"
 
+                        rayon = {
+                            'id' : int(request.session['detail'].get('id_user')),
+                            'rayon' : request.session['detail'].get('name')
+                        }
+
                         while DoctorDetail.objects.using('sales').filter(code=code).exists() :
                             random_number = ''.join(random.choices(string.digits, k=4))
                             code = f"{salutation_code}/{initial_first}/{initial_last}/{random_number}"
@@ -481,7 +492,7 @@ def doctor_detail(request, user_id, doc_id) :
                                 private_information = json.dumps(private_information),
                                 additional_information = json.dumps(additional_information),
                                 branch_information = json.dumps(branches),
-                                rayon_id = int(request.session['detail'].get('id_user'))
+                                rayon = json.dumps(rayon)
                             )
 
                             dr.save()

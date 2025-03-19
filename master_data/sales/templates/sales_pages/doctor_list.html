@@ -59,6 +59,9 @@
                         priority
                     </th>
                     <th scope="col" class="px-6 py-3 uppercase text-xs dark:text-gray-400 text-gray-800 font-bold">
+                        cover
+                    </th>
+                    <th scope="col" class="px-6 py-3 uppercase text-xs dark:text-gray-400 text-gray-800 font-bold">
                         update at
                     </th>
                 </tr>
@@ -67,7 +70,7 @@
                 {% for data in page_obj %}
                 <tr class="border-b text-center dark:border-gray-700 border-gray-200 backdrop-blur-sm bg-opacity-60 bg-gray-800">
                     <th scope="row" class="px-6 py-3 whitespace-nowrap">
-                        <a href="{% url 'sales:doctor_detail' request.session.detail.id_user data.data.id_dokter %}" class="font-medium text-xs text-gray-800 dark:text-gray-200 hover:underline hover:text-blue-600">
+                        <a {% if request.session.detail.id_user == 7 %} href="#" {% else %} href="{% url 'sales:doctor_detail' request.session.detail.id_user data.data.id_dokter %}" {% endif %} class="font-medium text-xs text-gray-800 dark:text-gray-200 hover:underline hover:text-blue-600">
                             {{ data.data.nama_dokter }}
                         </a>
                     </th>
@@ -76,6 +79,9 @@
                     </td>
                     <td class="px-6 py-3 whitespace-nowrap text-xs dark:text-gray-300 text-gray-800">
                         {{ data.priority }}
+                    </td>
+                    <td class="px-6 py-3 whitespace-nowrap text-xs dark:text-gray-300 text-gray-800">
+                        {{ data.cover.rayon }}
                     </td>
                     <td class="px-6 py-3 whitespace-nowrap text-xs dark:text-gray-300 text-gray-800 capitalize">
                         {{ data.last_update }}

@@ -2,13 +2,13 @@
 
 set -e
 
-# Install dependencies
-echo "Installing dependencies..."
-pipenv install
-
 # Activate virtual environment
 echo "Activating virtual environment..."
 pipenv shell
+
+# Install dependencies
+echo "Installing dependencies..."
+pipenv install
 
 # Run migrations
 echo "Running internal migrations..."
