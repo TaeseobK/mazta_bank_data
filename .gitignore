@@ -18,7 +18,7 @@ media
 migrations/
 !migrations/__init__.py
 
-file_asw.py
+lonely.py
 
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/

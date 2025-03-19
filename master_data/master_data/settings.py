@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 import json
-from master_data import file_asw
+from master_data import lonely
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,9 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-%ui#t=6)11fpu802x8&^974%tr)k8ojg_v!%au-*qyr79@+!_m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = file_asw.debug_is_true()
+DEBUG = lonely.debug_is_true()
 
-ALLOWED_HOSTS = file_asw.allowed_hosts()
+ALLOWED_HOSTS = lonely.allowed_hosts()
 
 # Application definition
 
@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'master_data.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = file_asw.db_settings()
+DATABASES = lonely.db_settings()
 
 DATABASE_ROUTERS = [
     'human_resource.routers.HumanResourceRouter',
@@ -156,7 +156,7 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-fff = file_asw.https_settings()
+fff = lonely.https_settings()
 
 CSRF_COOKIE_SECURE = fff['CSRF_COOKIE_SECURE']
 SESSION_COOKIE_SECURE = fff['SESSION_COOKIE_SECURE']
