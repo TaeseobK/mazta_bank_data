@@ -79,7 +79,7 @@ def doctor_list(request) :
                     'data' : t,
                     'last_update' : last_update,
                     'priority' : priority,
-                    'rayon' : rayon
+                    'cover' : rayon
                 })
 
         return render(request, 'sales_pages/doctor_list.html', {
