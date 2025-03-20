@@ -1963,7 +1963,7 @@ def detail_gc(request, gc_id) :
 
     return render(request, 'master_detail/gc_detail.html', {
         'title' : 'Grade Clinic Detail',
-        'page_name' : f'Detail Clinic Grade - {grade.description.get('alias')}',
+        'page_name' : f"Detail Clinic Grade - {grade.description.get('alias')}",
         'data' : grade
     })
 
