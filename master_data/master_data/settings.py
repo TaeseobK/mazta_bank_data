@@ -85,7 +85,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'master_data.wsgi.application'
 
 
-# Database
+# Databases
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = lonely.db_settings()
