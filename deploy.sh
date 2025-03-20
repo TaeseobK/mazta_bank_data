@@ -1,12 +1,10 @@
-#!/bin/bash
+# Install dependencies
+echo "Installing dependencies..."
+pipenv run install -r requirements.txt
 
 # Activate virtual environment
 echo "Activating virtual environment..."
 pipenv shell
-
-# Install dependencies
-echo "Installing dependencies..."
-pipenv install
 
 # Run migrations
 echo "Running internal migrations..."
