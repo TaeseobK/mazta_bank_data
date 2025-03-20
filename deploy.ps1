@@ -2,7 +2,7 @@ Write-Host "Installing pipenv..."
 pip install pipenv
 
 Write-Host "Installing dependencies..."
-pipenv install
+pipenv run install -r requirements.txt
 
 Write-Host "Activating virtual environment..."
 pipenv shell
