@@ -2126,7 +2126,7 @@ def detail_gu(request, gu_id) :
 
     return render(request, 'master_detail/gu_detail.html', {
         'title' : 'Detail Grade User',
-        'page_name' : f'Detail User Grade - {gu.name}',
+        'page_name' : f"Detail User Grade - {gu.name}",
         'data' : gu
     })
 
@@ -2225,7 +2225,7 @@ def detail_title(request, title_id) :
 
     return render(request, 'master_detail/title_detail.html', {
         'title' : 'Detail Title',
-        'page_name' : f'Detail - {title.short_name}',
+        'page_name' : f"Detail - {title.short_name}",
         'data' : title
     })
 
@@ -2342,7 +2342,7 @@ def detail_salutation(request, sal_id) :
 
     return render(request, 'master_detail/salutation_detail.html', {
         'title' : 'Detail Salutation',
-        'page_name' : f'Detail - {salutation.description.get('short_name')}',
+        'page_name' : f"Detail - {salutation.description.get('short_name')}",
         'data' : salutation
     })
 
@@ -2440,6 +2440,6 @@ def detail_specialist(request, sp_id) :
 
     return render(request, 'master_detail/specialist_detail.html', {
         'title' : 'Detail Specialist',
-        'page_name' : f'Detail - {specialist.short_name}',
+        'page_name' : f"Detail - {specialist.short_name}",
         'data' : specialist
     })
