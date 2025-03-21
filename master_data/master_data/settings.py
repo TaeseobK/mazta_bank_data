@@ -98,6 +98,7 @@ DATABASE_ROUTERS = [
 
 AUTO_LOGOUT_TIME = int(60 * 60)
 
+CSRF_TRUSTED_ORIGINS = lonely.csrf_settings()
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -155,6 +156,8 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SECURE_PROXY_SSL_HEADER = lonely.proxy_ssl_headers()
 
 fff = lonely.https_settings()
 
