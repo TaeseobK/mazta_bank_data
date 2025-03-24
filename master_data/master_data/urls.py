@@ -21,6 +21,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('__reload__/', include('django_browser_reload.urls')),
     path('', include('human_resource.urls')),
     path('', include('master.urls')),
     path('', include('sales.urls')),

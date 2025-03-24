@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'src/styles.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'icon/icon.png' %}" class="rounded-full">
+    <title>Mazta Bank Data - {{ title }}</title>
+</head>
+<body class="overflow-y-scroll">
+    {% block header %}
+    {% endblock header %}
+
+    {% block main %}
+    {% endblock main %}
+
+    {% block footer %}
+    {% endblock footer %}
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js" integrity="sha256-lFA8dPmfmR4AQorTbla7C2W0aborhztLt0IQFLAVBTQ=" crossorigin="anonymous"></script>
+    <script>
+      AOS.init();
+    </script>
+    <script>
+        $(document).ready(function() {
+          // Cek jika ada theme tersimpan di localStorage
+          var savedTheme = localStorage.getItem('theme');
+          if (savedTheme) {
+            // Set theme pada elemen <html> (atau <body> sesuai kebutuhan DaisyUI)
+            $('html').attr('data-theme', savedTheme);
+            // Tandai radio input yang sesuai sebagai checked
+            $('input[name="theme-dropdown"][value="'+savedTheme+'"]').prop('checked', true);
+          }
+      
+          // Saat radio input berubah
+          $('input[name="theme-dropdown"]').on('change', function() {
+            var theme = $(this).val();
+            // Set data-theme pada elemen <html>
+            $('html').attr('data-theme', theme);
+            // Simpan theme ke localStorage
+            localStorage.setItem('theme', theme);
+          });
+        });
+
+        $(document).ready(function() {
+            $('#search').on('keyup', function() {
+                var searchQuery = $(this).val();
+
+                $.ajax({
+                    url: window.location.href,
+                    data: {
+                        'search' : searchQuery
+                    },
+                    dataType: 'html',
+                    success: function(response) {
+                        $('#page-list').html($(response).find('#page-list').html());
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function() {
+          $('#togglePassword').on('click', function() {
+            var checkboxPassword = $('#check-password').is(':checked');
+            
+            if (checkboxPassword == true) {
+              $('#password-login').attr('type', 'text');
+            } else {
+              $('#password-login').attr('type', 'password');
+            }
+          });
+        });
+    </script>
+</body>
+</html>

@@ -15,13 +15,13 @@ API_LOGIN_URL = "https://dev-bco.businesscorporateofficer.com/api/login/"
 API_LOGOUT_URL = "https://dev-bco.businesscorporateofficer.com/api/logout/"
 
 def index_sales(request) :
-    return redirect('sales:login_2')
+    return redirect('master:login')
 
 def api_login_required(view_func) :
     @wraps(view_func)
     def wrapper(request, *args, **kwargs) :
         if not request.session.get('token') :
-            return redirect('sales:login_2')
+            return redirect('master:login')
         
         return view_func(request, *args, **kwargs)
     return wrapper
@@ -154,7 +154,7 @@ def doctor_list(request) :
             'title' : 'Doctor List',
             'page_name' : 'Doctor List',
             'page_obj' : page_obj,
-            'api' : 'False'
+            'api' : "False"
         })
 
 @api_login_required
