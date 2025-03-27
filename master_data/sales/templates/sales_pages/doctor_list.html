@@ -7,8 +7,8 @@
 {% endblock header %}
 
 {% block main %}
-<main class="mx-10 my-5 p-5 bg-base-200 rounded-md">
-    <table class="table table-zebra">
+<main class="mx-10 my-5 p-5 bg-base-200 rounded-md max-h-screen">
+    <table class="table table-zebra my-5">
         <thead>
             <tr>
                 <th>Doctor Name</th>
@@ -20,7 +20,7 @@
         </thead>
         <tbody id="page-list">
             {% for data in page_obj %}
-            <tr class="border-b border-current">
+            <tr class="border-b border-current hover:bg-base-100">
                 <th>
                     <a {% if request.session.detail.id_user == 7 %} href="#" {% else %} href="{% url 'sales:doctor_detail' request.session.detail.id_user data.data.id_dokter %}" {% endif %} class="link link-hover">
                         {{ data.data.nama_dokter }}

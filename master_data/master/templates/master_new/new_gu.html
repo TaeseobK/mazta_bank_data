@@ -1,63 +1,58 @@
-{% extends 'base_app/base.html' %}
+{% extends 'base/base_app.html' %}
 {% load static %}
-{% block home %}
-<section class="flex w-full p-4 rounded-md border-2 mt-16 mb-2 dark:border-gray-400 border-gray-800 backdrop-blur-sm bg-opacity-10 bg-gray-800 overflow-y-auto thin-scrollbar">
+
+{% block header %}
+    {% include 'head/nav_1.html' %}
+{% endblock header %}
+{% block main %}
+<section class="mx-5 flex gap-5">
     <div class="w-9/12">
-        <div class="flex gap-10">
-            <button onclick="document.getElementById('form-grade-clinic').submit();" class="rounded-sm hover:text-gray-800 hover:bg-gray-400 bg-gray-800 text-gray-400 border-2 border-gray-400 hover:border-gray-800 px-2 py-1 uppercase text-xs font-bold mb-2">submit</button>
-        </div>
-        <form id="form-grade-clinic" action="." method="post" class="rounded-md border-2 border-gray-400 backdrop-blur-sm bg-opacity-70 bg-gray-800">
+        <form action="." method="post" class="space-y-5">
             {% csrf_token %}
-            <input type="hidden" name="metode" value="post">
-            <div class="p-4">
-                <p class="dark:text-gray-400 bg-transparent text-gray-800 font-bold text-lg flex justify-start uppercase">New Grade User</p>
-                <div class="my-5 justify-start">
-                    <ul class="space-y-7">
-                        <li class="flex items-center dark:text-gray-400 text-gray-800 font-semibold">
-                            <div class="w-1/2 flex items-center">
-                                <label for="name-id" class="w-3/12 mt-1 dark:text-gray-400 text-gray-800 font-semibold">Grade Name</label>
-                                <input type="text" name="name" id="name-id" autocomplete="off" class="w-6/12 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                            </div>
-                            <div class="w-1/2 flex items-center">
-                                <label for="alias-id" class="w-3/12 mt-1 dark:text-gray-400 text-gray-800 font-semibold">Grade Alias</label>
-                                <input type="text" name="alias" id="alias-id" autocomplete="off" class="w-6/12 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                            </div>
-                        </li>
-                        <li>
-                            <p class="dark:text-gray-400 text-gray-800 font-semibold mt-12">Value for Range Clinic</p>
-                            <hr class="border-b border-gray-400 w-[840px]">
-                        </li>
-                        <li class="flex items-center w-[840px] dark:text-gray-400 text-gray-800 font-semibold">
-                            <div class="w-1/2 flex items-center">
-                                <label for="min-id" class="w-4/12 mt-1 dark:text-gray-400 text-gray-800 font-semibold">Min Value</label>
-                                <div class="w-full flex items-center justify-start text-md">
-                                    <input type="text" name="min" id="min-id" autocomplete="off" class="w-auto justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                    <select name="min-measure" id="min-measure-id" class="w-auto rounded-r-md border-2 border-gray-400 bg-gray-800 cursor-pointer focus:outline-none">
-                                        <option value="T" class="bg-gray-800 text-gray-400 font-semibold">Thousand</option>
-                                        <option value="M" class="bg-gray-800 text-gray-400 font-semibold">Million</option>
-                                        <option value="B" class="bg-gray-800 text-gray-400 font-semibold">Billion</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="w-1/2 flex items-center">
-                                <label for="max-id" class="w-4/12 mt-1 dark:text-gray-400 text-gray-800 font-semibold">Max Value</label>
-                                <div class="w-full flex items-center justify-start text-md">
-                                    <input type="text" name="max" id="max-id" autocomplete="off" class="w-auto justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                    <select name="max-measure" id="max-measure-id" class="w-auto rounded-r-md border-2 border-gray-400 bg-gray-800 cursor-pointer focus:outline-none">
-                                        <option value="T" class="bg-gray-800 text-gray-400 font-semibold">Thousand</option>
-                                        <option value="M" class="bg-gray-800 text-gray-400 font-semibold">Million</option>
-                                        <option value="B" class="bg-gray-800 text-gray-400 font-semibold">Billion</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="w-full dark:text-gray-400 text-gray-800 font-semibold">
-                            <p class="capitalize mt-5">description</p>
-                            <hr class="border-b border-gray-400 w-[840px]">
-                            <textarea name="desc" id="desc-id" autocomplete="off" class="w-[840px] p-2 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800"></textarea>
-                        </li>
-                    </ul>
+            <button type="submit" class="btn btn-md">Submit</button>
+            <input type="text" name="metode" value="post" class="hidden is-hidden">
+            <div class="w-full rounded-md border border-current p-5 space-y-5 glass">
+                <p class="text-md font-bold uppercase text-pretty font-sans">New Grade User</p>
+                <div class="flex items-center justify-between gap-20">
+                    <div class="flex items-center justify-between w-1/2 gap-5">
+                        <label for="gd-id" class="label font-semibold">Grade Name</label>
+                        <input type="text" id="gd-id" name="name" class="input" value="Grade " placeholder="Grade Name" required>
+                    </div>
+                    <div class="flex items-center justify-between w-1/2 gap-5">
+                        <label for="ga-id" class="label  font-semibold">Grade Alias</label>
+                        <input type="text" id="ga-id" name="alias" class="input" placeholder="Grade Alias" required>
+                    </div>
                 </div>
+                <div class="w-full">
+                    <p class="w-full block text-sm font-bold text-pretty font-sans">Value for Range User</p>
+                    <hr class="border border-current">
+                </div>
+                <div class="flex items-center justify-between gap-20">
+                    <div class="flex items-center justify-between w-1/2 gap-5">
+                        <label for="max-id" class="label font-semibold">Max Value</label>
+                        <div class="input flex items-center justify-between">
+                            <input type="number" id="max-id" name="max-value" required>
+                            <input type="text" name="max-measure" list="measure" required>
+                        </div>
+                    </div>
+                    <datalist id="measure">
+                        <option value="Thousand">
+                        <option value="Million">
+                            <option value="Billion">
+                    </datalist>
+                    <div class="flex items-center justify-between w-1/2 gap-5">
+                        <label for="min-id" class="label font-semibold">Min Value</label>
+                        <div class="input flex items-center justify-between">
+                            <input type="number" id="min-id" name="min-value" required>
+                            <input type="text" name="min-measure" list="measure" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full">
+                    <p class="w-full block text-sm font-bold text-pretty font-sans">Description</p>
+                    <hr class="border border-current">
+                </div>
+                <textarea name="description" id="" class="bg-transparent rounded-md w-full"></textarea>
             </div>
         </form>
     </div>
@@ -65,38 +60,4 @@
         <!-- Log Activity -->
     </div>
 </section>
-<script>
-    $(document).ready(function() {
-        $('#entity-id').on('change', function() {
-            var entityId = $(this).find(':selected').val();
-            console.log(entityId);
-
-            if(entityId) {
-                $.ajax({
-                    url: window.location.href,
-                    data: {
-                        'entity_obj_id': entityId
-                    },
-                    type: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        var branches = response;
-                        console.log(branches);
-                        branches.forEach(function(branch) {
-                            $('#branch-id').append(`<option value="${branch.pk}" class="bg-gray-800 text-gray-400 font-semibold">${branch.branch}</option>`);
-                        })
-                    },
-                    error: function() {
-                        alert("Error Fetching Branches");
-                    }
-                });
-            } else {
-                $('#branch-id').empty().append(`<option value="" class="bg-gray-800 text-gray-400 font-semibold">Select Branch</option>`);
-            }
-        });
-    });
-</script>
-{% endblock %}
+{% endblock main %}

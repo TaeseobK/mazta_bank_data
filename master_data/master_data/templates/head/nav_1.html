@@ -1,12 +1,12 @@
 {% load static %}
-<nav {% if not login %} class="rdp-navbar bg-base-300 shadow-2xl drop-shadow-2xl py-2" {% else %} class="w-full bg-base-300 shadow-2xl drop-shadow-2xl py-2 fixed" {% endif %}>
+<nav {% if not login %} class="rdp-navbar shadow-2xl bg-base-300 py-2" {% else %} class="w-full bg-base-300 shadow-2xl py-2 fixed" {% endif %}>
     <div class="py-1 px-4 flex justify-start items-center">
         <a href="{% url 'master:home' %}" class="w-2/12 flex items-center justify-start gap-5">
-            <img src="{% static 'icon/icon.png' %}" alt="" class="rounded-full w-8 border-2 border-current">
-            <p class="text-left text-pretty font-semibold text-md">Mazta Farma</p>
+            <img src="{% static 'icon/mazta_logo.png' %}" alt="" class="rounded-full w-8 bg-white" data-aos="fade-right">
+            <p class="text-left text-pretty font-semibold text-md" data-aos="fade-left">Mazta Farma</p>
         </a>
         <div class="w-4/12">
-            <p class="text-md text-left font-sans font-semibold text-pretty capitalize">{{ page_name }}</p>
+            <p class="text-md text-left font-sans font-semibold text-pretty capitalize" data-aos="fade-up">{{ page_name }}</p>
         </div>
         <div class="w-6/12 flex items-center justify-end gap-10">
             <div class="flex items-center justify-center gap-3">
@@ -14,11 +14,11 @@
                 <div class="drawer">
                     <input id="my-drawer" type="checkbox" class="drawer-toggle" />
                     <div class="drawer-content">
-                      <label for="my-drawer" class="drawer-butto text-md font-semibold uppercase btn btn-sm p-1">Databases</label>
+                      <label for="my-drawer" class="drawer-button text-md font-semibold uppercase btn btn-sm p-1" data-aos="zoom-in-left">Databases</label>
                     </div>
                     <div class="drawer-side z-10">
-                        <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-                        <ul class="menu bg-base-200 text-base-content min-h-full w-44 p-4">
+                        <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay z-10"></label>
+                        <ul class="menu bg-base-200 text-base-content h-full w-44 p-4 z-10">
                             <li>
                                 <div class=" flex items-center justify-center">
                                     <p class="text-lg font-semibold text-pretty font-sans text-center">Databases</p>
@@ -33,7 +33,7 @@
                                         <li><a href="{% url 'master:gu_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Grade User</a></li>
                                         <li><a href="{% url 'master:title_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Title</a></li>
                                         <li><a href="{% url 'master:salutation_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Salutation</a></li>
-                                        <li><a href="{% url 'master:specialists' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Specialist</a></li>
+                                        <li><a href="{% url 'master:specialist_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Specialist</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -53,7 +53,7 @@
             </div>
             <div class="flex items-center justify-center">
                 <div class="dropdown dropdown-hover dropdown-end">
-                    <div tabindex="0" role="button" class="link link-hover text-sm font-semibold uppercase font-sans">{{ request.session.detail.name }}</div>
+                    <div tabindex="0" role="button" class="link link-hover text-sm font-semibold uppercase font-sans" data-aos="fade-left">{{ request.session.detail.name }}</div>
                     <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-md">
                         <li><a href="" class="text-md font-semibold link link-hover">Settings</a></li>
                         <li><a href="" class="text-md font-semibold link link-hover">Profile</a></li>

@@ -1,929 +1,406 @@
-{% extends 'base_app/base.html' %}
+{% extends 'base/base_app.html' %}
 {% load static %}
-{% block home %}
-<section class="flex w-full p-4 rounded-md border-2 mt-16 mb-2 dark:border-gray-400 border-gray-800 backdrop-blur-sm bg-opacity-10 bg-gray-800 overflow-y-auto thin-scrollbar">
+
+{% block header %}
+    {% include 'head/nav_1.html' %}
+{% endblock header %}
+{% block main %}
+<section class="m-5 flex gap-5 z-0">
     <div class="w-9/12">
-        <div class="flex gap-10">
-            <button onclick="document.getElementById('form-entity').submit();" class="rounded-sm hover:text-gray-800 hover:bg-gray-400 bg-gray-800 text-gray-400 border-2 border-gray-400 hover:border-gray-800 px-2 py-1 uppercase text-xs font-bold mb-2">submit</button>
-        </div>
-        <form id="form-entity" action="." method="post" class="rounded-md border-2 border-gray-400 backdrop-blur-sm bg-opacity-70 bg-gray-800">
+        <form action="." method="post" class="space-y-5">
             {% csrf_token %}
-            <input type="hidden" name="metode" value="post">
-            <div class="p-4">
-                <p class="dark:text-gray-400 bg-transparent text-gray-800 font-bold text-lg flex justify-start uppercase select-none">{{ data.0.dr_api.nama_dokter }}</p>
-                <div class="flex justify-start gap-5">
-                    <div class="mt-3 bg-gray-800 w-full p-2 border-2 border-gray-500 flex gap-5 rounded-md text-gray-800 dark:text-gray-400">
-                        <ul class="space-y-5 w-1/2 mb-2">
-                            <li>
-                                <div class="flex gap-5 items-center w-full">
-                                    <label for="firstname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-1/4 mt-1">First Name</label>
-                                    <input type="text" name="firstname" id="firstname-id" value="{{ data.0.doctor.info.first_name }}" autocomplete="off" class="w-2/4 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800" required>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="flex gap-5 items-center w-full">
-                                    <label for="middlename-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-1/4 mt-1">Middle Name</label>
-                                    <input type="text" name="middlename" id="middlename-id" value="{{ data.0.doctor.info.middle_name }}" autocomplete="off" class="w-2/4 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800" required>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="flex gap-5 items-center w-full">
-                                    <label for="lastname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-1/4 mt-1">Last Name</label>
-                                    <input type="text" name="lastname" id="lastname-id" value="{{ data.0.doctor.info.last_name }}" autocomplete="off" class="w-2/4 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800" required>
-                                </div>
-                            </li>
-                        </ul>
-                        <ul class="space-y-5 w-1/2 mb-2">
-                            <li>
-                                <div class="flex gap-5 items-center w-full">
-                                    <label for="fullname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-1/4 mt-1">Full Name</label>
-                                    <input type="text" name="fullname" id="fullname-id" {% if data.0.doctor %} value="{{ data.0.doctor.info.full_name }}" {% else %} value="{{ data.0.dr_api.nama_dokter }}" {% endif %} autocomplete="off" class="w-2/4 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800" required>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="flex gap-5 items-center w-full">
-                                    <label for="salutation-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-1/4 mt-1">Salutation</label>
-                                    <select name="salutation" id="salutation-id" class="w-2/4 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                        <option value="" class="bg-gray-800 text-gray-400 font-semibold"></option>
-                                        {% for d in data.0.salutations %}
-                                        <option value="{{ d.pk }}" class="bg-gray-800 text-gray-400 font-semibold" {% if d.pk == data.0.doctor.info.salutation %} selected {% endif %}>{{ d.salutation }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="flex gap-5 items-center w-full">
-                                    <label for="title-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-1/4 mt-1">Title</label>
-                                    <select name="title" id="title-id" class="w-2/4 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                        <option value="" class="bg-gray-800 text-gray-400 font-semibold"></option>
-                                        {% for d in data.0.titles %}
-                                        <option value="{{ d.pk }}" class="bg-gray-800 text-gray-400 font-semibold" {% if d.pk == data.0.doctor.info.title %} selected {% endif %}>{{ d.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </li>
-                        </ul>
+            <button type="submit" class="btn btn-md btn-primary py-2 px-4">Submit</button>
+            <input type="text" name="metode" value="post" class="hidden is-hidden">
+            <div class="w-full rounded-md border border-current p-5 space-y-5 glass">
+                <p class="text-md font-bold uppercase text-pretty font-sans">{{ data.0.dr_api.nama_dokter }}</p>
+                <div class="space-y-5 border-base-100 bg-base-300 rounded-md m-5 p-5">
+                    <div class="flex items-center justify-between gap-20">
+                        <div class="flex items-center justify-between w-1/2 gap-5">
+                            <label for="fn-id" class="label font-semibold">First Name</label>
+                            <input type="text" id="fn-id" name="first-name" class="input input-sm px-2" autocomplete="off" value="" placeholder="First Name" required>
+                        </div>
+                        <div class="flex items-center justify-between w-1/2 gap-5">
+                            <label for="fl-id" class="label font-semibold">Full Name</label>
+                            <input type="text" id="fl-id" name="full-name" class="input input-sm px-2" placeholder="Full Name" required>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between gap-20">
+                        <div class="flex items-center justify-between w-1/2 gap-5">
+                            <label for="mn-id" class="label font-semibold">Middle Name</label>
+                            <input type="text" id="mn-id" name="middle-name" class="input input-sm px-2" value="" placeholder="Middle Name" required>
+                        </div>
+                        <div class="flex items-center justify-between w-1/2 gap-5">
+                            <label for="sal-id" class="label font-semibold">Salutations</label>
+                            <input type="text" id="sal-id" name="salutation-num" class="input input-sm px-2" placeholder="Salutations" list="" required>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between gap-20">
+                        <div class="flex items-center justify-between w-1/2 gap-5">
+                            <label for="ln-id" class="label font-semibold">Last Name</label>
+                            <input type="text" id="ln-id" name="last-name" class="input input-sm px-2" value="" placeholder="Last Name" required>
+                        </div>
+                        <div class="flex items-center justify-between w-1/2 gap-5">
+                            <label for="tit-id" class="label font-semibold">Title</label>
+                            <input type="text" id="tit-id" name="title-num" class="input input-sm px-2" placeholder="Titles" list="" required>
+                        </div>
                     </div>
                 </div>
-                <div class="border-b border-gray-200 dark:border-gray-600">
-                    <ul data-tabs-toggle="#profile-tab-content" role="tablist" class="flex flex-wrap -mb-px text-xs font-medium text-center text-gray-500 dark:text-gray-400">
-                        <li class="me-2" role="presentation">
-                            <button type="button" aria-selected="false" role="tab" id="pi-id" data-tabs-target="#public-information" class="inline-flex items-center justify-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group">
-                                <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 9h3m-3 3h3m-3 3h3m-6 1c-.306-.613-.933-1-1.618-1H7.618c-.685 0-1.312.387-1.618 1M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm7 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"/>
-                                </svg>                                                                   
-                                Work Information
-                            </button>
-                        </li>
-                        <li class="me-2" role="presentation">
-                            <button type="button" aria-selected="false" id="wi-id" data-tabs-target="#work-information" role="tab" class="inline-flex items-center justify-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group">
-                                <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v5m-3 0h6M4 11h16M5 15h14a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1Z"/>
+                <div>
+                    <div role="tablist" class="tabs tabs-border">
+                        <label for="wi-id" class="tab flex items-center justify-center gap-3">
+                            <input type="radio" id="wi-id" data-tab="wi-tab-id" name="tab-drd" class="tabs-lift check-tab" value="1" checked>
+                            <div class="w-6 h-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                                </svg>                              
+                            </div>
+                            Work Information
+                        </label>
+                        <label for="pi-id" class="tab flex items-center justify-center gap-3">
+                            <input type="radio" id="pi-id" name="tab-drd" data-tab="pi-tab-id" class="tabs-lift check-tab" value="2">
+                            <div class="w-6 h-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Zm6-10.125a1.875 1.875 0 1 1-3.75 0 1.875 1.875 0 0 1 3.75 0Zm1.294 6.336a6.721 6.721 0 0 1-3.17.789 6.721 6.721 0 0 1-3.168-.789 3.376 3.376 0 0 1 6.338 0Z" />
                                 </svg>                                  
-                                Private Information
-                            </button>
-                        </li>
-                        <li class="me-2" role="presentation">
-                            <button type="button" aria-selected="false" id="add-id" data-tabs-target="#additional-information" role="tab" class="inline-flex items-center justify-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group">
-                                <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                    <path fill-rule="evenodd" d="M8 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1h2a2 2 0 0 1 2 2v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2Zm6 1h-4v2H9a1 1 0 0 0 0 2h6a1 1 0 1 0 0-2h-1V4Z" clip-rule="evenodd"/>
-                                </svg>                                                               
-                                Additional Information
-                            </button>
-                        </li>
-                        <li class="me-2" role="presentation">
-                            <button type="button" aria-selected="false" id="br-id" data-tabs-target="#branch-information" role="tab" class="inline-flex items-center justify-center p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 group">
-                                <svg class="w-4 h-4 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="m6 10.5237-2.27075.6386C3.29797 11.2836 3 11.677 3 12.125V20c0 .5523.44772 1 1 1h2V10.5237Zm12 0 2.2707.6386c.4313.1213.7293.5147.7293.9627V20c0 .5523-.4477 1-1 1h-2V10.5237Z"/>
-                                    <path fill-rule="evenodd" d="M12.5547 3.16795c-.3359-.22393-.7735-.22393-1.1094 0l-6.00002 4c-.45952.30635-.5837.92722-.27735 1.38675.30636.45953.92723.5837 1.38675.27735L8 7.86853V21h8V7.86853l1.4453.96352c.0143.00957.0289.01873.0435.02746.1597.09514.3364.14076.5112.1406.3228-.0003.6395-.15664.832-.44541.3064-.45953.1822-1.0804-.2773-1.38675l-6-4ZM10 12c0-.5523.4477-1 1-1h2c.5523 0 1 .4477 1 1s-.4477 1-1 1h-2c-.5523 0-1-.4477-1-1Zm1-4c-.5523 0-1 .44772-1 1s.4477 1 1 1h2c.5523 0 1-.44772 1-1s-.4477-1-1-1h-2Z" clip-rule="evenodd"/>
-                                </svg>                                                                                               
-                                Branch Information
-                            </button>
-                        </li>
-                    </ul>
+                            </div>
+                            Private Information
+                        </label>
+                        <label for="ai-id" class="tab flex items-center justify-center gap-3">
+                            <input type="radio" id="ai-id" name="tab-drd" class="tabs-lift check-tab" value="3">
+                            <div class="w-6 h-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
+                                </svg>                                                                 
+                            </div>
+                            Additional Information
+                        </label>
+                        <label for="bi-id" class="tab flex items-center justify-center gap-3">
+                            <input type="radio" id="bi-id" name="tab-drd" class="tabs-lift check-tab" value="3">
+                            <div class="w-6 h-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
+                                </svg>                                                                                                  
+                            </div>
+                            Branch Information
+                        </label>
+                    </div>
                 </div>
-                <div id="profile-tab-content">
-                    <div id="public-information" role="tabpanel" aria-labelledby="pi-id" class="hidden p-1 my-5 space-y-10 rounded-sm bg-transparent text-gray-800 dark:text-gray-400 font-semibold">
-                        <div class="flex gap-10">
-                            <div class="bg-transparent space-y-5 w-1/2">
-                                <p class="text-gray-800 dark:text-gray-400 font-semibold uppercase border-b border-gray-400 text-sm">Work Location</p>
-                                <div class="flex gap-10">
-                                    <ul class="w-3/12 justify-start space-y-3">
-                                        <li>
-                                            <p class="text-gray-800 dark:text-gray-400 font-semibold text-sm">
-                                                Address
-                                            </p>
-                                        </li>
-                                    </ul>
-                                    <ul class="w-9/12 justify-start space-y-3">
-                                        <li>
-                                            <input type="text" id="" name="work-street-1" value="{{ data.0.doctor.work_information.address.street_1 }}" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="Street 1...">
-                                        </li>
-                                        <li>
-                                            <input type="text" id="" name="work-street-2" autocomplete="off" {% if data.0.doctor %} value="{{ data.0.doctor.work_information.address.street_2 }}" {% else %} value="{{ data.0.dr_api.kecamatan }}, {{ data.0.dr_api.kelurahan }}" {% endif %} class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="Street 2...">
-                                        </li>
-                                        <li>
-                                            <input type="text" id="" name="work-city" autocomplete="off" {% if data.0.doctor %} value="{{ data.0.doctor.work_information.address.city }}" {% else %} value="{{ data.0.dr_api.kota }}" {% endif %} class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="City...">
-                                        </li>
-                                        <li>
-                                            <div class="flex gap-5">
-                                                <input type="text" id="" name="work-state" autocomplete="off" {% if data.0.doctor %} value="{{ data.0.doctor.work_information.address.state }}" {% else %} value="{{ data.0.dr_api.provinsi }}" {% endif %} class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="State...">
-                                                <input type="text" id="" name="work-country" autocomplete="off" value="{{ data.0.doctor.work_information.address.country }}" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="Country...">
-                                                <input type="text" id="" name="work-zip" autocomplete="off" value="{{ data.0.doctor.work_information.address.zip }}" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="Zip...">
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-800 dark:text-gray-400 font-semibold w-full border-b border-gray-400">Full Work Address</p>
-                                    <textarea name="work-fulladdress" id="work-fulladdress-id" autocomplete="off" class="w-full thin-scrollbar p-1 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">{% if data.0.doctor %}{{ data.0.doctor.work_information.address.fulladdress }}{% else %}{{ data.0.dr_api.alamat }}{% endif %}</textarea>
-                                </div>
+                <div id="wi-tab-id" class="tab-active tab-content">
+                    <div class="grid grid-cols-2 gap-10 p-5">
+                        <div class="space-y-2">
+                            <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">Work Locations</p>
+                            <div class="flex justify-center gap-5 items-start">
+                                <p class="w-1/4 font-semibold label">Address</p>
+                                <ul class="w-3/4 space-y-2">
+                                    <li>
+                                        <input type="text" id="" name="work-street-1" class="input input-sm px-2 w-full" placeholder="Street 1...">
+                                    </li>
+                                    <li>
+                                        <input type="text" id="" name="work-street-2" class="input input-sm px-2 w-full" placeholder="Street 2...">
+                                    </li>
+                                    <li>
+                                        <input type="text" id="" name="work-city" class="input input-sm px-2 w-full" placeholder="City...">
+                                    </li>
+                                    <li class="flex items-center justify-center gap-3">
+                                        <input type="text" id="" name="work-state" class="input input-sm px-2 w-full" placeholder="State...">
+                                        <input type="text" id="" name="work-country" class="input input-sm px-2 w-full" placeholder="Country...">
+                                        <input type="text" id="" name="work-zip" class="input input-sm px-2 w-full" placeholder="Zip...">
+                                    </li>
+                                </ul>
                             </div>
-                            <div class="bg-transparent w-1/2 space-y-5">
-                                <p class="text-gray-800 dark:text-gray-400 font-semibold uppercase border-b border-gray-400 text-sm">Job Information</p>
-                                <div class="flex gap-10">
-                                    <ul class="w-4/12 justify-start space-y-4 items-center">
-                                        <li>
-                                            <label for="workspace-name-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">workspace name</label>
-                                        </li>
-                                        <li>
-                                            <label for="job-position-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">job position</label>
-                                        </li>
-                                        <li>
-                                            <label for="work-phone-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">work phone</label>
-                                        </li>
-                                        <li>
-                                            <label for="work-mobile-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">work mobile</label>
-                                        </li>
-                                        <li>
-                                            <label for="work-email-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">work email</label>
-                                        </li>
-                                    </ul>
-                                    <ul class="w-7/12 justify-start space-y-4 items-center">
-                                        <li>
-                                            <input type="text" name="workspace-name" id="workspace-name-id" value="{{ data.0.doctor.work_information.job_information.workspace_name }}" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">
-                                        </li>
-                                        <li>
-                                            <input type="text" name="job-position" id="job-position-id" value="{{ data.0.doctor.work_information.job_information.job_position }}" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">
-                                        </li>
-                                        <li>
-                                            <input type="text" name="work-phone" id="work-phone-id" value="{{ data.0.doctor.work_information.job_information.work_phone }}" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">
-                                        </li>
-                                        <li>
-                                            <input type="text" name="work-mobile" id="work-mobile-id" value="{{ data.0.doctor.work_information.job_information.work_mobile }}" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">
-                                        </li>
-                                        <li>
-                                            <input type="text" name="work-email" id="work-email-id" value="{{ data.0.doctor.work_information.job_information.work_email }}" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
+                            <p class="block w-full border-b border-current text-md font-semibold font-sans">Full Work Address</p>
+                            <textarea name="fll-work-address" id="wrk-add-id" type="text" class="textarea rounded-md w-full"></textarea>
                         </div>
-                        <div class="flex gap-10">
-                            <div class="bg-transparent space-y-5 w-1/2">
-                                <p class="text-gray-800 dark:text-gray-400 font-semibold uppercase border-b border-gray-400 text-sm">Sales Information</p>
-                                <ul class="space-y-4 items-center">
-                                    <li>
-                                        <div class="flex gap-10 items-center">
-                                            <label for="grade-user-id" class="w-4/12 text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">Grade User</label>
-                                            <select name="grade-user" id="grade-user-id" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">
-                                                <option value="" class="bg-gray-800 text-gray-400 font-semibold text-sm"></option>
-                                                {% for d in data.0.grade_user %}
-                                                <option value="{{ d.pk }}" class="bg-gray-800 text-gray-400 font-semibold text-sm" {% if d.pk == data.0.doctor.work_information.sales_information.grade_user %} selected {% endif %}>{{ d.name }}</option>
-                                                {% endfor %}
-                                            </select>
+                        <div class="space-y-2">
+                            <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">Job Information</p>
+                            <ul class="space-y-2 w-full">
+                                <li class="flex items-center justify-between">
+                                    <label for="ws-id" class="font-semibold label">Workspace Name</label>
+                                    <input type="text" id="ws-id" name="workspace-name" class="input input-sm px-2">
+                                </li>
+                                <li class="flex items-center justify-between">
+                                    <label for="jp-id" class="font-semibold label">Job Position</label>
+                                    <input type="text" id="jp-id" name="job-position" class="input input-sm px-2">
+                                </li>
+                                <li class="flex items-center justify-between">
+                                    <label for="wp-id" class="font-semibold label">Work Phone</label>
+                                    <input type="text" id="wp-id" value="+62 " name="work-phone" class="input input-sm px-2">
+                                </li>
+                                <li class="flex items-center justify-between">
+                                    <label for="wm-id" class="font-semibold label">Work Mobile</label>
+                                    <input type="text" id="wm-id" name="work-mobile" class="input input-sm px-2">
+                                </li>
+                                <li class="flex items-center justify-between">
+                                    <label for="we-id" class="font-semibold label">Work Email</label>
+                                    <input type="text" id="we-id" name="work-email" class="input input-sm px-2">
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">Sales Information</p>
+                            <ul class="space-y-2 w-full">
+                                <li class="flex items-center justify-between">
+                                    <label for="gu-id" class="font-semibold label">Grade User</label>
+                                    <input type="text" id="gu-id" name="grade-user" class="input input-sm px-2" required>
+                                </li>
+                                <li class="flex items-center justify-between">
+                                    <label for="gc-id" class="font-semibold label">Grade Clinic</label>
+                                    <input type="text" id="gc-id" name="grade-clinic" class="input input-sm px-2" required>
+                                </li>
+                                <li class="flex items-center justify-start gap-20">
+                                    <label for="wp-id" class="font-semibold label">User Priority</label>
+                                    <div class="space-y-1">
+                                        <div class="flex items-center justify-start gap-5">
+                                            <input type="radio" id="priority-id" value="1" class="radio" name="priority">
+                                            <label for="priority-id" class="label">Priority</label>
                                         </div>
-                                    </li>
-                                    <li>
-                                        <div class="flex gap-10 items-center">
-                                            <label for="grade-clinic-id" class="w-4/12 text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">Grade clinic</label>
-                                            <select name="grade-clinic" id="grade-clinic-id" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">
-                                                <option value="" class="bg-gray-800 text-gray-400 font-semibold text-sm"></option>
-                                                {% for d in data.0.grade_clinic %}
-                                                <option value="{{ d.pk }}" class="bg-gray-800 text-gray-400 font-semibold text-sm" {% if d.pk == data.0.doctor.work_information.sales_information.grade_clinic %} selected {% endif %}>{{ d.name }}</option>
-                                                {% endfor %}
-                                            </select>
+                                        <div class="flex items-center justify-start gap-5">
+                                            <input type="radio" id="not-priority-id" value="0" class="radio" name="priority">
+                                            <label for="not-priority-id" class="label">Not Priority</label>
                                         </div>
-                                    </li>
-                                    <li>
-                                        <div class="flex gap-10 items-center">
-                                            <label class="w-4/12 text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">User Priority</label>
-                                            <div class="w-8/12">
-                                                <ul class="space-y-3">
-                                                    <li>
-                                                        <div class="flex gap-5 items-center">
-                                                            <input type="radio" value="1" {% if data.0.doctor.work_information.sales_information.priority == 1 %} checked {% endif %} name="ispriority" class="cursor-pointer" id="priority">
-                                                            <label for="priority" class="text-gray-800 dark:text-gray-400 font-semibold cursor-pointer text-sm">Priority</label>
-                                                        </div>
-                                                    </li>
-                                                    <li>
-                                                        <div class="flex gap-5 items-center">
-                                                            <input type="radio" value="0" {% if data.0.doctor.work_information.sales_information.priority == 0 %} checked {% endif %} name="ispriority" class="cursor-pointer" id="notpriority">
-                                                            <label for="notpriority" class="text-gray-800 dark:text-gray-400 font-semibold cursor-pointer text-sm">Not Priority</label>
-                                                        </div>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="flex gap-10 items-center">
-                                            <label for="specalist-id" class="w-4/12 text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">Specialist</label>
-                                            <select name="spec_id" id="specalist-id" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">
-                                                <option value="" class="bg-gray-800 text-gray-400 font-semibold text-sm"></option>
-                                                {% for d in data.0.specialists %}
-                                                <option value="{{ d.pk }}" class="bg-gray-800 text-gray-400 font-semibold text-sm" {% if d.pk == data.0.doctor.work_information.sales_information.specialist_id %} selected {% endif %} >{{ d.short_name }}</option>
-                                                {% endfor %}
-                                            </select>                                        
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="bg-transparent space-y-5 w-1/2">
-                                <p class="text-gray-800 dark:text-gray-400 font-semibold uppercase border-b border-gray-400 text-sm">System Information</p>
-                                <ul class="space-y-4 items-center">
-                                    <li>
-                                        <div class="flex gap-10 items-center">
-                                            <label for="accurate-code-id" class="w-4/12 text-gray-800 dark:text-gray-400 font-semibold text-sm capitalize">Accurate Code</label>
-                                            <input type="text" id="accurate-code-id" name="accurate-code" {% if data.0.doctor %} value="{{ data.0.doctor.work_information.system_information.accurate_code }}" {% else %} value="{{ data.0.dr_api.kode_pelanggan_old }}" {% endif %} autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700">
-                                        </div>
-                                    </li>
-                                </ul>
+                                    </div>
+                                </li>
+                                <li class="flex items-center justify-between">
+                                    <label for="sp-id" class="font-semibold label">Specialist</label>
+                                    <input type="text" id="sp-id" name="specialist" class="input input-sm px-2" list="" required>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">Sales Information</p>
+                            <div class="flex items-center justify-between">
+                                <label for="acc-id" class="label font-semibold">Accurate Code</label>
+                                <input id="acc-id" name="accurate-code" type="text" class="input input-sm px-2">
                             </div>
                         </div>
                     </div>
-                    <div id="work-information" role="tabpanel" aria-labelledby="wi-id" class="hidden p-1 my-5 space-y-10 rounded-sm bg-transparent text-gray-800 dark:text-gray-400 font-semibold">
-                        <div class="flex gap-10">
-                            <div class="bg-transparent space-y-5 w-1/2">
-                                <p class="text-gray-800 dark:text-gray-400 font-semibold uppercase border-b border-gray-400 text-sm">Private Contact</p>
-                                <div class="flex gap-10">
-                                    <ul class="w-3/12 justify-start space-y-3">
-                                        <li>
-                                            <p class="text-gray-800 dark:text-gray-400 font-semibold text-sm">
-                                                Private Address
-                                            </p>
-                                        </li>
-                                    </ul>
-                                    <ul class="w-9/12 justify-start space-y-3">
-                                        <li>
-                                            <input type="text" id="" value="{{ data.0.doctor.private_information.private_contact.address.street_1 }}" name="private-street-1" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="Street 1...">
-                                        </li>
-                                        <li>
-                                            <input type="text" id="" value="{{ data.0.doctor.private_information.private_contact.address.street_2 }}" name="private-street-2" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="Street 2...">
-                                        </li>
-                                        <li>
-                                            <input type="text" id="" value="{{ data.0.doctor.private_information.private_contact.address.city }}" name="private-city" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="City...">
-                                        </li>
-                                        <li>
-                                            <div class="flex gap-5">
-                                                <input type="text" id="" value="{{ data.0.doctor.private_information.private_contact.address.state }}" name="private-state" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="State...">
-                                                <input type="text" id="" value="{{ data.0.doctor.private_information.private_contact.address.country }}" name="private-country" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="Country...">
-                                                <input type="text" id="" value="{{ data.0.doctor.private_information.private_contact.address.zip }}" name="private-zip" autocomplete="off" class="w-full text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-700" placeholder="Zip...">
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="flex gap-10 items-center">
-                                    <ul class="w-full justify-start space-y-3 items-center">
-                                        <li>
-                                            <div class="flex gap-10 items-center">
-                                                <label for="private-email-id" class="text-gray-800 w-3/12 dark:text-gray-400 font-semibold text-sm">Private Email</label>
-                                                <input type="email" id="private-email-id" value="{{ data.0.doctor.private_information.private_contact.email }}" name="private-email" autocomplete="off" class="w-9/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="flex gap-10 items-center">
-                                                <label for="private-phone-id" class="text-gray-800 w-3/12 dark:text-gray-400 font-semibold text-sm">Private Phone</label>
-                                                <input type="tel" id="private-phone-id" value="{{ data.0.doctor.private_information.private_contact.phone }}" name="private-phone" autocomplete="off" class="w-9/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="bg-transparent space-y-5 w-1/2">
-                                <p class="text-gray-800 dark:text-gray-400 font-semibold uppercase border-b border-gray-400 text-sm">citizenship</p>
-                                <ul class="space-y-4 items-center">
+                </div>
+                <div id="pi-tab-id" class="tab-content hidden">
+                    <div class="grid grid-cols-2 gap-10 p-5">
+                        <div class="space-y-2">
+                            <p class="w-full text-md font-semibold border-b-2 border-current uppercase">Private Contact</p>
+                            <div class="flex items-start justify-center gap-5">
+                                <p class="w-1/4 font-semibold label">Address</p>
+                                <ul class="w-3/4 space-y-2">
                                     <li>
-                                        <div class="flex gap-10 items-center">
-                                            <label for="nationality-id" class="text-gray-800 w-3/12 dark:text-gray-400 font-semibold text-sm">Nationality</label>
-                                            <input type="text" id="nationality-id" name="nationality" autocomplete="off" value="{{ data.0.doctor.private_information.citizenship.nationality }}" class="w-9/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                        </div>
+                                        <input type="text" id="" name="private-street-1" class="input input-sm px-2 w-full" placeholder="Street 1...">
                                     </li>
                                     <li>
-                                        <div class="flex gap-10 items-center">
-                                            <label for="gender-id" class="text-gray-800 w-3/12 dark:text-gray-400 font-semibold text-sm">Gender</label>
-                                            <select name="gender" id="gender-id" class="w-9/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                                <option value="M" class="bg-gray-800 text-gray-400 font-semibold text-sm" {% if data.0.doctor.private_information.citizenship.gender == M %} selected {% endif %} >Male</option>
-                                                <option value="F" class="bg-gray-800 text-gray-400 font-semibold text-sm" {% if data.0.doctor.private_information.citizenship.gender == F %} selected {% endif %} >Female</option>
-                                            </select>
-                                        </div>
+                                        <input type="text" id="" name="private-street-2" class="input input-sm px-2 w-full" placeholder="Street 2...">
                                     </li>
                                     <li>
-                                        <div class="flex gap-10 items-center">
-                                            <label for="birthdate-id" class="text-gray-800 w-3/12 dark:text-gray-400 font-semibold text-sm">Date of Birth</label>
-                                            <input type="text" id="birthdate-id" name="birthdate" autocomplete="off" value="{{ data.0.doctor.private_information.citizenship.birth_date }}" datepicker datepicker-autoselect-today datepicker-buttons datepicker-autohide datepicker-format="yyyy-mm-dd" class="w-9/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                        </div>
+                                        <input type="text" id="" name="private-city" class="input input-sm px-2 w-full" placeholder="City...">
                                     </li>
-                                    <li>
-                                        <div class="flex gap-10 items-center">
-                                            <label for="birthplace-id" class="text-gray-800 w-3/12 dark:text-gray-400 font-semibold text-sm">Place of Birth</label>
-                                            <input type="text" id="birthplace-id" name="birthplace" autocomplete="off" value="{{ data.0.doctor.private_information.citizenship.birth_place }}" class="w-9/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="flex gap-10 items-center">
-                                            <label for="religion-id" class="text-gray-800 w-3/12 dark:text-gray-400 font-semibold text-sm">Religion</label>
-                                            <input type="text" id="religion-id" name="religion" autocomplete="off" value="{{ data.0.doctor.private_information.citizenship.religion }}" class="w-9/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                        </div>
+                                    <li class="flex items-center justify-center gap-3">
+                                        <input type="text" id="" name="private-state" class="input input-sm px-2 w-full" placeholder="State...">
+                                        <input type="text" id="" name="private-country" class="input input-sm px-2 w-full" placeholder="Country...">
+                                        <input type="text" id="" name="private-zip" class="input input-sm px-2 w-full" placeholder="Zip...">
                                     </li>
                                 </ul>
+                            </div>
+                            <div class="flex items-start justify-between gap-5">
+                                <label for="pvt-email" class="label w-1/4 font-semibold">Private Email</label>
+                                <input type="text" id="pvt-email" name="private-email" class="input input-sm px-2 w-3/4">
+                            </div>
+                            <div class="flex items-start justify-between gap-5">
+                                <label for="pvt-phone" class="label w-1/4 font-semibold">Private Phone</label>
+                                <input type="text" id="pvt-phone" name="private-phone" class="input input-sm px-2 w-3/4" placeholder="+62 " value="+62 ">
                             </div>
                         </div>
-                        <div class="flex gap-10">
-                            <div class="bg-transparent w-1/2 space-y-5">
-                                <p class="text-gray-800 dark:text-gray-400 font-semibold uppercase border-b border-gray-400 text-sm">education</p>
-                                <ul class="space-y-4 items-center">
-                                    <li>
-                                        <div class="flex gap-10 items-center">
-                                            <label for="certification-id" class="text-gray-800 w-4/12 dark:text-gray-400 font-semibold text-sm">Certification Level</label>
-                                            <select name="certification" id="certification-id" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                                <option value="Graduate" class="bg-gray-800 text-gray-400 font-semibold text-sm" {% if data.0.doctor.private_information.education.certification_level == 'Graduate' %} selected {% endif %}>Graduate</option>
-                                                <option value="Bachelor" class="bg-gray-800 text-gray-400 font-semibold text-sm" {% if data.0.doctor.private_information.education.certification_level == 'Bachelor' %} selected {% endif %}>Bachelor</option>
-                                                <option value="Master" class="bg-gray-800 text-gray-400 font-semibold text-sm" {% if data.0.doctor.private_information.education.certification_level == 'Master' %} selected {% endif %}>Master</option>
-                                                <option value="Doctor" class="bg-gray-800 text-gray-400 font-semibold text-sm" {% if data.0.doctor.private_information.education.certification_level == 'Doctor' %} selected {% endif %}>Doctor</option>
-                                                <option value="Other" class="bg-gray-800 text-gray-400 font-semibold text-sm" {% if data.0.doctor.private_information.education.certification_level == 'Other' %} selected {% endif %}>Other</option>
-                                            </select>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="flex gap-10 items-center">
-                                            <label for="field-study-id" class="text-gray-800 w-4/12 dark:text-gray-400 font-semibold text-sm">Field of Study</label>
-                                            <input type="text" id="field-study-id" name="field-study" autocomplete="off" value="{{ data.0.doctor.private_information.education.field_study }}" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="flex gap-10 items-center">
-                                            <label for="school-name-id" class="text-gray-800 w-4/12 dark:text-gray-400 font-semibold text-sm">School Name</label>
-                                            <input type="text" id="school-name-id" name="school-name" autocomplete="off" value="{{ data.0.doctor.private_information.education.school_name }}" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                        </div>
-                                    </li>
-                                </ul>
+                        <div class="space-y-2">
+                            <p class="w-full text-md font-semibold border-b-2 border-current uppercase">Citizenship</p>
+                            <div class="flex items-start justify-between gap-5">
+                                <label for="ntl" class="label w-1/4 font-semibold">Nationality</label>
+                                <input type="text" id="ntl" name="nationality" class="input input-sm px-2 w-3/4">
                             </div>
-                            <div class="bg-transparent w-1/2 space-y-5">
-                                <p class="text-gray-800 dark:text-gray-400 font-semibold uppercase border-b border-gray-400 text-sm">Family Status</p>
-                                <ul class="space-y-4 items-center">
-                                    <li>
-                                        <div class="flex gap-10 items-center">
-                                            <label for="marital-id" class="text-gray-800 w-4/12 dark:text-gray-400 font-semibold text-sm">Marital Status</label>
-                                            <select name="marital" id="marital-id" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                                <option value="Single" class="bg-gray-800 text-gray-400 font-semibold text-sm" {% if data.0.doctor.private_information.family.marital_status == 'Single' %} selected {% endif %}>Single</option>
-                                                <option value="Married" class="bg-gray-800 text-gray-400 font-semibold text-sm" {% if data.0.doctor.private_information.family.marital_status == 'Married' %} selected {% endif %}>Married</option>
-                                                <option value="Legal Cohabit" class="bg-gray-800 text-gray-400 font-semibold text-sm" {% if data.0.doctor.private_information.family.marital_status == 'Legal Cohabit' %} selected {% endif %}>Legal Cohabit</option>
-                                                <option value="Widower" class="bg-gray-800 text-gray-400 font-semibold text-sm" {% if data.0.doctor.private_information.family.marital_status == 'Widower' %} selected {% endif %}>Widower</option>
-                                                <option value="Divorced" class="bg-gray-800 text-gray-400 font-semibold text-sm" {% if data.0.doctor.private_information.family.marital_status == 'Divorced' %} selected {% endif %}>Divorced</option>
-                                            </select>
-                                        </div>
-                                    </li>
-                                </ul>
+                            <div class="flex items-start justify-between gap-5">
+                                <label for="gdr" class="label w-1/4 font-semibold">Gender</label>
+                                <input type="text" id="gdr" name="gender" class="input input-sm px-2 w-3/4" list="" required>
+                            </div>
+                            <div class="flex items-start justify-between gap-5">
+                                <label for="brth" class="label w-1/4 font-semibold">Date of Birth</label>
+                                <input type="date" id="brth" name="birthday" class="input input-sm px-2 w-3/4">
+                            </div>
+                            <div class="flex items-start justify-between gap-5">
+                                <label for="brthplc" class="label w-1/4 font-semibold">Place of Birth</label>
+                                <input type="text" id="brthplc" name="birthplace" class="input input-sm px-2 w-3/4">
+                            </div>
+                            <div class="flex items-start justify-between gap-5">
+                                <label for="rlgn" class="label w-1/4 font-semibold">Religion</label>
+                                <input type="text" id="rlgn" name="religion" class="input input-sm px-2 w-3/4">
                             </div>
                         </div>
-                        <div class="flex gap-10">
-                            <div class="bg-transparent w-1/2 space-y-5">
-                                <p class="text-sm font-semibold border-b border-gray-400 text-gray-800 dark:text-gray-400 text-sm">Spouse</p>
-                                <ul class="w-full space-y-5" id="spouse-id">
-                                    <li>
-                                        <button data-modal-target="spouse-modal" data-modal-toggle="spouse-modal" type="button" class="text-gray-800 dark:text-gray-400 font-semibold text-sm hover:underline hover:text-blue-600 flex items-center">
-                                            <svg class="w-5 h-5 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 12h14m-7 7V5"/>
-                                            </svg>
-                                            Spouse
-                                        </button>
-                                    </li>
-                                </ul>
+                        <div class="space-y-2">
+                            <p class="w-full text-md font-semibold border-b-2 border-current uppercase">Education</p>
+                            <div class="flex items-start justify-between gap-5">
+                                <label for="cert-level" class="label w-1/4 font-semibold">Cert. Level</label>
+                                <input type="text" id="cert-level" name="certfification-level" list="" class="input input-sm px-2 w-3/4">
                             </div>
-                            <div class="bg-transparent w-1/2 space-y-5">
-                                <p class="text-sm font-semibold border-b border-gray-400 text-gray-800 dark:text-gray-400 text-sm">Children</p>
-                                <ul class="w-full space-y-5" id="children-id">
-                                    <li>
-                                        <button type="button" data-modal-target="children-modal" data-modal-toggle="children-modal" class="text-gray-800 dark:text-gray-400 font-semibold text-sm hover:underline hover:text-blue-600 flex items-center">
-                                            <svg class="w-5 h-5 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 12h14m-7 7V5"/>
-                                            </svg>
-                                            Children
-                                        </button>
-                                    </li>
-                                </ul>
+                            <div class="flex items-start justify-between gap-5">
+                                <label for="fos" class="label w-1/4 font-semibold">Field of Study</label>
+                                <input type="text" id="fos" name="field-of-study" class="input input-sm px-2 w-3/4" required>
+                            </div>
+                            <div class="flex items-start justify-between gap-5">
+                                <label for="sch-name" class="label w-1/4 font-semibold">School Name</label>
+                                <input type="text" id="sch-name" name="school-name" class="input input-sm px-2 w-3/4">
                             </div>
                         </div>
-                    </div>
-                    <div id="additional-information" role="tabpanel" aria-labelledby="add-id" class="hidden p-1 my-5 space-y-10 rounded-sm bg-transparent text-gray-800 dark:text-gray-400 font-semibold">
-                        <div class="flex gap-10">
-                            <div class="bg-transparent space-y-5 w-1/2">
-                                <p class="text-gray-800 dark:text-gray-400 border-b border-gray-400 font-semibold text-sm uppercase">Hobbies</p>
-                                <ul class="w-full space-y-3 my-5" id="hobbies-id">
-                                    <li>
-                                        <button type="button" id="add-hobby" class="text-gray-800 dark:text-gray-400 font-semibold text-sm hover:underline hover:text-blue-600 flex items-center">
-                                            <svg class="w-5 h-5 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 12h14m-7 7V5"/>
-                                            </svg>
-                                            Hobby
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="bg-transparent space-y-5 w-1/2">
-                                <p class="text-gray-800 dark:text-gray-400 border-b border-gray-400 font-semibold text-sm uppercase">Interest</p>
-                                <ul class="w-full space-y-3 my-5" id="interest-id">
-                                    <li>
-                                        <button type="button" id="add-interest" class="text-gray-800 dark:text-gray-400 font-semibold text-sm hover:underline hover:text-blue-600 flex items-center">
-                                            <svg class="w-5 h-5 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 12h14m-7 7V5"/>
-                                            </svg>
-                                            Interest
-                                        </button>
-                                    </li>
-                                </ul>
+                        <div class="space-y-2">
+                            <p class="w-full text-md font-semibold border-b-2 border-current uppercase">Family Status</p>
+                            <div class="flex items-start justify-between gap-5">
+                                <label for="mrtl-sts" class="label w-1/4 font-semibold">Marital Status</label>
+                                <input type="text" id="mrtl-sts" name="marital-status" list="" class="input input-sm px-2 w-3/4">
                             </div>
                         </div>
-                        <div class="flex gap-10">
-                            <div class="bg-transparent space-y-5 w-1/2">
-                                <p class="text-gray-800 dark:text-gray-400 border-b border-gray-400 font-semibold text-sm uppercase">Social Media</p>
-                                <ul class="w-full space-y-3 my-5" id="sosmed-id">
-                                    <li>
-                                        <button type="button" id="add-sosmed" class="text-gray-800 dark:text-gray-400 font-semibold text-sm hover:underline hover:text-blue-600 flex items-center">
-                                            <svg class="w-5 h-5 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 12h14m-7 7V5"/>
-                                            </svg>
-                                            Social Media
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="bg-transparent space-y-5 w-1/2">
-                            </div>
-                        </div>
-                    </div>
-                    <div id="branch-information" role="tabpanel" aria-labelledby="br-id" class="hidden p-1 my-5 space-y-10 rounded-sm bg-transparent text-gray-800 dark:text-gray-400 font-semibold">
-                        <ul class="flex grid grid-cols-3 gap-5" id="branch-list">
-                            <li>
-                                <button id="new-branch" data-modal-target="branch-modal" data-modal-toggle="branch-modal" class="hover:underline hover:text-blue-600 w-auto text-sm flex items-center" type="button">
-                                    <svg class="w-5 h-5 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 12h14m-7 7V5"/>
+                        <div class="space-y-2">
+                            <p class="w-full text-md font-semibold border-b-2 border-current uppercase">Spouse</p>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Birth</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sps-list">
+                                </tbody>
+                            </table>
+                            <div id="btn-sps" class="flex items-start justify-start gap-5">
+                                <button type="button" onclick="spouse_modal.showModal()" class="btn btn-primary py-4 px-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                     </svg>
-                                    Branch
+                                    Spouse
                                 </button>
-                            </li>
-                        </ul>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="w-full text-md font-semibold border-b-2 border-current uppercase">Children</p>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Birth</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="chldrn-list">
+                                </tbody>
+                            </table>
+                            <div id="btn-chldrn" class="flex items-start justify-start gap-5">
+                                <button type="button" onclick="children_modal.showModal()" class="btn btn-primary py-4 px-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>                                      
+                                    Children
+                                </button>
+                            </div>
+                        </div>
+                        <dialog id="children_modal" class="modal">
+                            <div class="modal-box w-11/12 max-w-5xl glass ">
+                                <h3 class="text-lg font-bold">Children</h3>
+                                <div class="modal-action w-full">
+                                    <form id="chld-form" class="w-full">
+                                        <div class="w-full space-y-5">
+                                            <div class="flex items-center justify-start gap-10 w-full">
+                                                <div class="flex items-center justify-between w-1/2 gap-5">
+                                                    <label for="chld-frst-nm" class="w-1/4">First Name</label>
+                                                    <input type="text" id="chld-frst-nm" name="chldrn_frst_nm" class="input input-sm px-2 w-3/4">
+                                                </div>
+                                                <div class="flex items-center justify-between w-1/2 gap-5">
+                                                    <label for="chld-fll-nm" class="w-1/4">Full Name</label>
+                                                    <input type="text" id="chld-fll-nm" name="chldrn_fll_nm" class="input input-sm px-2 w-3/4">
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-start gap-10 w-full">
+                                                <div class="flex items-center justify-between w-1/2 gap-5">
+                                                    <label for="chld-mdl-nm" class="w-1/4">Middle Name</label>
+                                                    <input type="text" id="chld-mdl-nm" name="chldrn_mdl_nm" class="input input-sm px-2 w-3/4">
+                                                </div>
+                                                <div class="flex items-center justify-between w-1/2 gap-5">
+                                                    <label for="chld-phon" class="w-1/4">Phone</label>
+                                                    <input type="text" id="chld-phon" name="chldrn_phn" class="input input-sm px-2 w-3/4" placeholder="+62 " value="+62 ">
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-start gap-10 w-full">
+                                                <div class="flex items-center justify-between w-1/2 gap-5">
+                                                    <label for="chld-lst-nm" class="w-1/4">Last Name</label>
+                                                    <input type="text" id="chld-lst-nm" name="chldrn_lst_nm" class="input input-sm px-2 w-3/4">
+                                                </div>
+                                                <div class="flex items-center justify-between w-1/2 gap-5">
+                                                    <label for="chld-brth" class="w-1/4">Birth Day</label>
+                                                    <input type="date" id="chld-brth" name="chldrn_brth" class="input input-sm px-2 w-3/4">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="mt-10 flex items-center justify-end gap-10">
+                                    <button id="chldrn-btn-cls" type="button" class="btn btn-xs py-4 px-2" onclick="children_modal.close()">Close</button>
+                                    <button id="chldrn-btn-sbmt" type="button" class="btn btn-xs py-4 px-2" onclick="children_modal.close()">Submit</button>
+                                </div>
+                            </div>
+                        </dialog>
+                        <dialog id="spouse_modal" class="modal">
+                            <div class="modal-box w-11/12 max-w-5xl glass ">
+                                <h3 class="text-lg font-bold">Spouse</h3>
+                                <div class="modal-action w-full">
+                                    <form id="sps-form-id" class="w-full">
+                                        <div class="w-full space-y-5">
+                                            <div class="flex items-center justify-start gap-10 w-full">
+                                                <div class="flex items-center justify-between w-1/2 gap-5">
+                                                    <label for="sps-frst-nm" class="w-1/4">First Name</label>
+                                                    <input type="text" id="sps-frst-nm" name="sps_frst_nm" class="input input-sm px-2 w-3/4">
+                                                </div>
+                                                <div class="flex items-center justify-between w-1/2 gap-5">
+                                                    <label for="sps-mrg-dt" class="w-1/4">Mariage Date</label>
+                                                    <input type="date" id="sps-mrg-dt" name="mrg_dt" class="input input-sm px-2 w-3/4">
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-start gap-10 w-full">
+                                                <div class="flex items-center justify-between w-1/2 gap-5">
+                                                    <label for="sps-mdl-nm" class="w-1/4">Middle Name</label>
+                                                    <input type="text" id="sps-mdl-nm" name="sps_mddl_nm" class="input input-sm px-2 w-3/4">
+                                                </div>
+                                                <div class="flex items-center justify-between w-1/2 gap-5">
+                                                    <label for="sps-phon" class="w-1/4">Phone</label>
+                                                    <input type="text" id="sps-phon" name="sps_phn" class="input input-sm px-2 w-3/4" placeholder="+62 " value="+62 ">
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-start gap-10 w-full">
+                                                <div class="flex items-center justify-between w-1/2 gap-5">
+                                                    <label for="sps-lst-nm" class="w-1/4">Last Name</label>
+                                                    <input type="text" id="sps-lst-nm" name="sps_lst_nm" class="input input-sm px-2 w-3/4">
+                                                </div>
+                                                <div class="flex items-center justify-between w-1/2 gap-5">
+                                                    <label for="sps-brth" class="w-1/4">Birth Day</label>
+                                                    <input type="date" id="sps-brth" name="sps_birth" class="input input-sm px-2 w-3/4">
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center justify-start gap-10 w-full">
+                                                <div class="flex items-center justify-between w-1/2 gap-5">
+                                                    <label for="sps-fll-nm" class="w-1/4">Full Name</label>
+                                                    <input type="text" id="sps-fll-nm" name="sps_fll_nm" class="input input-sm px-2 w-3/4">
+                                                </div>
+                                                <div class="flex items-center justify-between w-1/2 gap-5">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="mt-10 flex items-center justify-end gap-10">
+                                    <button id="sps-btn-cls" type="button" class="btn btn-xs py-4 px-2" onclick="spouse_modal.close()">Close</button>
+                                    <button id="sps-btn-sbmt" type="button" class="btn btn-xs py-4 px-2" onclick="spouse_modal.close()">Submit</button>
+                                </div>
+                            </div>
+                        </dialog>
                     </div>
                 </div>
             </div>
         </form>
     </div>
+    <div class="w-3/12">
+        <!-- Log Activity -->
+    </div>
 </section>
-<div id="spouse-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-4 w-full max-w-3xl max-h-full">
-        <!-- Modal content -->
-        <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
-            <!-- Modal header -->
-            <div class="flex items-center justify-center p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                    New Spouse
-                </h3>
-            </div>
-            <!-- Modal body -->
-            <div class="p-4 md:p-5 flex gap-10">
-                <ul class="space-y-4 w-1/2 items-center">
-                    <li>
-                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
-                            <label for="wife-firstname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">First Name</label>
-                            <input type="text" id="wife-firstname-id" name="wife-firstname" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
-                            <label for="wife-middlename-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Middle Name</label>
-                            <input type="text" id="wife-middlename-id" name="wife-middlename" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
-                            <label for="wife-lastname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Last Name</label>
-                            <input type="text" id="wife-lastname-id" name="wife-lastname" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
-                            <label for="wife-phone-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Phone</label>
-                            <input type="tel" id="wife-phone-id" name="wife-phone" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                        </div>
-                    </li>
-                </ul>
-                <ul class="space-y-4 w-1/2 items-center">
-                    <li>
-                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
-                            <label for="mariage-date-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Mariage Date</label>
-                            <input type="text" datepicker datepicker-buttons datepicker-autoselect-today datepicker-autohide datepicker-format="yyyy-mm-dd" id="mariage-date-id" name="mariage-date" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
-                            <label for="wife-fullname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Full Name</label>
-                            <input type="text" id="wife-fullname-id" name="wife-fullname" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
-                            <label for="wife-birthday-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Birth Day</label>
-                            <input type="text" id="wife-birthday-id" name="wife-birthday" datepicker datepicker-autohide datepicker-buttons datepicker-autoselect-today datepicker-format="yyyy-mm-dd" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <!-- Modal footer -->
-            <div class="flex items-center justify-start gap-5 p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                <button type="button" id="spouse-modal-submit" data-modal-hide="spouse-modal" class="border-2 border-gray-400 text-gray-800 dark:text-gray-400 font-semibold text-sm py-1 px-2 rounded-md bg-gray-700 hover:bg-gray-400 hover:border-gray-800 hover:text-gray-800">Submit</button>
-                <button type="button" id="spouse-modal-cancel" data-modal-hide="spouse-modal" class="border-2 border-gray-400 text-gray-800 dark:text-gray-400 font-semibold text-sm py-1 px-2 rounded-md bg-gray-700 hover:bg-red-500 hover:border-gray-800 hover:text-gray-800">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="children-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-4 w-full max-w-3xl max-h-full">
-        <!-- Modal content -->
-        <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
-            <!-- Modal header -->
-            <div class="flex items-center justify-center p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                    New Children
-                </h3>
-            </div>
-            <!-- Modal body -->
-            <div class="p-4 md:p-5 flex gap-10">
-                <ul class="space-y-4 w-1/2 items-center">
-                    <li>
-                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
-                            <label for="children-firstname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">First Name</label>
-                            <input type="text" id="children-firstname-id" name="children-firstname" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
-                            <label for="children-middlename-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Middle Name</label>
-                            <input type="text" id="children-middlename-id" name="children-middlename" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
-                            <label for="children-lastname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Last Name</label>
-                            <input type="text" id="children-lastname-id" name="children-lastname" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                        </div>
-                    </li>
-                </ul>
-                <ul class="space-y-4 w-1/2 items-center">
-                    <li>
-                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
-                            <label for="children-fullname-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Full Name</label>
-                            <input type="text" id="children-fullname-id" name="children-fullname" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
-                            <label for="children-birthday-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Birth Day</label>
-                            <input type="text" id="children-birthday-id" name="children-birthday" datepicker datepicker-autohide datepicker-buttons datepicker-autoselect-today datepicker-format="yyyy-mm-dd" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
-                            <label for="children-phone-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Phone</label>
-                            <input type="tel" id="children-phone-id" name="children-phone" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <!-- Modal footer -->
-            <div class="flex items-center justify-start gap-5 p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                <button type="button" id="children-modal-submit" data-modal-hide="children-modal" class="border-2 border-gray-400 text-gray-800 dark:text-gray-400 font-semibold text-sm py-1 px-2 rounded-md bg-gray-700 hover:bg-gray-400 hover:border-gray-800 hover:text-gray-800">Submit</button>
-                <button type="button" id="children-modal-cancel" data-modal-hide="children-modal" class="border-2 border-gray-400 text-gray-800 dark:text-gray-400 font-semibold text-sm py-1 px-2 rounded-md bg-gray-700 hover:bg-red-500 hover:border-gray-800 hover:text-gray-800">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="branch-modal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-4 w-full max-w-3xl max-h-full">
-        <!-- Modal content -->
-        <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
-            <!-- Modal header -->
-            <div class="flex items-center justify-center p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                    New Branch
-                </h3>
-            </div>
-            <!-- Modal body -->
-            <div class="p-4 md:p-5 flex gap-10">
-                <ul class="space-y-4 w-1/2 items-center">
-                    <li>
-                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
-                            <label for="branch-name-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Branch Name</label>
-                            <input type="text" id="branch-name-id" name="branch-name" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                        </div>
-                    </li>
-                    <li>
-                        <div class="flex gap-10 text-gray-800 dark:text-gray-400 items-center">
-                            <label for="established-date-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Established Date</label>
-                            <input type="text" id="established-date-id" name="established-date" datepicker datepicker-autoselect-today datepicker-autohide datepicker-buttons datepicker-format="yyyy-mm-dd" autocomplete="off" class="w-8/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                        </div>
-                    </li>
-                </ul>
-                <ul class="space-y-4 w-1/2 items-center">
-                    <li>
-                        <div class="flex gap-10 text-gray-800 dark:text-gray-400">
-                            <label for="branch-address-id" class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-4/12">Full Address</label>
-                            <textarea name="branch-address" id="branch-address-id" class="w-8/12 text-sm justify-start thin-scrollbar bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800"></textarea>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <!-- Modal footer -->
-            <div class="flex items-center justify-start gap-5 p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                <button type="button" id="branch-modal-submit" data-modal-hide="branch-modal" class="border-2 border-gray-400 text-gray-800 dark:text-gray-400 font-semibold text-sm py-1 px-2 rounded-md bg-gray-700 hover:bg-gray-400 hover:border-gray-800 hover:text-gray-800">Submit</button>
-                <button type="button" id="branch-modal-cancel" data-modal-hide="branch-modal" class="border-2 border-gray-400 text-gray-800 dark:text-gray-400 font-semibold text-sm py-1 px-2 rounded-md bg-gray-700 hover:bg-red-500 hover:border-gray-800 hover:text-gray-800">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
-<script>
-    $(document).ready(function() {
-        let rowCount = $('#spouse-id li').length - 1;
-        console.log(rowCount);
-
-        $('#spouse-modal-submit').on('click', function() {
-            rowCount++;
-            console.log(rowCount);
-
-            var s_firstname = $('#wife-firstname-id').val() ? $('#wife-firstname-id').val() : "None";
-            var s_middlename = $('#wife-middlename-id').val() ? $('#wife-middlename-id').val() : "None";
-            var s_lastname = $('#wife-lastname-id').val() ? $('#wife-lastname-id').val() : "None";
-            var s_fullname = $('#wife-fullname-id').val() ? $('#wife-fullname-id').val() : "None";
-            var s_birthday = $('#wife-birthday-id').val() ? $('#wife-birthday-id').val() : "None";
-            var s_phone = $('#wife-phone-id').val() ? $('#wife-phone-id').val() : "None";
-            var s_mariage_date = $('#mariage-date-id').val() ? $('#mariage-date-id').val() : "None";
-
-            let newItem = `
-            <li class="text-gray-800 dark:text-gray-400 font-semibold text-sm border-b border-gray-400">
-                <input type="text" class="hidden" name="spouse-firstname[]" value="${s_firstname}">
-                <input type="text" class="hidden" name="spouse-middlename[]" value="${s_middlename}">
-                <input type="text" class="hidden" name="spouse-lastname[]" value="${s_lastname}">
-                <input type="text" class="hidden" name="spouse-fullname[]" value="${s_fullname}">
-                <input type="text" class="hidden" name="spouse-birthday[]" value="${s_birthday}">
-                <input type="text" class="hidden" name="spouse-phone[]" value="${s_phone}">
-                <input type="text" class="hidden" name="spouse-mariage[]" value="${s_mariage_date}">
-                <div class="flex gap-5">
-                    <p class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-1/2">
-                    ${s_fullname}
-                    </p>
-                    <button id="remove-spouse" type="button" class="text-gray-800 dark:text-gray-400 font-semibold text-sm hover:underline hover:text-blue-600">Remove Row</button>
-                </div>
-            </li>
-            `;
-
-            let lastItem = $('#spouse-id li').last();
-
-            if (lastItem.length) {
-                $(newItem).insertBefore(lastItem);
-            } else {
-                $('#spouse-id').append(newItem);
-            }
-
-            $('#wife-firstname-id').val('');
-            $('#wife-middlename-id').val('');
-            $('#wife-lastname-id').val('');
-            $('#wife-fullname-id').val('');
-            $('#wife-birthday-id').val('');
-            $('#wife-phone-id').val('');
-
-        });
-
-        $(document).on('click', '#remove-spouse', function() {
-            $(this).closest('li').remove();
-            rowCount--;
-        });
-    });
-
-    $(document).ready(function() {
-        let crowCount = $('#children-id li').length - 1;
-        console.log(crowCount);
-
-        $('#children-modal-submit').on('click', function() {
-            crowCount++;
-            console.log(crowCount);
-
-            var c_firstname = $('#children-firstname-id').val() ? $('#children-firstname-id').val() : "None";
-            var c_middlename = $('#children-middlename-id').val() ? $('#children-middlename-id').val() : "None";
-            var c_lastname = $('#children-lastname-id').val() ? $('#children-lastname-id').val() : "None";
-            var c_fullname = $('#children-fullname-id').val() ? $('#children-fullname-id').val() : "None";
-            var c_birthday = $('#children-birthday-id').val() ? $('#children-birthday-id').val() : "None";
-            var c_phone = $('#children-phone-id').val() ? $('#children-phone-id').val() : "None";
-
-            let newItem = `
-            <li class="text-gray-800 dark:text-gray-400 font-semibold text-sm border-b border-gray-400">
-                <input type="text" class="hidden" name="children-firstname[]" value="${c_firstname}">
-                <input type="text" class="hidden" name="children-middlename[]" value="${c_middlename}">
-                <input type="text" class="hidden" name="children-lastname[]" value="${c_lastname}">
-                <input type="text" class="hidden" name="children-fullname[]" value="${c_fullname}">
-                <input type="text" class="hidden" name="children-birthday[]" value="${c_birthday}">
-                <input type="text" class="hidden" name="children-phone[]" value="${c_phone}">
-                <div class="flex gap-5">
-                    <p class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-1/2">
-                    ${c_fullname}
-                    </p>
-                    <button id="remove-children" type="button" class="text-gray-800 dark:text-gray-400 font-semibold text-sm hover:underline hover:text-blue-600">Remove Row</button>
-                </div>
-            </li>
-            `;
-
-            let lastItem = $('#children-id li').last();
-
-            if (lastItem.length) {
-                $(newItem).insertBefore(lastItem);
-            } else {
-                $('#children-id').append(newItem);
-            }
-
-            $('#children-firstname-id').val('');
-            $('#children-middlename-id').val('');
-            $('#children-lastname-id').val('');
-            $('#children-fullname-id').val('');
-            $('#children-birthday-id').val('');
-            $('#children-phone-id').val('');
-
-        });
-
-        $(document).on('click', '#remove-children', function() {
-            $(this).closest('li').remove();
-            crowCount--;
-        });
-    });
-
-    $(document).ready(function() {
-        let browCount = $('#branch-list li').length - 1;
-        console.log(browCount);
-
-        $('#branch-modal-submit').on('click', function() {
-            browCount++;
-            console.log(browCount);
-
-            var b_name = $('#branch-name-id').val() ? $('#branch-name-id').val() : "None";
-            var b_established_date = $('#established-date-id').val() ? $('#established-date-id').val() : "None";
-            var b_address = $('#branch-address-id').val() ? $('#branch-address-id').val() : "None";
-
-            let newItem = `
-            <li>
-                <div class="p-2 rounded-sm dark:bg-gray-800 bg-gray-400 dark:text-gray-400 text-gray-800 font-semibold capitalize border-2 dark:border-gray-400 border-gray-800">
-                    <ul>
-                        <li>
-                            <div class="flex gap-5 items-center">
-                                <p class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-2/4">Branch Name</p>
-                                <p class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-2/4">: ${b_name}</p>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="flex gap-5 items-center">
-                                <p class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-2/4">Established Date</p>
-                                <p class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-2/4">: ${b_established_date}</p>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="flex gap-5 items-center">
-                                <p class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-2/4">Address</p>
-                                <p class="text-gray-800 dark:text-gray-400 font-semibold text-sm w-2/4">: ${b_address}</p>
-                                <input type="text" class="hidden" name="branch-name[]" value="${b_name}">
-                                <input type="text" class="hidden" name="established-date[]" value="${b_established_date}">
-                                <input type="text" class="hidden" name="branch-address[]" value="${b_address}">
-                            </div>
-                        </li>
-                        <li>
-                            <button id="remove-branch" type="button" class="text-gray-800 mt-2 dark:text-gray-400 font-semibold text-sm font-semibold hover:underline hover:text-blue-600">Remove (-)</button>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            `;
-
-            let lastItem = $('#branch-list li').last();
-
-            if (lastItem.length) {
-                $(newItem).insertBefore(lastItem);
-            } else {
-                $('#branch-list').append(newItem);
-            }
-
-            $('#branch-name-id').val('');
-            $('#established-date-id').val('');
-            $('#branch-address-id').val('');
-
-        });
-
-        $(document).on('click', '#remove-branch', function() {
-            $(this).parent().parent().parent().parent().remove();
-            browCount--;
-        });
-    })
-
-    $(document).ready(function() {
-        let hrowCount = $('#hobbies-id li').length - 1;
-        console.log(hrowCount);
-
-        $('#add-hobby').on('click', function() {
-            hrowCount++;
-            console.log(hrowCount);
-
-            let newItem = `
-            <li>
-                <div class="flex gap-5 items-center">
-                    <input type="text" id="hobbies-id" name="category-hobbies[]" autocomplete="off" class="w-5/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-600" placeholder="Kategori...">
-                    <input type="text" id="hobbies-id" name="hobbies[]" autocomplete="off" class="w-5/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-600" placeholder="Hobby Name...">
-                    <button class="text-gray-800 dark:text-gray-400 font-semibold hover:underline justify-end mt-2 w-2/12 hover:text-blue-600 text-xs" id="remove-hobby">Remove</button>
-                </div>
-            </li>
-            `;
-
-            let lastItem = $('#hobbies-id li').last();
-            if (lastItem.length) {
-                $(newItem).insertBefore(lastItem);
-            } else {
-                $('#hobbies-id').append(newItem);
-            }
-        });
-
-        $(document).on('click', '#remove-hobby', function() {
-            $(this).closest('li').remove();
-            hrowCount--;
-        });
-
-    });
-
-    $(document).ready(function() {
-        let irowCount = $('#interest-id li').length - 1;
-        console.log(irowCount);
-
-        $('#add-interest').on('click', function() {
-            irowCount++;
-            console.log(irowCount);
-
-            let newItem = `
-            <li>
-                <div class="flex gap-5 items-center">
-                    <input type="text" id="hobbies-id" name="category-interest[]" autocomplete="off" class="w-5/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-600" placeholder="Category Interest...">
-                    <input type="text" id="hobbies-id" name="interest[]" autocomplete="off" class="w-5/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-600" placeholder="Interest Name...">
-                    <button class="text-gray-800 dark:text-gray-400 font-semibold hover:underline w-2/12 hover:text-blue-600 text-sm" id="remove-interest">Remove</button>
-                </div>    
-            </li>
-            `;
-
-            let lastItem = $('#interest-id li').last();
-            if (lastItem.length) {
-                $(newItem).insertBefore(lastItem);
-            } else {
-                $('#interest-id').append(newItem);
-            }
-        });
-
-        $(document).on('click', '#remove-interest', function() {
-            $(this).closest('li').remove();
-            irowCount--;
-        });
-    });
-
-    $(document).ready(function() {
-        let irowCount = $('#sosmed-id li').length - 1;
-        console.log(irowCount);
-
-        $('#add-sosmed').on('click', function() {
-            irowCount++;
-            console.log(irowCount);
-
-            let newItem = `
-            <li>
-                <div class="flex gap-5 items-center">
-                    <input type="text" id="hobbies-id" name="category-sosmed[]" autocomplete="off" class="w-5/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-600" placeholder="Socmed Name...">
-                    <input type="text" id="hobbies-id" name="sosmed[]" autocomplete="off" class="w-5/12 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800 placeholder:text-gray-600" placeholder="Account Name...">
-                    <button class="text-gray-800 dark:text-gray-400 font-semibold hover:underline w-2/12 hover:text-blue-600 text-sm" id="remove-sosmed">Remove</button>
-                </div>    
-            </li>
-            `;
-
-            let lastItem = $('#sosmed-id li').last();
-            if (lastItem.length) {
-                $(newItem).insertBefore(lastItem);
-            } else {
-                $('#sosmed-id').append(newItem);
-            }
-        });
-
-        $(document).on('click', '#remove-sosmed', function() {
-            $(this).closest('li').remove();
-            irowCount--;
-        });
-    });
-</script>
-{% endblock %}
+{% endblock main %}

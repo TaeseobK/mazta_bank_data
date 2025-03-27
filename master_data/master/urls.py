@@ -15,7 +15,7 @@ urlpatterns = [
     path('grade-user-list/', views.gu_list, name='gu_list'),
     path('title-list/', views.title_list, name='title_list'),
     path('salutation-list/', views.salutation_list, name='salutation_list'),
-    path('specialists/', views.specialists, name='specialists'),
+    path('specialists/', views.specialists, name='specialist_list'),
 
     #New Page
     path('grade-clinic-list/new/', views.new_gc, name='new_gc'),

@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from django.http import JsonResponse, Http404
 from .models import *
+from django.urls import reverse
 import requests
 from functools import wraps
 from datetime import datetime
@@ -99,6 +100,7 @@ def logout(request) :
         
         else :
             return JsonResponse({'error' : 'Logout Gagal, Coba lagi nanti...'})
+
 @api_login_required
 @admin_required
 def gc_list(request) :
@@ -138,7 +140,9 @@ def gc_list(request) :
     return render(request, 'master_pages/gc_list.html', {
         'title' : 'Grade Clinic',
         'page_name' : 'Grade Clinic',
-        'page_obj' : page_obj
+        'page_obj' : page_obj,
+        'api' : "False",
+        'new_url' : reverse('master:new_gc')
     })
 
 @api_login_required
@@ -149,29 +153,23 @@ def new_gc(request) :
         metode = request.POST['metode']
 
         if metode == 'post' :
-            name = request.POST['name']
-            alias = request.POST['alias']
-            min_v = request.POST['min']
-            max_v = request.POST['max']
-            desc = request.POST['desc']
+            name = request.POST.get('name')
+            alias = request.POST.get('alias')
+            max_value = request.POST.get('max-value')
+            min_value = request.POST.get('min-value')
+            desc = request.POST.get('description', '')
 
-            range = {
-                'min' : int(min_v),
-                'max' : int(max_v)
+            range_clinic = {
+                'max_value' : int(max_value),
+                'min_value' : int(min_value),
             }
 
-            descrip = {
-                'alias' : alias,
-                'description' : desc
-            }
-
-            new_clinic = ClinicGrade.objects.using('master').create(
-                name=name,
-                range_clinic=json.dumps(range),
-                description = json.dumps(descrip)
-            )
-
-            new_clinic.save()
+            ClinicGrade.objects.using('master').create(
+                name=str(name).title(),
+                alias=str(alias).title(),
+                range_clinic=json.dumps(range_clinic),
+                description=desc
+            ).save()
 
             return redirect('master:gc_list')
 
@@ -290,7 +288,9 @@ def gu_list(request) :
     return render(request, 'master_pages/gu_list.html', {
         'title' : 'Grade User List',
         'page_name' : 'Grade User List',
-        'page_obj' : page_obj
+        'page_obj' : page_obj,
+        'api' : "False",
+        'new_url' : reverse('master:new_gu')
     })
 
 @api_login_required
@@ -300,37 +300,31 @@ def new_gu(request) :
         metode = request.POST['metode']
 
         if metode == 'post' :
-            name = request.POST['name']
-            alias = request.POST['alias']
-            min_v = request.POST['min']
-            max_v = request.POST['max']
-            desc = request.POST['desc']
-            min_m = request.POST['min-measure']
-            max_m = request.POST['max-measure']
+            name = request.POST.get('name')
+            alias = request.POST.get('alias')
+            max_value = request.POST.get('max-value')
+            max_measure = request.POST.get('max-measure')
+            min_value = request.POST.get('min-value')
+            min_measure = request.POST.get('min-measure')
+            desc = request.POST.get('description', '')
 
-            range = {
-                'min' : {
-                    'value' : int(min_v),
-                    'measure' : min_m
-                },
+            range_user = {
                 'max' : {
-                    'value' : int(max_v),
-                    'measure' : max_m
+                    'measure' : str(max_measure),
+                    'value' : int(max_value)
+                },
+                'min' : {
+                    'measure' : str(min_measure),
+                    'value' : int(min_value)
                 }
             }
 
-            descp = {
-                'alias' : alias,
-                'description' : desc
-            }
-
-            gu_new = UserGrade.objects.using('master').create(
-                name=name,
-                range_user=json.dumps(range),
-                description=json.dumps(descp)
-            )
-
-            gu_new.save()
+            UserGrade.objects.using('master').create(
+                name=str(name).title(),
+                alias=str(alias).title(),
+                range_user=json.dumps(range_user),
+                description=desc
+            ).save()
 
             return redirect('master:gu_list')
 
@@ -426,7 +420,9 @@ def title_list(request) :
     return render(request, 'master_pages/title_list.html', {
         'title' : 'Title List',
         'page_name' : 'Title List',
-        'page_obj' : page_obj
+        'page_obj' : page_obj,
+        'api' : "False",
+        'new_url' : reverse('master:new_title')
     })
 
 @api_login_required
@@ -437,22 +433,20 @@ def new_title(request) :
         metode = request.POST['metode']
 
         if metode == 'post' :
-            short_name = request.POST['short']
-            full_name = request.POST['full']
-            desc = request.POST['desc']
+            short_name = request.POST.get('short-name')
+            full_name = request.POST.get('full-name')
+            description = request.POST.get('description', '')
 
             if Title.objects.using('master').filter(name=full_name).exists() or Title.objects.using('master').filter(short_name=short_name).exists() :
                 return redirect('master:new_title')
             
             else :
 
-                new_title = Title.objects.using('master').create(
-                    name=full_name,
-                    short_name=short_name,
-                    description=desc
-                )
-
-                new_title.save()
+                Title.objects.using('master').create(
+                    name=str(full_name).title(),
+                    short_name=str(short_name).title(),
+                    description=description
+                ).save()
 
                 return redirect('master:title_list')
         
@@ -537,7 +531,9 @@ def salutation_list(request) :
     return render(request, 'master_pages/salutation_list.html', {
         'title' : 'Salutations',
         'page_name' : 'Salutations',
-        'page_obj' : page_obj
+        'api' : "False",
+        'page_obj' : page_obj,
+        'new_url' : reverse('master:new_salutation')
     })
 
 @api_login_required
@@ -547,25 +543,19 @@ def new_salutation(request) :
         metode = request.POST['metode']
 
         if metode == 'post' :
-            full_name = request.POST['full']
-            short_name = request.POST['short']
-            desc = request.POST['desc']
-
-            descr = {
-                'short_name' : short_name,
-                'description' : desc
-            }
+            full_name = request.POST.get('full-name')
+            short_name = request.POST.get('short-name')
+            description = request.POST.get('description', '')
 
             if Salutation.objects.using('master').filter(salutation=short_name).exists() :
                 return redirect('master:new_salutation')
             
             else :
-                new_salutation = Salutation.objects.using('master').create(
-                    salutation=full_name,
-                    description=json.dumps(descr)
-                )
-
-                new_salutation.save()
+                Salutation.objects.using('master').create(
+                    salutation=str(full_name).title(),
+                    description=description,
+                    short_salutation=str(short_name).title()
+                ).save()
 
                 return redirect('master:salutation_list')
             
@@ -648,7 +638,9 @@ def specialists(request) :
     return render(request, 'master_pages/specialists.html', {
         'title' : 'Specialists',
         'page_name' : 'Specialists',
-        'page_obj' : page_obj
+        'api' : "False",
+        'page_obj' : page_obj,
+        'new_url' : reverse('master:new_specialist')
     })
 
 @api_login_required
@@ -658,23 +650,21 @@ def new_specialist(request) :
         metode = request.POST['metode']
 
         if metode == 'post' :
-            full_name = request.POST['full']
-            short_name = request.POST['short']
-            desc = request.POST['desc']
+            full_name = request.POST.get('full-name')
+            short_name = request.POST.get('short-name')
+            description = request.POST.get('description')
 
             if Specialist.objects.using('master').filter(short_name=short_name).exists() or Specialist.objects.using('master').filter(full=full_name).exists() :
                 return redirect('master:new_specialist')
             
             else :
-                new_specialist = Specialist.objects.using('master').create(
-                    full=full_name,
-                    short_name=short_name,
-                    description=desc
-                )
+                Specialist.objects.using('master').create(
+                    full=str(full_name).title(),
+                    short_name=str(short_name).title(),
+                    description=description
+                ).save()
 
-                new_specialist.save()
-
-                return redirect('master:specialists')
+                return redirect('master:specialist_list')
             
     return render(request, 'master_new/new_specialist.html', {
         'title' : 'New Specialist',
