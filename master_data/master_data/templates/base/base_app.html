@@ -130,7 +130,13 @@
             </tr>
             `);
 
-            $('#chld-form input').val('');
+            $('#chld-frst-nm').val('');
+            $('#chld-mdl-nm').val('');
+            $('#chld-lst-nm').val('');
+            $('#chld-fll-nm').val('');
+            $('#chld-brth').val('');
+            $('#chld-phon').val('+62 ');
+
           });
 
           $('#sps-btn-sbmt').on('click', function() {
@@ -166,8 +172,109 @@
             </tr>
             `);
 
-            $('#sps-form-id').val('');
+            $('#sps-frst-nm').val('');
+            $('#sps-mdl-nm').val('');
+            $('#sps-lst-nm').val('');
+            $('#sps-fll-nm').val('');
+            $('#sps-brth').val('');
+            $('#sps-phon').val('+62 ');
+            $('#sps-mrg-dt').val('');
+
           });
+
+          $('#add-interest').on('click', function() {
+            $('#interest-list').append(`
+            <tr>
+              <th>
+                <input name="interest-category" class="input input-sm" autocomplete="off">
+              </th>
+              <td>
+                <input name="interest-name" class="input input-sm" autocomplete="off">
+              </td>
+              <td>
+                <button type="button" class="btn delete-input btn-xs py-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            `);
+          });
+
+          $('#add-socmed').on('click', function() {
+            $('#socmed-list').append(`
+            <tr>
+              <th>
+                <input name="socmed-name" class="input input-sm" autocomplete="off">
+              </th>
+              <td>
+                <input name="socmed-account-name" class="input input-sm" autocomplete="off">
+              </td>
+              <td>
+                <button type="button" class="btn delete-input btn-xs py-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            `);
+          });
+
+          $('#branch-btn-sbmt').on('click', function() {
+
+            var branch_name = $('#brnach-name-id').val();
+            var branch_est_date = $('#brnach-date-id').val();
+            var branch_street_1 = $('#brnach-street1-id').val();
+            var branch_street_2 = $('#brnach-street2-id').val();
+            var branch_city = $('#brnach-city-id').val();
+            var branch_state = $('#brnach-state-id').val();
+            var branch_country = $('#brnach-country-id').val();
+            var branch_zip = $('#brnach-zip-id').val();
+
+            $('#branch-list').append(`
+            <div class="rounded-sm border-2 border-current glass p-2 space-y-2">
+              <div class="space-y-2">
+                <div class="flex items-center justify-start gap-2">
+                  <p class="w-1/3 text-md font-semibold text-left">Name</p>
+                  <p class="w-2/3 text-md font-semibold text-left">: ${branch_name}</p>  
+                </div>
+                <div class="flex items-center justify-start gap-2">
+                  <p class="w-1/3 text-md font-semibold text-left">Est Date</p>
+                  <p class="w-2/3 text-md font-semibold text-left">: ${branch_est_date}</p>  
+                </div>
+              </div>
+              <div class="flex items-center justify-end gap-10">
+                <button type="button" class="btn btn-xs delete-input py-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                </button>  
+              </div>
+              <div class="hidden">
+                <input name="branch-name" class="hidden" type="text" value="${branch_name}">
+                <input name="branch-est-date" class="hidden" type="text" value="${branch_est_date}">
+                <input name="branch-street-1" class="hidden" type="text" value="${branch_street_1}">
+                <input name="branch-street-2" class="hidden" type="text" value="${branch_street_2}">
+                <input name="branch-city" class="hidden" type="text" value="${branch_city}">
+                <input name="branch-state" class="hidden" type="text" value="${branch_state}">
+                <input name="branch-country" class="hidden" type="text" value="${branch_country}">
+                <input name="branch-zip" class="hidden" type="text" value="${branch_zip}">
+              </div>
+            </div>
+            `);
+
+            $('#brnach-name-id').val('');
+            $('#brnach-date-id').val('');
+            $('#brnach-street1-id').val('');
+            $('#brnach-street2-id').val('');
+            $('#brnach-city-id').val('');
+            $('#brnach-state-id').val('');
+            $('#brnach-country-id').val('');
+            $('#brnach-zip-id').val('');     
+
+          })
 
           $(document).on('click', '.delete-input', function() {
             $(this).parent().parent().remove();
