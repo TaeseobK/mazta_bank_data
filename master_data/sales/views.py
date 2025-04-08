@@ -186,6 +186,8 @@ def doctor_detail(request, user_id, doc_id) :
                 doctor.info = json.loads(doctor.info)
                 doctor.work_information = json.loads(doctor.work_information)
                 doctor.private_information = json.loads(doctor.private_information)
+                doctor.branch_information = json.loads(doctor.branch_information)
+                doctor.additional_information = json.loads(doctor.additional_information)
                 doctor.rayon = json.loads(doctor.rayon)
             
             else :
@@ -431,43 +433,43 @@ def doctor_detail(request, user_id, doc_id) :
                     """
 
                     #Interest
-                    category_interest = request.POST.getlist('interest-category[]')
-                    interests = request.POST.getlist('interest-name[]')
+                    category_interest = request.POST.getlist('interest-category', '')
+                    interests = request.POST.getlist('interest-name', '')
 
                     #Social Media
-                    category_socmed = request.POST.getlist('socmed-name[]')
-                    socmeds = request.POST.getlist('socmed-account-name[]')
+                    category_socmed = request.POST.getlist('socmed-name', '')
+                    socmeds = request.POST.getlist('socmed-account-name', '')
 
                     interest_data = []
                     for category_interest, interest in zip(category_interest, interests) :
                         interest_data.append({
-                            'category' : str(category_interest).upper().strip(),
-                            'interest' : str(interest).upper().strip()
+                            'category' : str(category_interest).title().strip(),
+                            'interest' : str(interest).title().strip()
                         })
 
                     socmed_data = []
                     for socmed_name, account_name in zip(category_socmed, socmeds) :
                         socmed_data.append({
-                            'name' : str(socmed_name).upper().strip(),
-                            'account_name' : str(account_name).upper().strip()
+                            'name' : str(socmed_name).title().strip(),
+                            'account_name' : str(account_name)
                         })
 
                     additional_information = {
-                        'interests' : json.dumps(interest_data),
-                        'social_media' : json.dumps(socmed_data)
+                        'interests' : interest_data,
+                        'social_media' : socmed_data
                     }
 
                     """
                     Branch Information
                     """
-                    branches_name = request.POST.getlist('branch-name[]')
-                    branches_date = request.POST.getlist('branch-est-date[]')
-                    branches_street_1 = request.POST.getlist('branch-street-1[]')
-                    branches_street_2 = request.POST.getlist('branch-street-2[]')
-                    branches_city = request.POST.getlist('branch-city[]')
-                    branches_state = request.POST.getlist('branch-state[]')
-                    branches_country = request.POST.getlist('branch-country[]')
-                    branches_zip = request.POST.getlist('branch-zip[]')
+                    branches_name = request.POST.getlist('branch-name', '')
+                    branches_date = request.POST.getlist('branch-est-date', '')
+                    branches_street_1 = request.POST.getlist('branch-street-1', '')
+                    branches_street_2 = request.POST.getlist('branch-street-2', '')
+                    branches_city = request.POST.getlist('branch-city', '')
+                    branches_state = request.POST.getlist('branch-state', '')
+                    branches_country = request.POST.getlist('branch-country', '')
+                    branches_zip = request.POST.getlist('branch-zip', '')
 
                     branches = []
                     for (
