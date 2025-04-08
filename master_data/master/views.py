@@ -521,18 +521,18 @@ def new_salutation(request) :
         metode = request.POST['metode']
 
         if metode == 'post' :
-            full_name = request.POST.get('full-name')
-            short_name = request.POST.get('short-name')
+            full_name = request.POST.get('full-name', '')
+            short_name = request.POST.get('short-name', '')
             description = request.POST.get('description', '')
 
-            if Salutation.objects.using('master').filter(salutation=short_name).exists() :
+            if Salutation.objects.using('master').filter(short_salutation=short_name).exists() :
                 return redirect('master:new_salutation')
             
             else :
                 Salutation.objects.using('master').create(
                     salutation=str(full_name).title(),
                     description=description,
-                    short_salutation=str(short_name).title()
+                    short_salutation=str(short_name).upper()
                 ).save()
 
                 return redirect('master:salutation_list')
