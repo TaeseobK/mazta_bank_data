@@ -18,8 +18,8 @@
         <tbody id="page-list">
             {% for data in page_obj %}
             <tr class="border-b border-current">
-                <th>{{ data.salutation.salutation }}</th>
-                <td>{{ data.salutation.description.short_name }}</td>
+                <th><a href="{% url 'master:detail_salutation' data.salutation.pk %}" class="link link-hover">{{ data.salutation.salutation }}</a></th>
+                <td>{{ data.salutation.short_salutation }}</td>
             </tr>
             {% endfor %}
         </tbody>

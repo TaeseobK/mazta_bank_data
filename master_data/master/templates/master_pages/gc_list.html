@@ -19,9 +19,9 @@
         <tbody id="page-list">
             {% for data in page_obj %}
             <tr class="border-b border-current">
-                <th>Grade {{ data.grade.name }}</th>
-                <td>{{ data.grade.description.alias }}</td>
-                <td> >= {{ data.grade.range_clinic.min }} Clinic, <= {{ data.grade.range_clinic.max }} Clinic </td>
+                <th><a href="{% url 'master:detail_gc' data.grade.pk %}">Grade {{ data.grade.name }}</a></th>
+                <td>{{ data.grade.alias }}</td>
+                <td> >= {{ data.grade.range_clinic.min_value }} Clinic, <= {{ data.grade.range_clinic.max_value }} Clinic </td>
             </tr>
             {% endfor %}
         </tbody>

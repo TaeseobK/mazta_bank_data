@@ -18,7 +18,7 @@
         <tbody id="page-list">
             {% for data in page_obj %}
             <tr class="border-b border-current">
-                <th>{{ data.full }}</th>
+                <th><a href="{% url 'master:detail_specialist' data.pk %}" class="link link-hover">{{ data.full }}</a></th>
                 <td>{{ data.short_name }}</td>
             </tr>
             {% endfor %}

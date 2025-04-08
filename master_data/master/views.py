@@ -111,7 +111,6 @@ def gc_list(request) :
     grades = ClinicGrade.objects.using('master').filter(is_active=True).all().order_by('id')
     
     for d in grades :
-        d.description = json.loads(d.description)
         d.range_clinic = json.loads(d.range_clinic)
 
         data.append({
@@ -153,10 +152,10 @@ def new_gc(request) :
         metode = request.POST['metode']
 
         if metode == 'post' :
-            name = request.POST.get('name')
-            alias = request.POST.get('alias')
-            max_value = request.POST.get('max-value')
-            min_value = request.POST.get('min-value')
+            name = request.POST.get('name', '')
+            alias = request.POST.get('alias', '')
+            max_value = request.POST.get('max-value', '')
+            min_value = request.POST.get('min-value', '')
             desc = request.POST.get('description', '')
 
             range_clinic = {
@@ -184,31 +183,26 @@ def detail_gc(request, gc_id) :
 
     grade = ClinicGrade.objects.using('master').get(id=int(gc_id))
     grade.range_clinic = json.loads(grade.range_clinic)
-    grade.description = json.loads(grade.description)
 
     if request.method == 'POST' :
         metode = request.POST['metode']
 
         if metode == 'post' :
-            name = request.POST['name']
-            alias = request.POST['alias']
-            min_v = request.POST['min']
-            max_v = request.POST['max']
-            desc = request.POST['desc']
+            name = request.POST.get('name', '')
+            alias = request.POST.get('alias', '')
+            max_value = request.POST.get('max-value', '')
+            min_value = request.POST.get('min-value', '')
+            desc = request.POST.get('description', '')
 
-            range = {
-                'min' : int(min_v),
-                'max' : int(max_v)
+            range_clinic = {
+                'max_value' : int(max_value),
+                'min_value' : int(min_value),
             }
 
-            descrip = {
-                'alias' : alias,
-                'description' : desc
-            }
-
-            grade.name = name
-            grade.range_clinic = json.dumps(range)
-            grade.description = json.dumps(descrip)
+            grade.name = str(name).title()
+            grade.alias = str(alias).title()
+            grade.range_clinic = json.dumps(range_clinic)
+            grade.description = desc
 
             grade.save()
 
@@ -216,7 +210,6 @@ def detail_gc(request, gc_id) :
         
         elif metode == 'delete' :
             grade.range_clinic = json.dumps(grade.range_clinic)
-            grade.description = json.dumps(grade.description)
             grade.is_active = False
             
             grade.save()
@@ -225,16 +218,16 @@ def detail_gc(request, gc_id) :
 
     return render(request, 'master_detail/gc_detail.html', {
         'title' : 'Grade Clinic Detail',
-        'page_name' : f"Detail Clinic Grade - {grade.description.get('alias')}",
+        'page_name' : f"Detail Clinic Grade - {grade.alias}",
         'data' : grade
     })
 
 def convert(value) :
-    if value == "M" :
+    if value == "Million" :
         measure = "Juta"
-    elif value == "B" :
+    elif value == "BIllion" :
         measure = "Milyar"
-    elif  value == "T" :
+    elif  value == "Thousand" :
         measure = "Ribu"
     
     return measure
@@ -249,18 +242,10 @@ def gu_list(request) :
     gus = UserGrade.objects.using('master').filter(is_active=True).all().order_by('id')
 
     for d in gus :
-        d.description = json.loads(d.description)
         d.range_user = json.loads(d.range_user)
-        measure_max = convert(d.range_user.get('max').get('measure'))
-        measure_min = convert(d.range_user.get('min').get('measure'))
 
-        data.append({
-            'user' : d,
-            'measure' : {
-                'max' : measure_max,
-                'min' : measure_min
-            }
-        })
+        data.append(d)
+    print(data)
 
     if search_query :
         data = [
@@ -300,12 +285,12 @@ def new_gu(request) :
         metode = request.POST['metode']
 
         if metode == 'post' :
-            name = request.POST.get('name')
-            alias = request.POST.get('alias')
-            max_value = request.POST.get('max-value')
-            max_measure = request.POST.get('max-measure')
-            min_value = request.POST.get('min-value')
-            min_measure = request.POST.get('min-measure')
+            name = request.POST.get('name', '')
+            alias = request.POST.get('alias', '')
+            max_value = request.POST.get('max-value', '')
+            max_measure = request.POST.get('max-measure', '')
+            min_value = request.POST.get('min-value', '')
+            min_measure = request.POST.get('min-measure', '')
             desc = request.POST.get('description', '')
 
             range_user = {
@@ -337,40 +322,35 @@ def new_gu(request) :
 @admin_required
 def detail_gu(request, gu_id) :
     gu = UserGrade.objects.using('master').get(id=int(gu_id))
-    gu.description = json.loads(gu.description)
     gu.range_user = json.loads(gu.range_user)
 
     if request.method == 'POST' :
         metode = request.POST['metode']
 
         if metode == 'post' :
-            name = request.POST['name']
-            alias = request.POST['alias']
-            min_v = request.POST['min']
-            max_v = request.POST['max']
-            desc = request.POST['desc']
-            min_m = request.POST['min-measure']
-            max_m = request.POST['max-measure']
+            name = request.POST.get('name', '')
+            alias = request.POST.get('alias', '')
+            max_value = request.POST.get('max-value', '')
+            max_measure = request.POST.get('max-measure', '')
+            min_value = request.POST.get('min-value', '')
+            min_measure = request.POST.get('min-measure', '')
+            desc = request.POST.get('description', '')
 
-            range = {
-                'min' : {
-                    'value' : int(min_v),
-                    'measure' : min_m
-                },
+            range_user = {
                 'max' : {
-                    'value' : int(max_v),
-                    'measure' : max_m
+                    'measure' : str(max_measure),
+                    'value' : int(max_value)
+                },
+                'min' : {
+                    'measure' : str(min_measure),
+                    'value' : int(min_value)
                 }
             }
 
-            descp = {
-                'alias' : alias,
-                'description' : desc
-            }
-
             gu.name=name
-            gu.range_user=json.dumps(range)
-            gu.description=json.dumps(descp)
+            gu.alias=alias
+            gu.range_user=json.dumps(range_user)
+            gu.description=desc
 
             gu.save()
 
@@ -378,7 +358,6 @@ def detail_gu(request, gu_id) :
         
         elif metode == 'delete' :
             gu.range_user = json.dumps(gu.range_user)
-            gu.description = json.dumps(gu.description)
             gu.is_active = False
 
             gu.save()
@@ -464,17 +443,17 @@ def detail_title(request, title_id) :
         metode = request.POST['metode']
 
         if metode == 'post' :
-            short_name = request.POST['short']
-            full_name = request.POST['full']
-            desc = request.POST['desc']
+            short_name = request.POST.get('short-name')
+            full_name = request.POST.get('full-name')
+            description = request.POST.get('description', '')
 
-            if Title.objects.using('master').filter(name=full_name).exclude(id=int(title_id)).exists() or Title.objects.using('master').filter(short_name=short_name).exclude(id=int(title_id)).exists() :
-                return redirect('master:detail_title', title_id=title.pk)
+            if Title.objects.using('master').filter(name=full_name).exists() or Title.objects.using('master').filter(short_name=short_name).exists() :
+                return redirect('master:new_title')
             
             else :
                 title.name = full_name
                 title.short_name = short_name
-                title.description = desc
+                title.description = description
 
                 title.save()
 
@@ -503,7 +482,6 @@ def salutation_list(request) :
     salutations = Salutation.objects.using('master').filter(is_active=True).all().order_by('id')
 
     for d in salutations :
-        d.description = json.loads(d.description)
 
         data.append({
             'salutation' : d
@@ -569,34 +547,28 @@ def new_salutation(request) :
 def detail_salutation(request, sal_id) :
 
     salutation = Salutation.objects.using('master').get(id=int(sal_id))
-    salutation.description = json.loads(salutation.description)
 
     if request.method == 'POST' :
         metode = request.POST['metode']
 
         if metode == 'post' :
-            full_name = request.POST['full']
-            short_name = request.POST['short']
-            desc = request.POST['desc']
+            full_name = request.POST.get('full-name')
+            short_name = request.POST.get('short-name')
+            description = request.POST.get('description', '')
 
-            descr = {
-                'short_name' : short_name,
-                'description' : desc
-            }
-
-            if Salutation.objects.using('master').filter(salutation=short_name).exclude(id=int(sal_id)).exists() :
+            if Salutation.objects.using('master').filter(salutation=short_name).exists() :
                 return redirect('master:new_salutation')
             
             else :
                 salutation.salutation = full_name
-                salutation.description = json.dumps(descr)
+                salutation.short_salutation = short_name
+                salutation.description = description
 
                 salutation.save()
 
                 return redirect('master:salutation_list')
             
         elif metode == 'delete' :
-            salutation.description = json.dumps(salutation.description)
             salutation.is_active = False
 
             salutation.save()
@@ -605,7 +577,7 @@ def detail_salutation(request, sal_id) :
 
     return render(request, 'master_detail/salutation_detail.html', {
         'title' : 'Detail Salutation',
-        'page_name' : f"Detail - {salutation.description.get('short_name')}",
+        'page_name' : f"Detail - {salutation.short_salutation}",
         'data' : salutation
     })
 

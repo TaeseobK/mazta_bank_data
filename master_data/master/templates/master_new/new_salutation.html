@@ -7,7 +7,7 @@
 {% block main %}
 <section class="mx-5 flex gap-5">
     <div class="w-9/12">
-        <form action="." method="post" class="space-y-5">
+        <form action="." method="post" class="space-y-5 mt-5">
             {% csrf_token %}
             <button type="submit" class="btn btn-md">Submit</button>
             <input type="text" name="metode" value="post" class="hidden is-hidden">
@@ -27,7 +27,7 @@
                     <p class="w-full block text-sm font-bold text-pretty font-sans">Description</p>
                     <hr class="border border-current">
                 </div>
-                <textarea name="description" id="" class="bg-transparent rounded-md w-full"></textarea>
+                <textarea name="description" id="" class="textarea rounded-md w-full"></textarea>
             </div>
         </form>
     </div>

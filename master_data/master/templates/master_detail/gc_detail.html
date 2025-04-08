@@ -1,64 +1,60 @@
-{% extends 'base_app/base.html' %}
+{% extends 'base/base_app.html' %}
 {% load static %}
-{% block home %}
-<section class="flex w-full p-4 rounded-md border-2 mt-16 mb-2 dark:border-gray-400 border-gray-800 backdrop-blur-sm bg-opacity-10 bg-gray-800 overflow-y-auto thin-scrollbar">
+
+{% block header %}
+    {% include 'head/nav_1.html' %}
+{% endblock header %}
+{% block main %}
+<section class="mx-5 flex gap-5">
     <div class="w-9/12">
-        <div class="flex gap-5">
-            <button onclick="document.getElementById('form-grade-clinic').submit();" class="rounded-sm hover:text-gray-800 hover:bg-gray-400 bg-gray-800 text-gray-400 border-2 border-gray-400 hover:border-gray-800 px-2 py-1 uppercase text-xs font-bold mb-2">submit</button>
-            <form action="." method="post" class="rounded-sm hover:text-gray-800 hover:bg-gray-400 bg-gray-800 text-gray-400 border-2 border-gray-400 hover:border-gray-800 px-2 py-1 uppercase text-xs font-bold mb-2">
-                {% csrf_token %}
-                <button type="submit" class="uppercase">Delete</button>
-                <input type="hidden" name="metode" value="delete">
-            </form>
-        </div>
-        <form id="form-grade-clinic" action="." method="post" class="rounded-md border-2 border-gray-400 backdrop-blur-sm bg-opacity-70 bg-gray-800">
+        <form action="." method="post" id="delete-form" class="hidden">
             {% csrf_token %}
-            <input type="hidden" name="metode" value="post">
-            <div class="p-4">
-                <p class="dark:text-gray-400 bg-transparent text-gray-800 font-bold text-lg flex justify-start uppercase">Detail Grade Clinic</p>
-                <div class="my-5 justify-start">
-                    <ul class="space-y-10">
-                        <li class="flex items-center dark:text-gray-400 text-gray-800 font-semibold">
-                            <div class="w-1/2 flex items-center">
-                                <label for="name-id" class="w-3/12 mt-1 dark:text-gray-400 text-gray-800 font-semibold">Category</label>
-                                <input type="text" name="name" id="name-id" autocomplete="off" value="{{ data.name }}" class="w-6/12 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                            </div>
-                            <div class="w-1/2 flex items-center">
-                                <label for="alias-id" class="w-3/12 mt-1 dark:text-gray-400 text-gray-800 font-semibold">Grade Alias</label>
-                                <input type="text" name="alias" id="alias-id" autocomplete="off" value="{{ data.description.alias }}" class="w-6/12 justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                            </div>
-                        </li>
-                        <li>
-                            <p class="dark:text-gray-400 text-gray-800 font-semibold mt-12">Value for Range Clinic</p>
-                            <hr class="border-b border-gray-400 w-[840px]">
-                        </li>
-                        <li class="flex items-center w-full dark:text-gray-400 text-gray-800 font-semibold">
-                            <div class="w-1/2 flex items-center mt-3">
-                                <label for="min-id" class="w-4/12 mt-1 dark:text-gray-400 text-gray-800 font-semibold">Min Value</label>
-                                <div class="w-full flex items-center justify-start text-md">
-                                    <input type="text" name="min" id="min-id" autocomplete="off" value="{{ data.range_clinic.min }}" class="w-auto justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                    <p class="w-[45px] border-b-2 border-gray-400 bg-transparent select-none">
-                                        Clinic
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="w-1/2 flex items-center mt-3">
-                                <label for="max-id" class="w-4/12 mt-1 dark:text-gray-400 text-gray-800 font-semibold">Max Value</label>
-                                <div class="w-full flex items-center justify-start text-md">
-                                    <input type="text" name="max" id="max-id" autocomplete="off" value="{{ data.range_clinic.max }}" class="w-auto justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">
-                                    <p class="w-[45px] border-b-2 border-gray-400 bg-transparent select-none">
-                                        Clinic
-                                    </p>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="w-full dark:text-gray-400 text-gray-800 font-semibold">
-                            <p class="capitalize mt-5">description</p>
-                            <hr class="border-b border-gray-400 w-[840px]">
-                            <textarea name="desc" id="desc-id" autocomplete="off" class="w-[840px] p-2 text-sm justify-start bg-transparent border-b-2 dark:border-gray-400 border-gray-800 focus:outline-none hover:border-red-600 focus:border-blue-600 focus:backdrop-blur-sm focus:bg-opacity-30 focus:bg-red-800">{{ data.description.description }}</textarea>
-                        </li>
-                    </ul>
+            <input type="text" name="metode" value="delete" class="hidden">
+        </form>
+        <form action="." method="post" class="space-y-5 mt-5">
+            {% csrf_token %}
+            <div class="w-full flex items-center justify-start gap-3">
+                <button type="submit" class="btn btn-md">Submit</button>
+                <button type="button" class="btn btn-md" onclick="document.getElementById('delete-form').submit();">Delete</button>
+            </div>
+            <input type="text" name="metode" value="post" class="hidden is-hidden">
+            <div class="w-full rounded-md border border-current p-5 space-y-5 glass">
+                <p class="text-md font-bold uppercase text-pretty font-sans">Detail Grade Clinic</p>
+                <div class="flex items-center justify-between gap-20">
+                    <div class="flex items-center justify-between w-1/2 gap-5">
+                        <label for="gd-id" class="label font-semibold">Grade Name</label>
+                        <input type="text" id="gd-id" name="name" class="input" value="{{ data.name }}" placeholder="Grade Name" required>
+                    </div>
+                    <div class="flex items-center justify-between w-1/2 gap-5">
+                        <label for="ga-id" class="label  font-semibold">Grade Alias</label>
+                        <input type="text" id="ga-id" name="alias" class="input" placeholder="Grade Alias" value="{{ data.alias }}" required>
+                    </div>
                 </div>
+                <div class="w-full">
+                    <p class="w-full block text-sm font-bold text-pretty font-sans">Value for Range Clinic</p>
+                    <hr class="border border-current">
+                </div>
+                <div class="flex items-center justify-between gap-20">
+                    <div class="flex items-center justify-between w-1/2 gap-5">
+                        <label for="max-id" class="label font-semibold">Max Value</label>
+                        <div class="input flex items-center justify-between">
+                            <input type="number" id="max-id" name="max-value" class="" value="{{ data.range_clinic.max_value }}" required>
+                            <p class="text-md font-sans font-semibold text-pretty">Clinic</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between w-1/2 gap-5">
+                        <label for="min-id" class="label font-semibold">Min Value</label>
+                        <div class="input flex items-center justify-between">
+                            <input type="number" id="min-id" name="min-value" class="" value="{{ data.range_clinic.min_value }}" required>
+                            <p class="text-md font-sans font-semibold text-pretty">Clinic</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full">
+                    <p class="w-full block text-sm font-bold text-pretty font-sans">Description</p>
+                    <hr class="border border-current">
+                </div>
+                <textarea name="description" id="" class="textarea rounded-md w-full">{{ data.description }}</textarea>
             </div>
         </form>
     </div>
@@ -66,38 +62,4 @@
         <!-- Log Activity -->
     </div>
 </section>
-<script>
-    $(document).ready(function() {
-        $('#entity-id').on('change', function() {
-            var entityId = $(this).find(':selected').val();
-            console.log(entityId);
-
-            if(entityId) {
-                $.ajax({
-                    url: window.location.href,
-                    data: {
-                        'entity_obj_id': entityId
-                    },
-                    type: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    dataType: 'json',
-                    success: function(response) {
-                        var branches = response;
-                        console.log(branches);
-                        branches.forEach(function(branch) {
-                            $('#branch-id').append(`<option value="${branch.pk}" class="bg-gray-800 text-gray-400 font-semibold">${branch.branch}</option>`);
-                        })
-                    },
-                    error: function() {
-                        alert("Error Fetching Branches");
-                    }
-                });
-            } else {
-                $('#branch-id').empty().append(`<option value="" class="bg-gray-800 text-gray-400 font-semibold">Select Branch</option>`);
-            }
-        });
-    });
-</script>
-{% endblock %}
+{% endblock main %}
