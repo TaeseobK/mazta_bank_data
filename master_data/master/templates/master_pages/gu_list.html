@@ -19,7 +19,7 @@
         <tbody id="page-list">
             {% for data in page_obj %}
             <tr class="border-b border-current">
-                <th><a href="{% url 'master:detail_gu' data.pk %}">Grade {{ data.name }}</a></th>
+                <th><a href="{% url 'master:detail_gu' data.pk %}">{{ data.name }}</a></th>
                 <td>{{ data.alias }}</td>
                 <td> >= {{ data.range_user.min.value }} {{ data.range_user.min.measure }}, <= {{ data.range_user.max.value }} {{ data.range_user.max.measure }} </td>
             </tr>
