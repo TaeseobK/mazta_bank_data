@@ -7,13 +7,11 @@ from django.contrib import messages
 from django.http import JsonResponse, Http404
 from .models import *
 from django.urls import reverse
+from master_data.local_settings import *
 import requests
 from functools import wraps
 from datetime import datetime
 import json
-
-API_LOGIN_URL = "https://dev-bco.businesscorporateofficer.com/api/login/"
-API_LOGOUT_URL = "https://dev-bco.businesscorporateofficer.com/api/logout/"
 
 def api_login_required(view_func) :
     @wraps(view_func)
@@ -55,7 +53,7 @@ def login_view(request) :
         email = request.POST.get('email')
         password = request.POST.get('password')
 
-        response = requests.post(API_LOGIN_URL, data={
+        response = requests.post(login_url(), data={
             'email' : email,
             'password' : password
         })
@@ -65,7 +63,6 @@ def login_view(request) :
             detail = response.json().get('data')
             request.session['token'] = token
             request.session['detail'] = detail
-            print(request.session['detail'].get('id_user'))
 
             if request.session['detail'].get('id_user') == 7 :
                 next_url = request.POST.get('next') or request.GET.get('next') or '/'
@@ -90,7 +87,7 @@ def logout(request) :
         headers = {
             'Authorization' : f"Token {token}"
         }
-        response = requests.post(API_LOGOUT_URL, headers=headers)
+        response = requests.post(logout_url(), headers=headers)
 
         if response.status_code == 200 :
             del request.session['token']

@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 import json
-from master_data import lonely
+from master_data import local_settings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,9 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-%ui#t=6)11fpu802x8&^974%tr)k8ojg_v!%au-*qyr79@+!_m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = lonely.debug_is_true()
+DEBUG = local_settings.debug_is_true()
 
-ALLOWED_HOSTS = lonely.allowed_hosts()
+ALLOWED_HOSTS = local_settings.allowed_hosts()
 
 # Application definition
 
@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'master_data.wsgi.application'
 # Databases
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = lonely.db_settings()
+DATABASES = local_settings.db_settings()
 
 DATABASE_ROUTERS = [
     'human_resource.routers.HumanResourceRouter',
@@ -100,7 +100,7 @@ DATABASE_ROUTERS = [
 
 AUTO_LOGOUT_TIME = int(60 * 60)
 
-CSRF_TRUSTED_ORIGINS = lonely.csrf_settings()
+CSRF_TRUSTED_ORIGINS = local_settings.csrf_settings()
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -159,9 +159,9 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SECURE_PROXY_SSL_HEADER = lonely.proxy_ssl_headers()
+SECURE_PROXY_SSL_HEADER = local_settings.proxy_ssl_headers()
 
-fff = lonely.https_settings()
+fff = local_settings.https_settings()
 
 CSRF_COOKIE_SECURE = fff['CSRF_COOKIE_SECURE']
 SESSION_COOKIE_SECURE = fff['SESSION_COOKIE_SECURE']

@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from functools import wraps
+from master_data.local_settings import *
 import json
 import random
 import string
@@ -10,9 +11,6 @@ import requests
 from .models import *
 from master.models import *
 from human_resource.models import *
-
-API_LOGIN_URL = "https://dev-bco.businesscorporateofficer.com/api/login/"
-API_LOGOUT_URL = "https://dev-bco.businesscorporateofficer.com/api/logout/"
 
 def index_sales(request) :
     return redirect('master:login')
@@ -41,7 +39,7 @@ def doctor_list(request) :
         page = request.GET.get('page', '1')
         search = request.GET.get('search', '')
 
-        api_url = f"https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/filter/"
+        api_url = api_doctor_admin()
 
         response = requests.post(api_url, params={'page' : page}, data={'keyword' : search})
 
@@ -94,7 +92,7 @@ def doctor_list(request) :
         })
 
     else :
-        api_url = f"https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/{id_user}/"
+        api_url = api_doctor_sales(id_user)
 
         response = requests.get(api_url)
 
@@ -160,7 +158,7 @@ def doctor_list(request) :
 @api_login_required
 def doctor_detail(request, user_id, doc_id) :
     id_user = request.session.get('detail').get('id_user')
-    api_url = f"https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/{user_id}/"
+    api_url = api_doctor_sales(id_user)
     
     response = requests.get(api_url)
 
