@@ -305,7 +305,15 @@
                             </div>
                             <div class="flex items-start justify-between gap-5">
                                 <label for="rlgn" class="label w-1/4 font-semibold">Religion</label>
-                                <input type="text" id="rlgn" name="religion" class="input input-sm px-2 w-3/4" value="{{ data.0.doctor.private_information.citizenship.religion }}">
+                                <input type="text" id="rlgn" name="religion" class="input input-sm px-2 w-3/4" list="rlgn-list" value="{{ data.0.doctor.private_information.citizenship.religion }}">
+                                <datalist id="rlgn-list">
+                                    <option value="Islam">
+                                    <option value="Kristen Protestan">
+                                    <option value="Katolik">
+                                    <option value="Hindu">
+                                    <option value="Buddha">
+                                    <option value="Konghucu">
+                                </datalist>
                             </div>
                         </div>
                         <div class="space-y-2">
