@@ -10,12 +10,15 @@
     <form action="" method="post" class="flex items-center justify-center min-h-screen max-w-sm mx-auto">
         {% csrf_token %}
         <input type="hidden" name="metode" value="post">
-        <div class="mt-5 border-2 border-current rounded-md p-4 px-10 py-8 backdrop-blur-sm bg-opacity-30 glass">
+        <div class="mt-5 border-2 border-current rounded-md p-4 px-6 py-8 w-screen backdrop-blur-sm bg-opacity-30 glass">
             <p class="flex items-center justify-center text-current text-center text-3xl font-semibold select-none font-sans uppercase">Login</p>
             <p class="flex items-center justify-center text-current text-md font-semibold select-none font-sans uppercase">PT Mazta Farma</p>
             <p class="flex items-center justify-center text-current text-center text-md mb-10 font-semibold select-none font-sans uppercase">Doctor Priority Application</p>
             <div class="w-full mt-5 flex items-center justify-center bg-transparent gap-5">
                 <ul class="space-y-8 w-full">
+                    <li class="mt-2">
+                        <input type="text" id="username-id" name="username" autocomplete="off" class="w-full input px-3" placeholder="Username">
+                    </li>
                     <li class="mt-2">
                         <input type="email" id="email-id" name="email" autocomplete="off" class="w-full input px-3" placeholder="Email" required>
                     </li>

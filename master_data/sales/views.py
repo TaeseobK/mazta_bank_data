@@ -6,8 +6,11 @@ from functools import wraps
 from master_data.local_settings import *
 import json
 import random
+import calendar
 import string
 import requests
+import re
+from datetime import datetime
 from .models import *
 from master.models import *
 from human_resource.models import *
@@ -171,6 +174,11 @@ def doctor_detail(request, user_id, doc_id) :
 
         if dr_detail :
 
+            year = datetime.now().year
+            month = datetime.now().month
+
+            _, last_day = calendar.monthrange(year, month)
+
             data = []
 
             grade_users = UserGrade.objects.using('master').filter(is_active=True).all()
@@ -178,6 +186,8 @@ def doctor_detail(request, user_id, doc_id) :
             salutations = Salutation.objects.using('master').filter(is_active=True).all()
             titles = Title.objects.using('master').filter(is_active=True).all()
             specialists = Specialist.objects.using('master').filter(is_active=True).all()
+            days_of_week = [str(day).title() for day in calendar.day_name]
+            tanggal = list(range(1, last_day + 1))
 
             if DoctorDetail.objects.using('sales').filter(jamet_id=doc_id).exists() :
                 doctor = DoctorDetail.objects.using('sales').get(jamet_id=doc_id)
@@ -187,6 +197,10 @@ def doctor_detail(request, user_id, doc_id) :
                 doctor.branch_information = json.loads(doctor.branch_information)
                 doctor.additional_information = json.loads(doctor.additional_information)
                 doctor.rayon = json.loads(doctor.rayon)
+
+                text_re = re.findall(r"\d{2}:\d{2}", doctor.additional_information.get('base_time').get('time'))
+                start_time = text_re[0]
+                end_time = text_re[1]
             
             else :
                 doctor = None
@@ -198,7 +212,13 @@ def doctor_detail(request, user_id, doc_id) :
                 'titles' : titles,
                 'specialists' : specialists,
                 'doctor' : doctor,
-                'dr_api' : dr_detail
+                'dr_api' : dr_detail,
+                'date' : {
+                    'nama_hari' : days_of_week,
+                    'tanggal' : tanggal,
+                    'start_time' : start_time,
+                    'end_time' : end_time
+                }
             })
 
             if request.method == 'POST' :
@@ -438,6 +458,23 @@ def doctor_detail(request, user_id, doc_id) :
                     category_socmed = request.POST.getlist('socmed-name', '')
                     socmeds = request.POST.getlist('socmed-account-name', '')
 
+                    #Base Time
+                    base_date = request.POST.get('date-input', '')
+                    base_days = request.POST.get('days-input', '')
+                    time_start = request.POST.get('time-start', '')
+                    time_end = request.POST.get('time-end')
+                    penentu = request.POST.get('date-or-days', '')
+
+                    if penentu == "date" :
+                        base = base_date
+                        base_v = "Every date"
+                    elif penentu == "days" :
+                        base = base_days
+                        base_v = "Every"
+                    else :
+                        base = None
+                        base_v = None
+
                     interest_data = []
                     for category_interest, interest in zip(category_interest, interests) :
                         interest_data.append({
@@ -454,7 +491,11 @@ def doctor_detail(request, user_id, doc_id) :
 
                     additional_information = {
                         'interests' : interest_data,
-                        'social_media' : socmed_data
+                        'social_media' : socmed_data,
+                        'base_time' : {
+                            'base' : f"{base_v} {base}",
+                            'time' : f"From {time_start} to {time_end}"
+                        }
                     }
 
                     """

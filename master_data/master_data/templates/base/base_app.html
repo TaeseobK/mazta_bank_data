@@ -48,7 +48,7 @@
         });
 
         $(document).ready(function() {
-            $('#search').on('keyup', function() {
+            $('#search').on('input', function() {
                 var searchQuery = $(this).val();
 
                 $.ajax({
@@ -62,6 +62,24 @@
                     }
                 });
             });
+        });
+
+        $(document).ready(function() {
+          var checkedRadio = $('input[name="date-or-days"]:checked');
+
+          if (checkedRadio.length > 0) {
+            var target = checkedRadio.attr('to');
+            $('.by-date-days').addClass('hidden').removeClass('flex');
+            $('#' + target).removeClass('hidden').addClass('flex');
+          }
+
+          $('input[name="date-or-days"]').on('change', function() {
+              $('.by-date-days').addClass('hidden').removeClass('flex');
+              
+              var c = $(this).attr('to');
+
+              $('#' + c).addClass('flex').removeClass('hidden');
+          });
         });
 
         $(document).ready(function() {

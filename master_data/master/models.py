@@ -61,6 +61,46 @@ class Title(models.Model) :
         kwargs['using'] = 'master'
         super().delete(*args, **kwargs)
 
+class UserConfig(models.Model) :
+    user = models.IntegerField()
+    groups = models.IntegerField()
+    config = models.TextField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta :
+        app_label = 'master'
+        db_table = 'user_config'
+        managed = True
+
+    def save(self, *args, **kwargs) :
+        kwargs['using'] = 'master'
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs) :
+        kwargs['using'] = 'master'
+        super().delete(*args, **kwargs)
+
+class Announcement(models.Model) :
+    groups = models.TextField(null=True, blank=True)
+    see = models.TextField(null=True, blank=True)
+    text = models.TextField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta :
+        app_label = 'master'
+        db_table = 'announcement'
+        managed = True
+
+    def save(self, *args, **kwargs) :
+        kwargs['using'] = 'master'
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs) :
+        kwargs['using'] = 'master'
+        super().delete(*args, **kwargs)
+
 class Salutation(models.Model) :
     salutation = models.CharField(max_length=64)
     short_salutation = models.CharField(max_length=64, blank=True, null=True)

@@ -8,7 +8,7 @@ app_name = 'master'
 urlpatterns = [
     path('', views.home, name='home'),
     path('login/', views.login_view, name='login'),
-    path('logout/', views.logout, name='logout'),
+    path('logout/', views.logout_view, name='logout'),
 
     #List Page
     path('grade-clinic-list/', views.gc_list, name='gc_list'),

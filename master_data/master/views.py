@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User, auth
+from django.contrib.auth.models import User, auth, Group
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, logout
 from django.core.paginator import Paginator
+from django.contrib.auth.hashers import check_password
 from django.contrib import messages
 from django.http import JsonResponse, Http404
 from .models import *
@@ -13,14 +14,19 @@ from functools import wraps
 from datetime import datetime
 import json
 
-def api_login_required(view_func) :
-    @wraps(view_func)
-    def wrapper(request, *args, **kwargs) :
-        if not request.session.get('token') :
-            return redirect('master:login')
-        
-        return view_func(request, *args, **kwargs)
-    return wrapper
+def group_required(group_name) :
+    def decorator(view_func) :
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs) :
+            user = request.user
+            if (user.is_authenticated and user.groups.filter(name=group_name).exists()) or user.is_superuser :
+                return view_func(request, *args, **kwargs)
+            
+            else :
+                raise Http404("You don't have permission to access this page.")
+            
+            return _wrapped_view
+        return decorator
 
 def admin_required(view_func) :
     @wraps(view_func)
@@ -40,7 +46,7 @@ def admin_required(view_func) :
     
     return _wrapped_view
 
-@api_login_required
+@login_required
 def home(request) :
 
     return render(request, 'core/home.html', {
@@ -50,8 +56,10 @@ def home(request) :
 
 def login_view(request) :
     if request.method == 'POST' :
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        email = request.POST.get('email', '')
+        password = request.POST.get('password', '')
+        username = request.POST.get('username', '')
+        next_url = request.POST.get('next') or request.GET.get('next') or '/'
 
         response = requests.post(login_url(), data={
             'email' : email,
@@ -63,42 +71,99 @@ def login_view(request) :
             detail = response.json().get('data')
             request.session['token'] = token
             request.session['detail'] = detail
+            
+            print(detail.get('email'))
 
-            if request.session['detail'].get('id_user') == 7 :
-                next_url = request.POST.get('next') or request.GET.get('next') or '/'
+            try :
+                user = User.objects.get(email=email)
+                
+                if user.check_password(password) :
+                    group, _ = Group.objects.get_or_create(name="sales")
+
+                    if not user.groups.filter(name="sales").exists() :
+                        user.groups.add(group)
+
+                    login(request, user)
+
+                    print(f"User dengan username {user.username} berhasil.")
+                    return redirect(next_url)
+                
+                else :
+                    print(f"Error creating user with email {email}.")
+                    return redirect('master:login')
+                
+            except User.DoesNotExist :
+                if "admin" in str(detail.get('name')).lower() :
+                    staff = True
+
+                else :
+                    staff = False
+
+                user_ = User.objects.create_user(
+                    username=email,
+                    email=email,
+                    password=password,
+                    is_staff=staff
+                )
+
+                group_, _1 = Group.objects.get_or_create(name="sales")
+
+                if not user_.groups.filter(name="sales").exists() :
+                    user_.groups.add(group_)
+
+                user_.save()
+
+                login(request, user_)
                 return redirect(next_url)
             
-            else :
-                next_url = request.POST.get('next') or request.GET.get('next') or '/'
-                return redirect(next_url)
-        
         else :
-            return JsonResponse({'error' : 'Login Gagal, Periksa Username atau Password...'})
+            try :
+                user = User.objects.get(username=username, email=email)
+
+                if user.check_password(password) :
+                    login(request, user)
+                    return redirect(next_url)
+                
+                else :
+                    return redirect('master:login')
+                
+            except User.DoesNotExist :
+                raise Http404("Please check your email or password")
             
     return render(request, 'core/login.html', {
         'title' : 'Login',
         'login' : True
     })
 
-@api_login_required
-def logout(request) :
+@login_required
+def logout_view(request) :
     token = request.session.get('token')
+    user = request.user
+
     if token :
         headers = {
-            'Authorization' : f"Token {token}"
+            'Authorization' : token
         }
         response = requests.post(logout_url(), headers=headers)
 
+        print(response)
+
         if response.status_code == 200 :
-            del request.session['token']
-            del request.session['detail']
+            request.session.pop('token', None)
+            request.session.pop('detail', None)
+
+            request.session.flush()
+            logout(request)
 
             return redirect('master:login')
-        
         else :
             return JsonResponse({'error' : 'Logout Gagal, Coba lagi nanti...'})
+    
+    else :
+        logout(request)
+        return redirect('master:login')
 
-@api_login_required
+@login_required
 @admin_required
 def gc_list(request) :
     search_query = request.GET.get('search', '')
@@ -141,7 +206,7 @@ def gc_list(request) :
         'new_url' : reverse('master:new_gc')
     })
 
-@api_login_required
+@login_required
 @admin_required
 def new_gc(request) :
     
@@ -174,7 +239,7 @@ def new_gc(request) :
         'page_name' : 'New Grade Clinic'
     })
 
-@api_login_required
+@login_required
 @admin_required
 def detail_gc(request, gc_id) :
 
@@ -229,7 +294,7 @@ def convert(value) :
     
     return measure
 
-@api_login_required
+@login_required
 @admin_required
 def gu_list(request) :
     search_query = request.GET.get('search', '')
@@ -275,7 +340,7 @@ def gu_list(request) :
         'new_url' : reverse('master:new_gu')
     })
 
-@api_login_required
+@login_required
 @admin_required
 def new_gu(request) :
     if request.method == 'POST' :
@@ -315,7 +380,7 @@ def new_gu(request) :
         'page_name' : 'New Grade User'
     })
 
-@api_login_required
+@login_required
 @admin_required
 def detail_gu(request, gu_id) :
     gu = UserGrade.objects.using('master').get(id=int(gu_id))
@@ -367,7 +432,7 @@ def detail_gu(request, gu_id) :
         'data' : gu
     })
 
-@api_login_required
+@login_required
 @admin_required
 def title_list(request) :
     search_query = request.GET.get('search', '')
@@ -401,7 +466,7 @@ def title_list(request) :
         'new_url' : reverse('master:new_title')
     })
 
-@api_login_required
+@login_required
 @admin_required
 def new_title(request) :
 
@@ -431,7 +496,7 @@ def new_title(request) :
         'page_name' : 'New Title'
     })
 
-@api_login_required
+@login_required
 @admin_required
 def detail_title(request, title_id) :
     title = Title.objects.using('master').get(id=int(title_id))
@@ -469,7 +534,7 @@ def detail_title(request, title_id) :
         'data' : title
     })
 
-@api_login_required
+@login_required
 @admin_required
 def salutation_list(request) :
     search_query = request.GET.get('search', '')
@@ -511,7 +576,7 @@ def salutation_list(request) :
         'new_url' : reverse('master:new_salutation')
     })
 
-@api_login_required
+@login_required
 @admin_required
 def new_salutation(request) :
     if request.method == 'POST' :
@@ -539,7 +604,7 @@ def new_salutation(request) :
         'page_name' : 'New Salutation'
     })
 
-@api_login_required
+@login_required
 @admin_required
 def detail_salutation(request, sal_id) :
 
@@ -578,7 +643,7 @@ def detail_salutation(request, sal_id) :
         'data' : salutation
     })
 
-@api_login_required
+@login_required
 @admin_required
 def specialists(request) :
     search_query = request.GET.get('search', '')
@@ -612,7 +677,7 @@ def specialists(request) :
         'new_url' : reverse('master:new_specialist')
     })
 
-@api_login_required
+@login_required
 @admin_required
 def new_specialist(request) :
     if request.method == 'POST' :
@@ -640,7 +705,7 @@ def new_specialist(request) :
         'page_name' : 'New Specialist'
     })
 
-@api_login_required
+@login_required
 @admin_required
 def detail_specialist(request, sp_id) :
 

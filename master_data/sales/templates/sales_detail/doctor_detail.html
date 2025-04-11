@@ -32,7 +32,7 @@
                     <div class="flex items-center justify-between gap-20">
                         <div class="flex items-center justify-between w-1/2 gap-5">
                             <label for="fn-id" class="label font-semibold">First Name</label>
-                            <input type="text" id="fn-id" name="first-name" class="input input-sm px-2" autocomplete="off" value="{{ data.0.doctor.info.first_name }}" placeholder="First Name" required>
+                            <input type="text" id="fn-id" name="first-name" class="input input-sm px-2" autocomplete="off" value="{{ data.0.doctor.info.first_name }}" placeholder="First Name">
                         </div>
                         <div class="flex items-center justify-between w-1/2 gap-5">
                             <label for="fl-id" class="label font-semibold">Full Name</label>
@@ -42,7 +42,7 @@
                     <div class="flex items-center justify-between gap-20">
                         <div class="flex items-center justify-between w-1/2 gap-5">
                             <label for="mn-id" class="label font-semibold">Middle Name</label>
-                            <input type="text" id="mn-id" name="middle-name" class="input input-sm px-2" value="{{ data.0.doctor.info.middle_name }}" placeholder="Middle Name" required>
+                            <input type="text" id="mn-id" name="middle-name" class="input input-sm px-2" value="{{ data.0.doctor.info.middle_name }}" placeholder="Middle Name">
                         </div>
                         <div class="flex items-center justify-between w-1/2 gap-5">
                             <label for="sal-id" class="label font-semibold">Salutations</label>
@@ -63,7 +63,7 @@
                     <div class="flex items-center justify-between gap-20">
                         <div class="flex items-center justify-between w-1/2 gap-5">
                             <label for="ln-id" class="label font-semibold">Last Name</label>
-                            <input type="text" id="ln-id" name="last-name" class="input input-sm px-2" value="{{ data.0.doctor.info.last_name }}" placeholder="Last Name" required>
+                            <input type="text" id="ln-id" name="last-name" class="input input-sm px-2" value="{{ data.0.doctor.info.last_name }}" placeholder="Last Name">
                         </div>
                         <div class="flex items-center justify-between w-1/2 gap-5">
                             <label for="tit-id" class="label font-semibold">Title</label>
@@ -289,7 +289,7 @@
                             </div>
                             <div class="flex items-start justify-between gap-5">
                                 <label for="gdr" class="label w-1/4 font-semibold">Gender</label>
-                                <select name="gender" id="gdr" class="input input-px-2 w-3/4 cursor-pointer" required>
+                                <select name="gender" id="gdr" class="input input-px-2 w-3/4 cursor-pointer">
                                     <option value="" {% if not data.0.doctor %} selected {% endif %} disabled>Select Gender</option>
                                     <option value="Male" {% if data.0.doctor.private_information.citizenship.gender == "Male" %} selected {% endif %}>Male</option>
                                     <option value="Female" {% if data.0.doctor.private_information.citizenship.gender == "Female" %} selected {% endif %}>Female</option>
@@ -609,6 +609,50 @@
                             </button>
                         </div>
                     </div>
+                    <div class="space-y-2 p-5 flex items-center justify-center">
+                        <div class="w-full">
+                            <p class="text-md border-b-2 border-current font-semibold font-sans uppercase">Base Time</p>
+                            <div class="grid grid-cols-2 gap-10 mt-5">
+                                <div class="gap-5 flex justify-start items-center by-days">
+                                    <span class="text-md font-semibold text-current">Time Base Input?</span>
+                                    <div class="flex items-center justify-start gap-3">
+                                        <input type="radio" class="radio" id="by-date" to="by-date-2" name="date-or-days" {% if "date" in data.0.doctor.additional_information.base_time.base %} checked {% endif %} value="date">
+                                        <label for="by-date" class="label cursor-pointer">By Date?</label>
+                                    </div>
+                                    <div class="flex items-center justify-start gap-3">
+                                        <input type="radio" class="radio" id="by-days" to="by-days-2" name="date-or-days" {% if not "date" in data.0.doctor.additional_information.base_time.base %} checked {% endif %} value="days">
+                                        <label for="by-days" class="label cursor-pointer">By Days?</label>
+                                    </div>
+                                </div>
+                                <div id="by-days-2" class="gap-2 justify-start items-center hidden by-date-days">
+                                    <label for="days-input" class="label w-1/3">Days of Week</label>
+                                    <select name="days-input" id="days-input" class="select w-2/3">
+                                        <option value="" selected disabled>Select Days of Week</option>
+                                        {% for d in data.0.date.nama_hari %}
+                                        <option value="{{ d }}" {% if d in data.0.doctor.additional_information.base_time.base %} selected {% endif %} >{{ d }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div id="by-date-2" class="gap-2 justify-start items-center hidden by-date-days">
+                                    <label for="date-input" class="label w-1/3">Date</label>
+                                    <select name="date-input" class="select w-2/3" id="date-input">
+                                        <option value="" selected disabled>Select Date</option>
+                                        {% for d in data.0.date.tanggal %}
+                                        <option value="{{ d }}" {% if d in data.0.doctor.additional_information.base_time.base %} selected {% endif %} >{{ d }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="flex gap-2 justify-start items-center">
+                                    <label for="time-start" class="label w-1/3">Start Time</label>
+                                    <input type="time" class="input w-2/3" name="time-start" id="time-start" value="{{ data.0.date.start_time }}">
+                                </div>
+                                <div class="flex gap-2 justify-start items-center">
+                                    <label for="time-end" class="label w-1/3">End Time</label>
+                                    <input type="time" class="input w-2/3" name="time-end" id="time-end" value="{{ data.0.date.end_time }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div id="bi-tab-id" class="tab-content hidden">
                     <div class="flex items-center gap-10 w-full border-b border-current p-2 mr-10">
@@ -709,4 +753,6 @@
         <!-- Log Activity -->
     </div>
 </section>
+<script>
+</script>
 {% endblock main %}
