@@ -198,9 +198,10 @@ def doctor_detail(request, user_id, doc_id) :
                 doctor.additional_information = json.loads(doctor.additional_information)
                 doctor.rayon = json.loads(doctor.rayon)
 
-                text_re = re.findall(r"\d{2}:\d{2}", doctor.additional_information.get('base_time').get('time'))
-                start_time = text_re[0]
-                end_time = text_re[1]
+                if doctor.additional_information :
+                    text_re = re.findall(r"\d{2}:\d{2}", doctor.additional_information.get('base_time').get('time'))
+                    start_time = text_re[0]
+                    end_time = text_re[1]
             
             else :
                 doctor = None
@@ -216,8 +217,8 @@ def doctor_detail(request, user_id, doc_id) :
                 'date' : {
                     'nama_hari' : days_of_week,
                     'tanggal' : tanggal,
-                    'start_time' : start_time,
-                    'end_time' : end_time
+                    'start_time' : start_time if doctor else None,
+                    'end_time' : end_time if doctor else None
                 }
             })
 
