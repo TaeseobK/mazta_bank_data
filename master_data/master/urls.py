@@ -10,6 +10,11 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
 
+    path('api/grade-user/<int:gu_id>/', views.gu_data, name='api_gu'),
+    path('api/grade-clinic/<int:gc_id>/', views.gc_data, name='api_gc'),
+    path('api/salutation/<int:sal_id>/', views.sal_data, name='api_salutation'),
+    path('api/title/<int:tit_id>/', views.title_data, name='api_title'),
+
     #List Page
     path('grade-clinic-list/', views.gc_list, name='gc_list'),
     path('grade-user-list/', views.gu_list, name='gu_list'),

@@ -10,6 +10,7 @@ from .models import *
 from django.urls import reverse
 from master_data.local_settings import *
 import requests
+from django.forms.models import model_to_dict
 from functools import wraps
 from datetime import datetime
 import json
@@ -53,6 +54,41 @@ def home(request) :
         'title' : 'Dashboard',
         'page_name' : 'Home'
     })
+
+def gu_data(request, gu_id) :
+
+    if not request.user.is_authenticated :
+        return redirect('master:login')
+    
+    grade_user = UserGrade.objects.using('master').get(id=gu_id)
+
+    return JsonResponse(model_to_dict(grade_user), safe=False)
+
+def gc_data(request, gc_id) :
+    if not request.user.is_authenticated :
+        return redirect('master:login')
+    
+    grade_clinic = ClinicGrade.objects.using('master').get(id=gc_id)
+
+    return JsonResponse(model_to_dict(grade_clinic), safe=False)
+
+def sal_data(request, sal_id) :
+    
+    if not request.user.is_authenticated :
+        return redirect('master:login')
+    
+    salutation = Salutation.objects.using('master').get(id=sal_id)
+
+    return JsonResponse(model_to_dict(salutation), safe=False)
+
+def title_data(request, tit_id) :
+    
+    if not request.user.is_authenticated :
+        return redirect('master:login')
+    
+    title = Title.objects.using('master').get(id=tit_id)
+
+    return JsonResponse(model_to_dict(title), safe=False)
 
 def login_view(request) :
     if request.method == 'POST' :

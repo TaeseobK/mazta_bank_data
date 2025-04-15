@@ -297,6 +297,95 @@
           $(document).on('click', '.delete-input', function() {
             $(this).parent().parent().remove();
           });
+
+          $('#gu-id').on('change', function() {
+            $('#gu-tooltip-false').removeClass('flex').addClass('hidden');
+            var thisPk = $(this).val();
+
+            $.ajax({
+                url: `/api/grade-user/${thisPk}/`,
+                method: 'GET',
+                success: function(data) {
+                  $('#gu-tooltip-true').removeClass('hidden').addClass('flex').append(`
+                    <div class="tooltip">
+                        <div class="tooltip-content">
+                            <div class="text-sm font-normal p-1">${data.description}</div>
+                        </div>
+                        <svg class="w-5 h-5 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                        </svg>                                          
+                    </div>
+                  `);
+                }
+            });
+          });
+
+          $('#gc-id').on('change', function() {
+            $('#gc-tooltip-false').removeClass('flex').addClass('hidden');
+            var thisPk = $(this).val();
+
+            $.ajax({
+                url: `/api/grade-clinic/${thisPk}/`,
+                method: 'GET',
+                success: function(data) {
+                  $('#gc-tooltip-true').removeClass('hidden').addClass('flex').append(`
+                    <div class="tooltip">
+                        <div class="tooltip-content">
+                            <div class="text-sm font-normal p-1">${data.description}</div>
+                        </div>
+                        <svg class="w-5 h-5 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                        </svg>                                          
+                    </div>
+                  `);
+                }
+            });
+          });
+
+          $('#sal-id').on('change', function() {
+            $('#sal-tooltip-false').removeClass('flex').addClass('hidden');
+            var thisPk = $(this).val();
+
+            $.ajax({
+                url: `/api/salutation/${thisPk}/`,
+                method: 'GET',
+                success: function(data) {
+                  $('#sal-tooltip-true').removeClass('hidden').addClass('flex').append(`
+                    <div class="tooltip">
+                        <div class="tooltip-content">
+                            <div class="text-sm font-normal p-1">${data.description}</div>
+                        </div>
+                        <svg class="w-5 h-5 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                        </svg>                                          
+                    </div>
+                  `);
+                }
+            });
+          });
+
+          $('#tit-id').on('change', function() {
+            $('#tit-tooltip-false').removeClass('flex').addClass('hidden');
+            $('#tit-tooltip-true').empty();
+            var thisPk = $(this).val();
+
+            $.ajax({
+                url: `/api/title/${thisPk}/`,
+                method: 'GET',
+                success: function(data) {
+                  $('#tit-tooltip-true').removeClass('hidden').addClass('flex').append(`
+                    <div class="tooltip">
+                        <div class="tooltip-content">
+                            <div class="text-sm font-normal p-1">${data.description}</div>
+                        </div>
+                        <svg class="w-5 h-5 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                        </svg>                                          
+                    </div>
+                  `);
+                }
+            });
+          });
         });
     </script>
 </body>

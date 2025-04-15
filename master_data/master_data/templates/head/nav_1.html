@@ -58,6 +58,21 @@
                         <li><a href="" class="text-md font-semibold link link-hover">Settings</a></li>
                         <li><a href="" class="text-md font-semibold link link-hover">Profile</a></li>
                         <li><a href="{% url 'master:logout' %}" class="text-md font-semibold link link-hover">LogOut</a></li>
+                        <li><a 
+                            {% if request.user.is_staff and request.user.groups.all.0 %}
+                                {% for group in request.user.groups.all %}
+                                    {% if group.name == "sales" %}
+                                        href="{% static 'files/dokumentasi_program_admin.pdf' %}"
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                {% for group in request.user.groups.all %}
+                                    {% if group.name == "sales" %}
+                                        href="{% static 'files/dokumentasi_program_user.pdf' %}"
+                                    {% endif %}
+                                {% endfor %} 
+                            {% endif %} 
+                            class="link link-hover font-semibold" target="_blank">Guide Book</a></li>
                         <li>
                             <div class="dropdown dropdown-hover dropdown-end">
                                 <div tabindex="0" role="button" class="text-md font-semibold link link-hover">
