@@ -386,6 +386,16 @@
                 }
             });
           });
+
+          $('#fn-id, #mn-id,  #ln-id').on('input', function() {
+            var firstName = $('#fn-id').val();
+            var middleName = $('#mn-id').val();
+            var lastName = $('#ln-id').val();
+
+            var fullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
+
+            $('#fl-id').val(fullName);
+          });
         });
     </script>
 </body>
