@@ -24,7 +24,7 @@
                                     <p class="text-lg font-semibold text-pretty font-sans text-center">Databases</p>
                                 </div>
                             </li>
-                            {% if request.session.detail.id_user == 7 %}
+                            {% if request.user.is_staff %}
                             <li>
                                 <div class="dropdown dropdown-hover dropdown-right">
                                     <div tabindex="0" role="button" class="link link-hover font-semibold font-sans text-md text-pretty text-center">Master</div>

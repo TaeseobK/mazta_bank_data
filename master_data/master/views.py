@@ -34,14 +34,8 @@ def admin_required(view_func) :
     def _wrapped_view(request, *args, **kwargs) :
         detail = request.session.get('detail')
 
-        if not detail :
+        if not detail or not request.user.is_staff :
             raise Http404("Not Found!")
-        
-        if int(detail.get('id_user')) != 7 or not request.user.is_superuser :
-            raise Http404("Admin Access Required!")
-        
-        else :
-            pass
         
         return view_func(request, *args, **kwargs)
     
