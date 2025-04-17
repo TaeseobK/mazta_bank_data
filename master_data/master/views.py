@@ -37,7 +37,7 @@ def admin_required(view_func) :
         if not detail :
             raise Http404("Not Found!")
         
-        if int(detail.get('id_user')) != 7 :
+        if int(detail.get('id_user')) != 7 or request.user.is_superuser :
             raise Http404("Admin Access Required!")
         
         else :
