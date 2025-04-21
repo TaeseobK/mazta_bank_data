@@ -7,8 +7,8 @@
 {% endblock header %}
 
 {% block main %}
-<main class="mx-10 my-5 p-5 bg-base-200 rounded-md max-h-screen">
-    <table class="table table-zebra my-5">
+<main class="lg:mx-10 mx-5 my-5 p-5 bg-base-200 rounded-md max-w-screen">
+    <table class="lg:table table-zebra my-5 hidden">
         <thead>
             <tr>
                 <th>Doctor Name</th>
@@ -34,5 +34,26 @@
             {% endfor %}
         </tbody>
     </table>
+    <div id="page-list-2" class="space-y-2 lg:hidden block">
+        {% for data in page_obj %}
+        <div class="rounded-sm bg-base-100 p-2">
+            <a href="{% url 'sales:doctor_detail' request.session.detail.id_user data.data.id_dokter %}" class="text-left text-md font-semibold">{{ data.data.nama_dokter }}</a>
+            <div class="flex items-center justify-start gap-5">
+                <ul class="w-1/4 text-xs font-semibold">
+                    <li>Old Code</li>
+                    <li>Priority</li>
+                    <li>Cover</li>
+                    <li>Update At</li>
+                </ul>
+                <ul class="w-3/4 text-xs font-semibold">
+                    <li> : {{ data.data.kode_pelanggan }}</li>
+                    <li> : {{ data.priority }}</li>
+                    <li> : {{ data.cover.rayon }}</li>
+                    <li> : {{ data.last_update }}</li>
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </main>
 {% endblock main %}

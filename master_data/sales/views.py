@@ -38,7 +38,7 @@ def remove_duplicates(text) :
 def doctor_list(request) :
     id_user = request.session.get('detail').get('id_user')
 
-    if int(id_user) == 7 :
+    if request.user.is_staff :
         page = request.GET.get('page', '1')
         search = request.GET.get('search', '')
 
