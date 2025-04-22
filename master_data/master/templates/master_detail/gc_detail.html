@@ -6,7 +6,7 @@
 {% endblock header %}
 {% block main %}
 <section class="mx-5 flex gap-5">
-    <div class="w-9/12">
+    <div class="lg:w-9/12 w-full">
         <form action="." method="post" id="delete-form" class="hidden">
             {% csrf_token %}
             <input type="text" name="metode" value="delete" class="hidden">
@@ -20,32 +20,32 @@
             <input type="text" name="metode" value="post" class="hidden is-hidden">
             <div class="w-full rounded-md border border-current p-5 space-y-5 glass">
                 <p class="text-md font-bold uppercase text-pretty font-sans">Detail Grade Clinic</p>
-                <div class="flex items-center justify-between gap-20">
-                    <div class="flex items-center justify-between w-1/2 gap-5">
-                        <label for="gd-id" class="label font-semibold">Grade Name</label>
-                        <input type="text" id="gd-id" name="name" class="input" value="{{ data.name }}" placeholder="Grade Name" required>
+                <div class="grid lg:grid-cols-2 grid-cols-1 lg:gap-20 gap-5">
+                    <div class="flex items-center justify-between w-full gap-5">
+                        <label for="gd-id" class="label font-semibold w-1/3">Grade Name</label>
+                        <input type="text" id="gd-id" name="name" class="input w-2/3" value="{{ data.name }}" placeholder="Grade Name" required>
                     </div>
-                    <div class="flex items-center justify-between w-1/2 gap-5">
-                        <label for="ga-id" class="label  font-semibold">Grade Alias</label>
-                        <input type="text" id="ga-id" name="alias" class="input" placeholder="Grade Alias" value="{{ data.alias }}" required>
+                    <div class="flex items-center justify-between w-full gap-5">
+                        <label for="ga-id" class="label  font-semibold w-1/3">Grade Alias</label>
+                        <input type="text" id="ga-id" name="alias" class="input w-2/3" placeholder="Grade Alias" value="{{ data.alias }}" required>
                     </div>
                 </div>
                 <div class="w-full">
                     <p class="w-full block text-sm font-bold text-pretty font-sans">Value for Range Clinic</p>
                     <hr class="border border-current">
                 </div>
-                <div class="flex items-center justify-between gap-20">
-                    <div class="flex items-center justify-between w-1/2 gap-5">
-                        <label for="max-id" class="label font-semibold">Max Value</label>
-                        <div class="input flex items-center justify-between">
-                            <input type="number" id="max-id" name="max-value" class="" value="{{ data.range_clinic.max_value }}" required>
+                <div class="grid lg:grid-cols-2 grid-cols-1 lg:gap-20 gap-5">
+                    <div class="flex items-center justify-between w-full gap-5">
+                        <label for="max-id" class="label font-semibold w-1/3">Max Value</label>
+                        <div class="input flex items-center justify-between w-2/3">
+                            <input type="number" id="max-id" name="max-value" class="input rounded-none shadow-none border-none" value="{{ data.range_clinic.max_value }}" required>
                             <p class="text-md font-sans font-semibold text-pretty">Clinic</p>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between w-1/2 gap-5">
-                        <label for="min-id" class="label font-semibold">Min Value</label>
-                        <div class="input flex items-center justify-between">
-                            <input type="number" id="min-id" name="min-value" class="" value="{{ data.range_clinic.min_value }}" required>
+                    <div class="flex items-center justify-between w-full gap-5">
+                        <label for="min-id" class="label font-semibold w-1/3">Min Value</label>
+                        <div class="input flex items-center justify-between w-2/3">
+                            <input type="number" id="min-id" name="min-value" class="input rounded-none shadow-none border-none" value="{{ data.range_clinic.min_value }}" required>
                             <p class="text-md font-sans font-semibold text-pretty">Clinic</p>
                         </div>
                     </div>
@@ -58,7 +58,7 @@
             </div>
         </form>
     </div>
-    <div class="w-3/12">
+    <div class="lg:w-3/12 hidden">
         <!-- Log Activity -->
     </div>
 </section>
