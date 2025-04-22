@@ -7,8 +7,8 @@
 {% endblock header %}
 
 {% block main %}
-<main class="mx-10 my-5 p-5 bg-base-200 rounded-md">
-    <table class="table table-zebra">
+<main class="lg:mx-10 mx-5 my-5 p-5 bg-base-200 rounded-md">
+    <table class="lg:table hidden table-zebra">
         <thead>
             <tr>
                 <th>Grade Name</th>
@@ -26,5 +26,22 @@
             {% endfor %}
         </tbody>
     </table>
+    <div id="page-list-2" class="space-y-2 lg:hidden block">
+        {% for data in page_obj %}
+        <div class="rounded-sm bg-base-100 p-2">
+            <a href="{% url 'master:detail_gc' data.grade.pk %} class="text-left text-md font-semibold">{{ data.grade.name }}</a>
+            <div class="flex items-center justify-start gap-5">
+                <ul class="w-1/4 text-xs font-semibold">
+                    <li>Alias</li>
+                    <li>Range</li>
+                </ul>
+                <ul class="w-3/4 text-xs font-semibold">
+                    <li> : {{ data.grade.alias }}</li>
+                    <li> : >= {{ data.grade.range_clinic.min_value }} Clinic, <= {{ data.grade.range_clinic.max_value }} Clinic </li>
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </main>
 {% endblock main %}

@@ -40,10 +40,13 @@
           // Saat radio input berubah
           $('input[name="theme-dropdown"]').on('change', function() {
             var theme = $(this).val();
-            // Set data-theme pada elemen <html>
-            $('html').attr('data-theme', theme);
-            // Simpan theme ke localStorage
-            localStorage.setItem('theme', theme);
+            if ($(this).is(':checked')) {
+              $('html').attr('data-theme', theme);
+              localStorage.setItem('theme', theme);
+            } else {
+              $('html').attr('data-theme', 'lemonade');
+              localStorage.setItem('theme', 'lemonade');
+            }
           });
         });
 
@@ -59,6 +62,23 @@
                     dataType: 'html',
                     success: function(response) {
                         $('#page-list').html($(response).find('#page-list').html());
+                    }
+                });
+            });
+        });
+
+        $(document).ready(function() {
+            $('#search-2').on('input', function() {
+                var searchQuery = $(this).val();
+
+                $.ajax({
+                    url: window.location.href,
+                    data: {
+                        'search' : searchQuery
+                    },
+                    dataType: 'html',
+                    success: function(response) {
+                        $('#page-list-2').html($(response).find('#page-list-2').html());
                     }
                 });
             });

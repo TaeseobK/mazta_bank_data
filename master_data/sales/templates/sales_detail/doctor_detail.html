@@ -6,7 +6,7 @@
 {% endblock header %}
 {% block main %}
 <section class="m-5 flex gap-5 z-0">
-    <div class="w-9/12">
+    <div class="lg:w-9/12 w-full">
         <form action="." method="post" class="space-y-5">
             {% csrf_token %}
             {% if data.0.doctor %}
@@ -28,39 +28,27 @@
                         {% endif %}
                     </p>
                 </div>
-                <div class="space-y-5 border-base-100 bg-base-300 rounded-md m-5 p-5">
-                    <div class="flex items-center justify-between gap-20">
-                        <div class="flex items-center justify-between w-1/2 gap-5">
-                            <label for="fn-id" class="label font-semibold">First Name</label>
-                            <input type="text" id="fn-id" name="first-name" class="input input-sm px-2" autocomplete="off" value="{{ data.0.doctor.info.first_name }}" placeholder="First Name">
-                        </div>
-                        <div class="flex items-center justify-between w-1/2 gap-5">
-                            <label for="fl-id" class="label font-semibold">Full Name</label>
-                            <input type="text" id="fl-id" name="full-name" class="input input-sm px-2" placeholder="Full Name" {% if not data.0.doctor %} value="{{ data.0.dr_api.nama_dokter }}" {% else %} value="{{ data.0.doctor.info.full_name }}" {% endif %} required>
-                        </div>
+                <div class="border-base-100 bg-base-300 rounded-md m-5 p-5 grid lg:grid-cols-2 grid-cols-1 gap-5">
+                    <div class="flex items-center justify-start gap-5">
+                        <label for="fn-id" class="label text-md font-semibold lg:block hidden w-1/4">First Name</label>
+                        <input type="text" id="fn-id" name="first-name" class="input input-sm px-2 w-full lg:w-3/4" autocomplete="off" value="{{ data.0.doctor.info.first_name }}" placeholder="First Name">
                     </div>
-                    <div class="flex items-center justify-between gap-20">
-                        <div class="flex items-center justify-between w-1/2 gap-5">
-                            <label for="mn-id" class="label font-semibold">Middle Name</label>
-                            <input type="text" id="mn-id" name="middle-name" class="input input-sm px-2" value="{{ data.0.doctor.info.middle_name }}" placeholder="Middle Name">
-                        </div>
-                        <div class="flex items-center justify-between w-1/2 gap-5">
-                            <div class="flex items-center justify-between gap-5 w-3/8">
-                                <label for="sal-id" class="font-semibold label">Salutation</label>
-                                <div id="sal-tooltip-false" class="flex items-center justify-end">
-                                    <div class="tooltip">
-                                        <div class="tooltip-content">
-                                            <div class="text-sm font-normal p-1">No Selected Items</div>
-                                        </div>
-                                        <svg class="w-5 h-5 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                                        </svg>                                          
-                                    </div>
-                                </div>
-                                <div id="sal-tooltip-true" class="items-center hidden">
-                                </div>
-                            </div>
-                            <select name="sal-num" id="sal-id" class="input input-sm px-2 cursor-pointer" required>
+                    <div class="flex items-center justify-start gap-5">
+                        <label for="mn-id" class="label text-md font-semibold lg:block hidden w-1/4">Middle Name</label>
+                        <input type="text" id="mn-id" name="middle-name" class="input input-sm px-2 w-full lg:w-3/4" value="{{ data.0.doctor.info.middle_name }}" placeholder="Middle Name">
+                    </div>
+                    <div class="flex items-center justify-start gap-5">
+                        <label for="ln-id" class="label text-md font-semibold lg:block hidden w-1/4">Last Name</label>
+                        <input type="text" id="ln-id" name="last-name" class="input input-sm px-2 w-full lg:w-3/4" value="{{ data.0.doctor.info.last_name }}" placeholder="Last Name">
+                    </div>
+                    <div class="flex items-center justify-start gap-5">
+                        <label for="fl-id" class="label text-md font-semibold lg:block hidden w-1/4">Full Name</label>
+                        <input type="text" id="fl-id" name="full-name" class="input input-sm px-2 w-full lg:w-3/4" placeholder="Full Name" {% if not data.0.doctor %} value="{{ data.0.dr_api.nama_dokter }}" {% else %} value="{{ data.0.doctor.info.full_name }}" {% endif %} required>
+                    </div>
+                    <div class="flex items-center justify-start gap-5 w-full">
+                        <label for="sal-num" class="label text-md font-semibold lg:block hidden w-1/4">Salutation</label>
+                        <div class="flex items-center justify-start gap-5 w-full lg:w-3/4">
+                            <select name="sal-num" id="sal-id" class="select select-sm px-2 cursor-pointer" required>
                                 {% if data.0.doctor %}
                                     {% for d in data.0.salutations %}
                                     <option value="{{ d.pk }}" {% if data.0.doctor.info.salutation == d.pk %} selected {% endif %} >{{ d.short_salutation }}</option>
@@ -72,30 +60,24 @@
                                     {% endfor %}
                                 {% endif %}
                             </select>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between gap-20">
-                        <div class="flex items-center justify-between w-1/2 gap-5">
-                            <label for="ln-id" class="label font-semibold">Last Name</label>
-                            <input type="text" id="ln-id" name="last-name" class="input input-sm px-2" value="{{ data.0.doctor.info.last_name }}" placeholder="Last Name">
-                        </div>
-                        <div class="flex items-center justify-between w-1/2 gap-5">
-                            <div class="flex items-center justify-between gap-5 w-3/8">
-                                <label for="tit-id" class="font-semibold label">Title</label>
-                                <div id="tit-tooltip-false" class="flex items-center justify-end">
-                                    <div class="tooltip">
-                                        <div class="tooltip-content">
-                                            <div class="text-sm font-normal p-1">No Selected Items</div>
-                                        </div>
-                                        <svg class="w-5 h-5 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                                        </svg>                                          
+                            <div id="sal-tooltip-false" class="flex items-center justify-center w-1/12">
+                                <div class="tooltip">
+                                    <div class="tooltip-content">
+                                        <div class="text-sm font-normal p-1">No Selected Items</div>
                                     </div>
-                                </div>
-                                <div id="tit-tooltip-true" class="items-center hidden">
+                                    <svg class="w-5 h-5 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                    </svg>                                          
                                 </div>
                             </div>
-                            <select name="tit-num" id="tit-id" class="input input-sm px-2 cursor-pointer" required>
+                            <div id="sal-tooltip-true" class="items-center hidden w-1/12">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-start gap-5 w-full">
+                        <label for="tit-num" class="label text-md font-semibold lg:block hidden w-1/4">Title</label>
+                        <div class="flex items-center justify-start gap-5 w-full lg:w-3/4">
+                            <select name="tit-num" id="tit-id" class="select select-sm px-2 cursor-pointer" required>
                                 <option value="" selected disabled>Select Titles</option>
                                 {% if data.0.doctor %}
                                     {% for d in data.0.titles %}
@@ -108,11 +90,36 @@
                                     {% endfor %}
                                 {% endif %}
                             </select>
+                            <div id="tit-tooltip-false" class="flex items-center justify-center w-1/12">
+                                <div class="tooltip">
+                                    <div class="tooltip-content">
+                                        <div class="text-sm font-normal p-1">No Selected Items</div>
+                                    </div>
+                                    <svg class="w-5 h-5 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                    </svg>                                          
+                                </div>
+                            </div>
+                            <div id="tit-tooltip-true" class="items-center hidden w-1/12">
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div>
-                    <div role="tablist" class="tabs tabs-border">
+                    <div class="dropdown dropdown-start block lg:hidden mx-5">
+                        <div tabindex="0" role="button" class="btn m-1 rounded-none rounded-l-sm rounded-r-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25" />
+                            </svg>                              
+                        </div>
+                        <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-sm z-1 w-auto p-2 shadow-sm mx-2">
+                            <li><label for="wi-id">Work Information</label></li>
+                            <li><label for="pi-id">Private Information</label></li>
+                            <li><label for="ai-id">Additional Information</label></li>
+                            <li><label for="bi-id">Branch Information</label></li>
+                        </ul>
+                    </div>
+                    <div role="tablist" class="tabs tabs-border hidden lg:flex flex-wrap justify-start gap-2 sm:gap-4">
                         <label for="wi-id" class="tab flex items-center justify-center gap-3">
                             <input type="radio" id="wi-id" data-tab="wi-tab-id" name="tab-drd" class="tabs-lift check-tab" value="1" checked>
                             <div class="w-6 h-6">
@@ -141,7 +148,7 @@
                             Additional Information
                         </label>
                         <label for="bi-id" class="tab flex items-center justify-center gap-3">
-                            <input type="radio" id="bi-id" name="tab-drd" data-tab="bi-tab-id" class="tabs-lift check-tab" value="3">
+                            <input type="radio" id="bi-id" name="tab-drd" data-tab="bi-tab-id" class="tabs-lift check-tab" value="4">
                             <div class="w-6 h-6">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349M3.75 21V9.349m0 0a3.001 3.001 0 0 0 3.75-.615A2.993 2.993 0 0 0 9.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 0 0 2.25 1.016c.896 0 1.7-.393 2.25-1.015a3.001 3.001 0 0 0 3.75.614m-16.5 0a3.004 3.004 0 0 1-.621-4.72l1.189-1.19A1.5 1.5 0 0 1 5.378 3h13.243a1.5 1.5 0 0 1 1.06.44l1.19 1.189a3 3 0 0 1-.621 4.72M6.75 18h3.75a.75.75 0 0 0 .75-.75V13.5a.75.75 0 0 0-.75-.75H6.75a.75.75 0 0 0-.75.75v3.75c0 .414.336.75.75.75Z" />
@@ -152,12 +159,12 @@
                     </div>
                 </div>
                 <div id="wi-tab-id" class="tab-active tab-content">
-                    <div class="grid grid-cols-2 gap-10 p-5">
+                    <div class="grid lg:grid-cols-2 grid-cols-1 gap-10 p-5">
                         <div class="space-y-2">
                             <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">Work Locations</p>
                             <div class="flex justify-center gap-5 items-start">
-                                <p class="w-1/4 font-semibold label">Address</p>
-                                <ul class="w-3/4 space-y-2">
+                                <p class="w-1/4 font-semibold label lg:block hidden">Address</p>
+                                <ul class="lg:w-3/4 w-full space-y-2">
                                     <li>
                                         <input type="text" id="" name="work-street-1" class="input input-sm px-2 w-full" placeholder="Street 1..." {% if not data.0.doctor %} value="{{ data.0.dr_api.alamat }}" {% else %} value="{{ data.0.doctor.work_information.address.street_1 }}" {% endif %}>
                                     </li>
@@ -181,33 +188,46 @@
                             <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">Job Information</p>
                             <ul class="space-y-2 w-full">
                                 <li class="flex items-center justify-between">
-                                    <label for="ws-id" class="font-semibold label">Workspace Name</label>
-                                    <input type="text" id="ws-id" name="workspace-name" class="input input-sm px-2" value="{{ data.0.doctor.work_information.job_information.workspace_name }}">
+                                    <label for="ws-id" class="font-semibold label hidden lg:block">Workspace Name</label>
+                                    <input type="text" id="ws-id" name="workspace-name" class="input input-sm px-2" placeholder="Workspace Name" value="{{ data.0.doctor.work_information.job_information.workspace_name }}">
                                 </li>
                                 <li class="flex items-center justify-between">
-                                    <label for="jp-id" class="font-semibold label">Job Position</label>
-                                    <input type="text" id="jp-id" name="job-position" class="input input-sm px-2" value="{{ data.0.doctor.work_information.job_information.job_position }}">
+                                    <label for="jp-id" class="font-semibold label hidden lg:block">Job Position</label>
+                                    <input type="text" id="jp-id" name="job-position" class="input input-sm px-2" placeholder="Job Position" value="{{ data.0.doctor.work_information.job_information.job_position }}">
                                 </li>
                                 <li class="flex items-center justify-between">
-                                    <label for="wp-id" class="font-semibold label">Work Phone</label>
-                                    <input type="text" id="wp-id" value="{% if not data.0.doctor %}+62 {% else %}{{ data.0.doctor.work_information.job_information.work_phone }}{% endif %}" name="work-phone" class="input input-sm px-2">
+                                    <label for="wp-id" class="font-semibold label hidden lg:block">Work Phone</label>
+                                    <input type="text" id="wp-id" placeholder="Work Phone" value="{% if not data.0.doctor %}+62 Work Phone{% else %}{{ data.0.doctor.work_information.job_information.work_phone }}{% endif %}" name="work-phone" class="input input-sm px-2">
                                 </li>
                                 <li class="flex items-center justify-between">
-                                    <label for="wm-id" class="font-semibold label">Work Mobile</label>
-                                    <input type="text" id="wm-id" name="work-mobile" class="input input-sm px-2" value="{% if not data.0.doctor %}+62 {% else %}{{ data.0.doctor.work_information.job_information.work_mobile }}{% endif %}">
+                                    <label for="wm-id" class="font-semibold label hidden lg:block">Work Mobile</label>
+                                    <input type="text" id="wm-id" name="work-mobile" class="input input-sm px-2" placeholder="Work Mobile" value="{% if not data.0.doctor %}+62 Work Mobile {% else %}{{ data.0.doctor.work_information.job_information.work_mobile }}{% endif %}">
                                 </li>
                                 <li class="flex items-center justify-between">
-                                    <label for="we-id" class="font-semibold label">Work Email</label>
-                                    <input type="text" id="we-id" name="work-email" class="input input-sm px-2" value="{{ data.0.doctor.work_information.job_information.work_email }}">
+                                    <label for="we-id" class="font-semibold label hidden lg:block">Work Email</label>
+                                    <input type="text" id="we-id" name="work-email" class="input input-sm px-2" placeholder="Work Email" value="{{ data.0.doctor.work_information.job_information.work_email }}">
                                 </li>
                             </ul>
                         </div>
                         <div class="space-y-2">
                             <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">Sales Information</p>
-                            <ul class="space-y-2 w-full">
-                                <li class="flex items-center justify-between">
-                                    <div class="flex items-center justify-between gap-3 w-1/3">
-                                        <label for="gu-id" class="font-semibold label w-1/3">Grade User</label>
+                            <ul class="grid grid-cols-1 gap-5 w-full">
+                                <li class="flex items-center justify-start gap-5">
+                                    <label for="gu-id" class="font-semibold label w-1/3 hidden lg:block">Grade User</label>
+                                    <div class="flex items-center justify-start gap-5 lg:w-2/3 w-full">
+                                        <select name="grade-user" id="gu-id" class="input w-full input-sm px-2 cursor-pointer" required>
+                                            {% if data.0.doctor %}
+                                                <option value="" disabled>Select Grade Users</option>
+                                                {% for d in data.0.grade_user %}
+                                                <option value="{{ d.pk }}" {% if data.0.doctor.sales_information.grade_user == d.pk %} selected {% endif %}>{{ d.alias }}</option>
+                                                {% endfor %}
+                                            {% else %}
+                                                <option value="" selected disabled>Select Grade Users</option>
+                                                {% for d in data.0.grade_user %}
+                                                <option value="{{ d.pk }}">{{ d.alias }}</option>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </select>
                                         <div id="gu-tooltip-false" class="flex items-center justify-end">
                                             <div class="tooltip">
                                                 <div class="tooltip-content">
@@ -221,23 +241,23 @@
                                         <div id="gu-tooltip-true" class="items-center hidden">
                                         </div>
                                     </div>
-                                    <select name="grade-user" id="gu-id" class="input input-sm px-2 cursor-pointer" required>
-                                        {% if data.0.doctor %}
-                                            <option value="" disabled>Select Grade Users</option>
-                                            {% for d in data.0.grade_user %}
-                                            <option value="{{ d.pk }}" {% if data.0.doctor.sales_information.grade_user == d.pk %} selected {% endif %}>{{ d.alias }}</option>
-                                            {% endfor %}
-                                        {% else %}
-                                            <option value="" selected disabled>Select Grade Users</option>
-                                            {% for d in data.0.grade_user %}
-                                            <option value="{{ d.pk }}">{{ d.alias }}</option>
-                                            {% endfor %}
-                                        {% endif %}
-                                    </select>
                                 </li>
-                                <li class="flex items-center justify-between">
-                                    <div class="flex items-center justify-between gap-3 w-1/3">
-                                        <label for="gc-id" class="font-semibold label w-1/3">Grade Clinic</label>
+                                <li class="flex items-center justify-start gap-5">
+                                    <label for="gc-id" class="font-semibold label w-1/3 hidden lg:block">Grade Clinic</label>
+                                    <div class="flex items-center justify-start gap-5 lg:w-2/3 w-full">
+                                        <select name="grade-clinic" id="gc-id" class="input input-sm px-2 cursor-pointer" required>
+                                            {% if data.0.doctor %}
+                                                <option value="" disabled>Select Grade Clinics</option>
+                                                {% for d in data.0.grade_clinic %}
+                                                <option value="{{ d.pk }}" {% if data.0.doctor.sales_information.grade_clinic == d.pk %} selected {% endif %}>{{ d.alias }}</option>
+                                                {% endfor %}
+                                            {% else %}
+                                                <option value="" selected disabled>Select Grade Clinics</option>
+                                                {% for d in data.0.grade_clinic %}
+                                                <option value="{{ d.pk }}">{{ d.alias }}</option>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </select>
                                         <div id="gc-tooltip-false" class="flex items-center">
                                             <div class="tooltip">
                                                 <div class="tooltip-content">
@@ -251,23 +271,10 @@
                                         <div id="gc-tooltip-true" class="items-center hidden">
                                         </div>
                                     </div>
-                                    <select name="grade-clinic" id="gc-id" class="input input-sm px-2 cursor-pointer" required>
-                                        {% if data.0.doctor %}
-                                            <option value="" disabled>Select Grade Clinics</option>
-                                            {% for d in data.0.grade_clinic %}
-                                            <option value="{{ d.pk }}" {% if data.0.doctor.sales_information.grade_clinic == d.pk %} selected {% endif %}>{{ d.alias }}</option>
-                                            {% endfor %}
-                                        {% else %}
-                                            <option value="" selected disabled>Select Grade Clinics</option>
-                                            {% for d in data.0.grade_clinic %}
-                                            <option value="{{ d.pk }}">{{ d.alias }}</option>
-                                            {% endfor %}
-                                        {% endif %}
-                                    </select>
                                 </li>
                                 <li class="flex items-center justify-start gap-20">
-                                    <label for="wp-id" class="font-semibold label">User Priority</label>
-                                    <div class="space-y-1">
+                                    <label for="wp-id" class="font-semibold label lg:block hidden">User Priority</label>
+                                    <div class="space-y-1 lg:block flex items-center justify-start gap-5">
                                         <div class="flex items-center justify-start gap-5">
                                             <input type="radio" id="priority-id" value="1" {% if data.0.doctor.work_information.sales_information.priority == 1 %} checked {% endif %} class="radio" name="priority">
                                             <label for="priority-id" class="label">Priority</label>
@@ -279,7 +286,7 @@
                                     </div>
                                 </li>
                                 <li class="flex items-center justify-between">
-                                    <label for="sp-id" class="font-semibold label">Specialist</label>
+                                    <label for="sp-id" class="font-semibold label lg:block hidden">Specialist</label>
                                     <select name="specialists" id="sp-id" class="input input-sm px-2 cursor-pointer" required>
                                         {% if data.0.doctor %}
                                             <option value="" disabled>Select Specialists</option>
@@ -299,19 +306,19 @@
                         <div class="space-y-2">
                             <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">System Information</p>
                             <div class="flex items-center justify-between">
-                                <label for="acc-id" class="label font-semibold">Accurate Code</label>
-                                <input id="acc-id" name="accurate-code" type="text" class="input input-sm px-2" value="{{ data.0.doctor.work_information.system_information.accurate_code }}">
+                                <label for="acc-id" class="label font-semibold lg:block hidden">Accurate Code</label>
+                                <input id="acc-id" name="accurate-code" placeholder="Accurate Code" type="text" class="input input-sm px-2" value="{{ data.0.doctor.work_information.system_information.accurate_code }}">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div id="pi-tab-id" class="tab-content hidden">
-                    <div class="grid grid-cols-2 gap-10 p-5">
+                    <div class="grid lg:grid-cols-2 grid-cols-1 gap-10 p-5">
                         <div class="space-y-2">
                             <p class="w-full text-md font-semibold border-b-2 border-current uppercase">Private Contact</p>
                             <div class="flex items-start justify-center gap-5">
-                                <p class="w-1/4 font-semibold label">Address</p>
-                                <ul class="w-3/4 space-y-2">
+                                <p class="w-1/4 font-semibold label lg:block hidden">Address</p>
+                                <ul class="lg:w-3/4 w-full space-y-2">
                                     <li>
                                         <input type="text" id="" name="private-street-1" class="input input-sm px-2 w-full" placeholder="Street 1..." value="{{ data.0.doctor.private_information.private_contact.address.street_1 }}">
                                     </li>
@@ -329,39 +336,39 @@
                                 </ul>
                             </div>
                             <div class="flex items-start justify-between gap-5">
-                                <label for="pvt-email" class="label w-1/4 font-semibold">Private Email</label>
-                                <input type="text" id="pvt-email" name="private-email" class="input input-sm px-2 w-3/4" value="{{ data.0.doctor.private_information.private_contact.email }}">
+                                <label for="pvt-email" class="label w-1/4 font-semibold lg:block hidden">Private Email</label>
+                                <input type="text" id="pvt-email" name="private-email" class="input input-sm px-2 lg:w-3/4 w-full" placeholder="Private Email" value="{{ data.0.doctor.private_information.private_contact.email }}">
                             </div>
                             <div class="flex items-start justify-between gap-5">
-                                <label for="pvt-phone" class="label w-1/4 font-semibold">Private Phone</label>
-                                <input type="text" id="pvt-phone" name="private-phone" class="input input-sm px-2 w-3/4" placeholder="+62 " value="{% if data.0.doctor %}{{ data.0.doctor.private_information.private_contact.phone }}{% else %}+62 {% endif %}">
+                                <label for="pvt-phone" class="label w-1/4 font-semibold lg:block hidden">Private Phone</label>
+                                <input type="text" id="pvt-phone" name="private-phone" class="input input-sm px-2 lg:w-3/4 w-full" placeholder="+62 (Private Phone)" value="{% if data.0.doctor %}{{ data.0.doctor.private_information.private_contact.phone }}{% else %}+62 {% endif %}">
                             </div>
                         </div>
                         <div class="space-y-2">
                             <p class="w-full text-md font-semibold border-b-2 border-current uppercase">Citizenship</p>
                             <div class="flex items-start justify-between gap-5">
-                                <label for="ntl" class="label w-1/4 font-semibold">Nationality</label>
-                                <input type="text" id="ntl" name="nationality" class="input input-sm px-2 w-3/4" value="{{ data.0.doctor.private_information.citizenship.nationality }}">
+                                <label for="ntl" class="label w-1/4 font-semibold lg:block hidden">Nationality</label>
+                                <input type="text" id="ntl" name="nationality" class="input input-sm px-2 w-full lg:w-3/4" placeholder="Nationality" value="{{ data.0.doctor.private_information.citizenship.nationality }}">
                             </div>
                             <div class="flex items-start justify-between gap-5">
-                                <label for="gdr" class="label w-1/4 font-semibold">Gender</label>
-                                <select name="gender" id="gdr" class="input input-px-2 w-3/4 cursor-pointer">
+                                <label for="gdr" class="label w-1/4 font-semibold lg:block hidden">Gender</label>
+                                <select name="gender" id="gdr" class="input input-px-2 w-full lg:w-3/4 cursor-pointer">
                                     <option value="" {% if not data.0.doctor %} selected {% endif %} disabled>Select Gender</option>
                                     <option value="Male" {% if data.0.doctor.private_information.citizenship.gender == "Male" %} selected {% endif %}>Male</option>
                                     <option value="Female" {% if data.0.doctor.private_information.citizenship.gender == "Female" %} selected {% endif %}>Female</option>
                                 </select>
                             </div>
                             <div class="flex items-start justify-between gap-5">
-                                <label for="brth" class="label w-1/4 font-semibold">Date of Birth</label>
-                                <input type="date" id="brth" name="birthday" class="input input-sm px-2 w-3/4" value="{{ data.0.doctor.private_information.citizenship.birth_date }}">
+                                <label for="brth" class="label w-1/4 font-semibold lg:block hidden">Date of Birth</label>
+                                <input type="date" id="brth" name="birthday" class="input input-sm px-2 w-full lg:w-3/4" placeholder="Date of Birth" value="{{ data.0.doctor.private_information.citizenship.birth_date }}">
                             </div>
                             <div class="flex items-start justify-between gap-5">
-                                <label for="brthplc" class="label w-1/4 font-semibold">Place of Birth</label>
-                                <input type="text" id="brthplc" name="birthplace" class="input input-sm px-2 w-3/4" value="{{ data.0.doctor.private_information.citizenship.birth_place }}">
+                                <label for="brthplc" class="label w-1/4 font-semibold lg:block hidden">Place of Birth</label>
+                                <input type="text" id="brthplc" name="birthplace" class="input input-sm px-2 w-full lg:w-3/4" placeholder="Place of Birth" value="{{ data.0.doctor.private_information.citizenship.birth_place }}">
                             </div>
                             <div class="flex items-start justify-between gap-5">
-                                <label for="rlgn" class="label w-1/4 font-semibold">Religion</label>
-                                <input type="text" id="rlgn" name="religion" class="input input-sm px-2 w-3/4" list="rlgn-list" value="{{ data.0.doctor.private_information.citizenship.religion }}">
+                                <label for="rlgn" class="label w-1/4 font-semibold lg:block hidden">Religion</label>
+                                <input type="text" id="rlgn" name="religion" class="input input-sm px-2 w-full lg:w-3/4" list="rlgn-list" placeholder="Religion" value="{{ data.0.doctor.private_information.citizenship.religion }}">
                                 <datalist id="rlgn-list">
                                     <option value="Islam">
                                     <option value="Kristen Protestan">
@@ -375,23 +382,23 @@
                         <div class="space-y-2">
                             <p class="w-full text-md font-semibold border-b-2 border-current uppercase">Education</p>
                             <div class="flex items-start justify-between gap-5">
-                                <label for="cert-level" class="label w-1/4 font-semibold">Cert. Level</label>
-                                <input type="text" id="cert-level" name="certification-level" list="" class="input input-sm px-2 w-3/4" value="{{ data.0.doctor.private_information.education.certification }}">
+                                <label for="cert-level" class="label w-1/4 font-semibold lg:block hidden">Cert. Level</label>
+                                <input type="text" id="cert-level" name="certification-level" class="input input-sm px-2 w-full lg:w-3/4" placeholder="Certification Level" value="{{ data.0.doctor.private_information.education.certification }}">
                             </div>
                             <div class="flex items-start justify-between gap-5">
-                                <label for="fos" class="label w-1/4 font-semibold">Field of Study</label>
-                                <input type="text" id="fos" name="field-study" class="input input-sm px-2 w-3/4" value="{{ data.0.doctor.private_information.education.field_study }}">
+                                <label for="fos" class="label w-1/4 font-semibold lg:block hidden">Field of Study</label>
+                                <input type="text" id="fos" name="field-study" class="input input-sm px-2 w-full lg:w-3/4" placeholder="Field of Study" value="{{ data.0.doctor.private_information.education.field_study }}">
                             </div>
                             <div class="flex items-start justify-between gap-5">
-                                <label for="sch-name" class="label w-1/4 font-semibold">School Name</label>
-                                <input type="text" id="sch-name" name="school-name" class="input input-sm px-2 w-3/4" value="{{ data.0.doctor.private_information.education.school_name }}">
+                                <label for="sch-name" class="label w-1/4 font-semibold lg:block hidden">School Name</label>
+                                <input type="text" id="sch-name" name="school-name" class="input input-sm px-2 w-full lg:w-3/4" placeholder="School Name" value="{{ data.0.doctor.private_information.education.school_name }}">
                             </div>
                         </div>
                         <div class="space-y-2">
                             <p class="w-full text-md font-semibold border-b-2 border-current uppercase">Family Status</p>
                             <div class="flex items-start justify-between gap-5">
-                                <label for="mrtl-sts" class="label w-1/4 font-semibold">Marital Status</label>
-                                <select name="marital-status" id="mrtl-sts" class="input input-sm px-2 w-3/4 cursor-pointer">
+                                <label for="mrtl-sts" class="label w-1/4 font-semibold lg:block hidden">Marital Status</label>
+                                <select name="marital-status" id="mrtl-sts" class="input input-sm px-2 w-full lg:w-3/4 cursor-pointer">
                                     <option value="" {% if not data.0.doctor %} selected {% endif %} disabled>Select Marital Status</option>
                                     <option value="Single" {% if data.0.doctor.private_information.family.marital_status == "Single" %} selected {% endif %}>Single</option>
                                     <option value="Married" {% if data.0.doctor.private_information.family.marital_status == "Married" %} selected {% endif %}>Married</option>
@@ -489,40 +496,34 @@
                             </div>
                         </div>
                         <dialog id="children_modal" class="modal">
-                            <div class="modal-box w-11/12 max-w-5xl glass ">
+                            <div class="modal-box w-11/12 max-w-5xl glass">
                                 <h3 class="text-lg font-bold">Children</h3>
-                                <div class="modal-action w-full">
-                                    <form id="chld-form" class="w-full">
-                                        <div class="w-full space-y-5">
-                                            <div class="flex items-center justify-start gap-10 w-full">
-                                                <div class="flex items-center justify-between w-1/2 gap-5">
-                                                    <label for="chld-frst-nm" class="w-1/4">First Name</label>
-                                                    <input type="text" id="chld-frst-nm" name="chldrn_frst_nm" class="input input-sm px-2 w-3/4">
-                                                </div>
-                                                <div class="flex items-center justify-between w-1/2 gap-5">
-                                                    <label for="chld-fll-nm" class="w-1/4">Full Name</label>
-                                                    <input type="text" id="chld-fll-nm" name="chldrn_fll_nm" class="input input-sm px-2 w-3/4">
-                                                </div>
+                                <div class="modal-action w-full flex items-center justify-center">
+                                    <form id="chld-form" class="w-full flex items-center justify-center">
+                                        <div class="w-full grid lg:grid-cols-2 grid-cols-1 gap-5">
+                                            <div class="flex items-center justify-between w-full gap-5">
+                                                <label for="chld-frst-nm" class="w-1/4 lg:block hidden">First Name</label>
+                                                <input type="text" id="chld-frst-nm" name="chldrn_frst_nm" placeholder="Children First Name" class="input input-sm px-2 w-full lg:w-3/4">
                                             </div>
-                                            <div class="flex items-center justify-start gap-10 w-full">
-                                                <div class="flex items-center justify-between w-1/2 gap-5">
-                                                    <label for="chld-mdl-nm" class="w-1/4">Middle Name</label>
-                                                    <input type="text" id="chld-mdl-nm" name="chldrn_mdl_nm" class="input input-sm px-2 w-3/4">
-                                                </div>
-                                                <div class="flex items-center justify-between w-1/2 gap-5">
-                                                    <label for="chld-phon" class="w-1/4">Phone</label>
-                                                    <input type="text" id="chld-phon" name="chldrn_phn" class="input input-sm px-2 w-3/4" placeholder="+62 " value="+62 ">
-                                                </div>
+                                            <div class="flex items-center justify-between w-full gap-5">
+                                                <label for="chld-mdl-nm" class="w-1/4 lg:block hidden">Middle Name</label>
+                                                <input type="text" id="chld-mdl-nm" placeholder="Children Middle Name" name="chldrn_mdl_nm" class="input input-sm px-2 w-full lg:w-3/4">
                                             </div>
-                                            <div class="flex items-center justify-start gap-10 w-full">
-                                                <div class="flex items-center justify-between w-1/2 gap-5">
-                                                    <label for="chld-lst-nm" class="w-1/4">Last Name</label>
-                                                    <input type="text" id="chld-lst-nm" name="chldrn_lst_nm" class="input input-sm px-2 w-3/4">
-                                                </div>
-                                                <div class="flex items-center justify-between w-1/2 gap-5">
-                                                    <label for="chld-brth" class="w-1/4">Birth Day</label>
-                                                    <input type="date" id="chld-brth" name="chldrn_brth" class="input input-sm px-2 w-3/4">
-                                                </div>
+                                            <div class="flex items-center justify-between w-full gap-5">
+                                                <label for="chld-lst-nm" class="w-1/4 lg:block hidden">Last Name</label>
+                                                <input type="text" id="chld-lst-nm" placeholder="Children Last Name" name="chldrn_lst_nm" class="input input-sm px-2 w-full lg:w-3/4">
+                                            </div>
+                                            <div class="flex items-center justify-between w-full gap-5">
+                                                <label for="chld-fll-nm" class="w-1/4 lg:block hidden">Full Name</label>
+                                                <input type="text" id="chld-fll-nm" name="chldrn_fll_nm" placeholder="Children Full Name" class="input input-sm px-2 w-full lg:w-3/4">
+                                            </div>
+                                            <div class="flex items-center justify-between w-full gap-5">
+                                                <label for="chld-phon" class="w-1/4 lg:block hidden">Phone</label>
+                                                <input type="text" id="chld-phon" name="chldrn_phn" class="input input-sm px-2 w-full lg:w-3/4" placeholder="+62 (Children Phone)" value="+62 ">
+                                            </div>
+                                            <div class="flex items-center justify-between w-full gap-5">
+                                                <label for="chld-brth" class="w-1/4 lg:block hidden">Birth Day</label>
+                                                <input type="date" id="chld-brth" placeholder="Children Birth Day" name="chldrn_brth" class="input input-sm px-2 w-full lg:w-3/4">
                                             </div>
                                         </div>
                                     </form>
@@ -538,44 +539,34 @@
                                 <h3 class="text-lg font-bold">Spouse</h3>
                                 <div class="modal-action w-full">
                                     <form id="sps-form-id" class="w-full">
-                                        <div class="w-full space-y-5">
-                                            <div class="flex items-center justify-start gap-10 w-full">
-                                                <div class="flex items-center justify-between w-1/2 gap-5">
-                                                    <label for="sps-frst-nm" class="w-1/4">First Name</label>
-                                                    <input type="text" id="sps-frst-nm" name="sps_frst_nm" class="input input-sm px-2 w-3/4">
-                                                </div>
-                                                <div class="flex items-center justify-between w-1/2 gap-5">
-                                                    <label for="sps-mrg-dt" class="w-1/4">Mariage Date</label>
-                                                    <input type="date" id="sps-mrg-dt" name="mrg_dt" class="input input-sm px-2 w-3/4">
-                                                </div>
+                                        <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-5">
+                                            <div class="flex items-center justify-between w-full gap-5">
+                                                <label for="sps-frst-nm" class="lg:block hidden w-1/4">First Name</label>
+                                                <input type="text" id="sps-frst-nm" placeholder="Spouse First Name" name="sps_frst_nm" class="input input-sm px-2 w-full lg:w-3/4">
                                             </div>
-                                            <div class="flex items-center justify-start gap-10 w-full">
-                                                <div class="flex items-center justify-between w-1/2 gap-5">
-                                                    <label for="sps-mdl-nm" class="w-1/4">Middle Name</label>
-                                                    <input type="text" id="sps-mdl-nm" name="sps_mddl_nm" class="input input-sm px-2 w-3/4">
-                                                </div>
-                                                <div class="flex items-center justify-between w-1/2 gap-5">
-                                                    <label for="sps-phon" class="w-1/4">Phone</label>
-                                                    <input type="text" id="sps-phon" name="sps_phn" class="input input-sm px-2 w-3/4" placeholder="+62 " value="+62 ">
-                                                </div>
+                                            <div class="flex items-center justify-between w-full gap-5">
+                                                <label for="sps-mdl-nm" class="lg:block hidden w-1/4">Middle Name</label>
+                                                <input type="text" id="sps-mdl-nm" placeholder="Spouse Middle Name" name="sps_mddl_nm" class="input input-sm px-2 w-full lg:w-3/4">
                                             </div>
-                                            <div class="flex items-center justify-start gap-10 w-full">
-                                                <div class="flex items-center justify-between w-1/2 gap-5">
-                                                    <label for="sps-lst-nm" class="w-1/4">Last Name</label>
-                                                    <input type="text" id="sps-lst-nm" name="sps_lst_nm" class="input input-sm px-2 w-3/4">
-                                                </div>
-                                                <div class="flex items-center justify-between w-1/2 gap-5">
-                                                    <label for="sps-brth" class="w-1/4">Birth Day</label>
-                                                    <input type="date" id="sps-brth" name="sps_birth" class="input input-sm px-2 w-3/4">
-                                                </div>
+                                            <div class="flex items-center justify-between w-full gap-5">
+                                                <label for="sps-lst-nm" class="lg:block hidden w-1/4">Last Name</label>
+                                                <input type="text" id="sps-lst-nm" placeholder="Spouse Last Name" name="sps_lst_nm" class="input input-sm px-2 w-full lg:w-3/4">
                                             </div>
-                                            <div class="flex items-center justify-start gap-10 w-full">
-                                                <div class="flex items-center justify-between w-1/2 gap-5">
-                                                    <label for="sps-fll-nm" class="w-1/4">Full Name</label>
-                                                    <input type="text" id="sps-fll-nm" name="sps_fll_nm" class="input input-sm px-2 w-3/4">
-                                                </div>
-                                                <div class="flex items-center justify-between w-1/2 gap-5">
-                                                </div>
+                                            <div class="flex items-center justify-between w-full gap-5">
+                                                <label for="sps-fll-nm" class="lg:block hidden w-1/4">Full Name</label>
+                                                <input type="text" id="sps-fll-nm" placeholder="Spouse Full Name" name="sps_fll_nm" class="input input-sm px-2 w-full lg:w-3/4">
+                                            </div>
+                                            <div class="flex items-center justify-between w-full gap-5">
+                                                <label for="sps-mrg-dt" class="lg:block hidden w-1/4">Mariage Date</label>
+                                                <input type="date" id="sps-mrg-dt" placeholder="Marriage Date" name="mrg_dt" class="input input-sm px-2 w-full lg:w-3/4">
+                                            </div>
+                                            <div class="flex items-center justify-between w-full gap-5">
+                                                <label for="sps-brth" class="lg:block hidden w-1/4">Birth Day</label>
+                                                <input type="date" id="sps-brth" placeholder="Spouse Birt Date" name="sps_birth" class="input input-sm px-2 w-full lg:w-3/4">
+                                            </div>
+                                            <div class="flex items-center justify-between w-full gap-5">
+                                                <label for="sps-phon" class="lg:block hidden w-1/4">Phone</label>
+                                                <input type="text" id="sps-phon" name="sps_phn" class="input input-sm px-2 w-full lg:w-3/4" placeholder="+62 (Spouse Phone)" value="+62 (Spouse Phone)">
                                             </div>
                                         </div>
                                     </form>
@@ -589,7 +580,7 @@
                     </div>
                 </div>
                 <div id="ai-tab-id" class="tab-content hidden">
-                    <div class="grid grid-cols-2 gap-10 p-5">
+                    <div class="grid lg:grid-cols-2 grid-cols-1 gap-10 p-5">
                         <div class="space-y-2">
                             <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">Interest</p>
                             <table class="table">
@@ -668,9 +659,9 @@
                     <div class="space-y-2 p-5 flex items-center justify-center">
                         <div class="w-full">
                             <p class="text-md border-b-2 border-current font-semibold font-sans uppercase">Best Time</p>
-                            <div class="grid grid-cols-2 gap-10 mt-5">
-                                <div class="gap-5 flex justify-start items-center by-days">
-                                    <span class="text-md font-semibold text-current">Time Base Input?</span>
+                            <div class="grid lg:grid-cols-2 grid-cols-1 gap-10 mt-5">
+                                <div class="gap-5 flex w-full justify-start items-center by-days">
+                                    <span class="text-md font-semibold text-current lg:block hidden">Time Base Input?</span>
                                     <div class="flex items-center justify-start gap-3">
                                         <input type="radio" class="radio" id="by-date" to="by-date-2" name="date-or-days" {% if "date" in data.0.doctor.additional_information.base_time.base %} checked {% endif %} value="date">
                                         <label for="by-date" class="label cursor-pointer">By Date?</label>
@@ -681,8 +672,8 @@
                                     </div>
                                 </div>
                                 <div id="by-days-2" class="gap-2 justify-start items-center hidden by-date-days">
-                                    <label for="days-input" class="label w-1/3">Days of Week</label>
-                                    <select name="days-input" id="days-input" class="select w-2/3">
+                                    <label for="days-input" class="label lg:block hidden w-1/3">Days of Week</label>
+                                    <select name="days-input" id="days-input" class="select w-full lg:w-2/3">
                                         <option value="" selected disabled>Select Days of Week</option>
                                         {% for d in data.0.date.nama_hari %}
                                         <option value="{{ d }}" {% if d in data.0.doctor.additional_information.base_time.base %} selected {% endif %} >{{ d }}</option>
@@ -690,8 +681,8 @@
                                     </select>
                                 </div>
                                 <div id="by-date-2" class="gap-2 justify-start items-center hidden by-date-days">
-                                    <label for="date-input" class="label w-1/3">Date</label>
-                                    <select name="date-input" class="select w-2/3" id="date-input">
+                                    <label for="date-input" class="label lg:block hidden w-1/3">Date</label>
+                                    <select name="date-input" class="select w-full lg:w-2/3" id="date-input">
                                         <option value="" selected disabled>Select Date</option>
                                         {% for d in data.0.date.tanggal %}
                                         <option value="{{ d }}" {% if d in data.0.doctor.additional_information.base_time.base %} selected {% endif %} >{{ d }}</option>
@@ -699,12 +690,12 @@
                                     </select>
                                 </div>
                                 <div class="flex gap-2 justify-start items-center">
-                                    <label for="time-start" class="label w-1/3">Start Time</label>
-                                    <input type="time" class="input w-2/3" name="time-start" id="time-start" value="{{ data.0.date.start_time }}">
+                                    <label for="time-start" class="label lg:block hidden w-1/3">Start Time</label>
+                                    <input type="time" class="input w-full lg:w-2/3" name="time-start" id="time-start" value="{{ data.0.date.start_time }}">
                                 </div>
                                 <div class="flex gap-2 justify-start items-center">
-                                    <label for="time-end" class="label w-1/3">End Time</label>
-                                    <input type="time" class="input w-2/3" name="time-end" id="time-end" value="{{ data.0.date.end_time }}">
+                                    <label for="time-end" class="label lg:block hidden w-1/3">End Time</label>
+                                    <input type="time" class="input w-full lg:w-2/3" name="time-end" id="time-end" value="{{ data.0.date.end_time }}">
                                 </div>
                             </div>
                         </div>
@@ -722,7 +713,7 @@
                             </button>
                         </div>
                     </div>
-                    <div id="branch-list" class="grid grid-cols-4 gap-5 p-5">
+                    <div id="branch-list" class="grid lg:grid-cols-4 grid-cols-1 gap-5 p-5">
                         {% for d in data.0.doctor.branch_information %}
                         <div class="rounded-sm border-2 border-current glass p-2 space-y-2">
                             <div class="space-y-2">
@@ -760,20 +751,20 @@
                             <h3 class="text-lg font-bold">Branch</h3>
                             <div class="modal-action w-full">
                                 <form id="branch-form" class="w-full">
-                                    <div class="flex justify-start gap-10">
-                                        <div class="space-y-2 w-1/2">
+                                    <div class="grid lg:grid-cols-2 grid-cols-1 gap-10">
+                                        <div class="space-y-2 w-full">
                                             <div class="flex items-center justify-start gap-5 w-full">
-                                                <label for="brnach-name-id" class="label w-1/3">Branch Name</label>
-                                                <input id="brnach-name-id" name="branch_name" type="text" class="input w-2/3 input-sm">
+                                                <label for="brnach-name-id" class="label lg:block hidden w-full lg:w-1/3">Branch Name</label>
+                                                <input id="brnach-name-id" name="branch_name" placeholder="Branch Name" type="text" class="input w-full lg:w-2/3 input-sm">
                                             </div>
                                             <div class="flex items-center justify-start gap-5 w-full">
-                                                <label for="brnach-date-id" class="label w-1/3">Established Date</label>
-                                                <input id="brnach-date-id" name="branch_date" type="date" class="input w-2/3 input-sm">
+                                                <label for="brnach-date-id" class="label lg:block hidden lg:w-1/3">Established Date</label>
+                                                <input id="brnach-date-id" name="branch_date" placeholder="Established Date" type="date" class="input w-full lg:w-2/3 input-sm">
                                             </div>
                                         </div>
-                                        <div class="flex justify-start items-start gap-5 w-1/2">
-                                            <p class="w-1/3 font-semibold text-lg label">Branch Address</p>
-                                            <ul class="w-2/3 space-y-2">
+                                        <div class="flex justify-start items-start gap-5 w-full">
+                                            <p class="lg:w-1/3 font-semibold label lg:block hidden">Branch Address</p>
+                                            <ul class="w-full lg:w-2/3 space-y-2">
                                                 <li>
                                                     <input type="text" id="brnach-street1-id" name="branch_add_st_1" class="input input-sm" placeholder="Street 1...">
                                                 </li>
@@ -805,7 +796,7 @@
             </div>
         </form>
     </div>
-    <div class="w-3/12">
+    <div class="w-3/12 lg:block hidden">
         <!-- Log Activity -->
     </div>
 </section>

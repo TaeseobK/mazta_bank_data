@@ -335,7 +335,7 @@ def doctor_detail(request, user_id, doc_id) :
                         'sales_information' : {
                             'grade_user' : grade_user,
                             'grade_clinic' : grade_clinic,
-                            'priority' : int(priority),
+                            'priority' : int(priority) if priority != '' else 0,
                             'specialist_id' : specialist
                         },
                         'system_information' : {
