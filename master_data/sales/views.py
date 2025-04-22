@@ -44,7 +44,7 @@ def doctor_list(request) :
 
         api_url = api_doctor_admin()
 
-        response = requests.post(api_url, params={'page' : page}, data={'keyword' : search})
+        response = requests.post(api_url, data={'keyword' : search})
 
         if response.status_code == 200 :
             dt = response.json()
