@@ -6,45 +6,50 @@
 {% endblock header %}
 {% block main %}
 <section class="mx-5 flex gap-5">
-    <div class="w-9/12">
-        <form action="." method="post" class="space-y-5">
+    <div class="lg:w-9/12 w-full">
+        <form action="." method="post" class="space-y-5 mt-5">
             {% csrf_token %}
             <button type="submit" class="btn btn-md">Submit</button>
             <input type="text" name="metode" value="post" class="hidden is-hidden">
             <div class="w-full rounded-md border border-current p-5 space-y-5 glass">
                 <p class="text-md font-bold uppercase text-pretty font-sans">New Grade User</p>
-                <div class="flex items-center justify-between gap-20">
-                    <div class="flex items-center justify-between w-1/2 gap-5">
-                        <label for="gd-id" class="label font-semibold">Grade Name</label>
-                        <input type="text" id="gd-id" name="name" class="input" value="Grade " placeholder="Grade Name" required>
+                <div class="grid lg:grid-cols-2 grid-cols-1 lg:gap-20 gap-5">
+                    <div class="flex items-center justify-between w-full gap-5">
+                        <label for="gd-id" class="label font-semibold w-1/3">Grade Name</label>
+                        <input type="text" id="gd-id" name="name" class="input w-2/3" value="Grade " placeholder="Grade Name" required>
                     </div>
-                    <div class="flex items-center justify-between w-1/2 gap-5">
-                        <label for="ga-id" class="label  font-semibold">Grade Alias</label>
-                        <input type="text" id="ga-id" name="alias" class="input" placeholder="Grade Alias" required>
+                    <div class="flex items-center justify-between w-full gap-5">
+                        <label for="ga-id" class="label  font-semibold w-1/3">Grade Alias</label>
+                        <input type="text" id="ga-id" name="alias" class="input w-2/3" placeholder="Grade Alias" required>
                     </div>
                 </div>
                 <div class="w-full">
                     <p class="w-full block text-sm font-bold text-pretty font-sans">Value for Range User</p>
                     <hr class="border border-current">
                 </div>
-                <div class="flex items-center justify-between gap-20">
-                    <div class="flex items-center justify-between w-1/2 gap-5">
-                        <label for="max-id" class="label font-semibold">Max Value</label>
-                        <div class="input flex items-center justify-between">
+                <div class="grid lg:grid-cols-2 grid-cols-1 lg:gap-20 gap-5">
+                    <div class="flex items-center justify-between w-full gap-5">
+                        <label for="max-id" class="label font-semibold w-1/3">Max Value</label>
+                        <div class="input flex items-center justify-between w-2/3">
                             <input type="number" id="max-id" name="max-value" required>
-                            <input type="text" name="max-measure" list="measure" required>
+                            <select name="max-measure" class="select select-sm border-none rounded-none shadow-none" required>
+                                <option value="" selected disabled>Select Measure</option>
+                                <option value="Thousand">Thousand</option>
+                                <option value="Million">Million</option>
+                                <option value="Billion">Bllion</option>
+                            </select>
                         </div>
                     </div>
-                    <datalist id="measure">
-                        <option value="Thousand">
-                        <option value="Million">
-                            <option value="Billion">
-                    </datalist>
-                    <div class="flex items-center justify-between w-1/2 gap-5">
-                        <label for="min-id" class="label font-semibold">Min Value</label>
-                        <div class="input flex items-center justify-between">
+                    <div class="flex items-center justify-between w-full gap-5">
+                        <label for="min-id" class="label font-semibold w-1/3">Min Value</label>
+                        <div class="input flex items-center justify-between w-2/3">
                             <input type="number" id="min-id" name="min-value" required>
-                            <input type="text" name="min-measure" list="measure" required>
+                            <select name="min-measure" class="select select-sm border-none rounded-none shadow-none" required>
+                                <option value="" selected disabled>Select Measure</option>
+                                <option value="Thousand">Thousand</option>
+                                <option value="Million">Million</option>
+                                <option value="Billion">Bllion</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -56,7 +61,7 @@
             </div>
         </form>
     </div>
-    <div class="w-3/12">
+    <div class="lg:w-3/12 hidden">
         <!-- Log Activity -->
     </div>
 </section>

@@ -6,21 +6,21 @@
 {% endblock header %}
 {% block main %}
 <section class="mx-5 flex gap-5">
-    <div class="w-9/12">
+    <div class="lg:w-9/12 w-full">
         <form action="." method="post" class="space-y-5 mt-5">
             {% csrf_token %}
             <button type="submit" class="btn btn-md">Submit</button>
             <input type="text" name="metode" value="post" class="hidden is-hidden">
             <div class="w-full rounded-md border border-current p-5 space-y-5 glass">
                 <p class="text-md font-bold uppercase text-pretty font-sans">New Salutation</p>
-                <div class="flex items-center justify-between gap-20">
-                    <div class="flex items-center justify-between w-1/2 gap-5">
-                        <label for="gd-id" class="label font-semibold">Full Salutation Name</label>
-                        <input type="text" id="gd-id" name="full-name" class="input" placeholder="Salutation Full Name" required>
+                <div class="grid lg:grid-cols-2 grid-cols-1 lg:gap-20 gap-5">
+                    <div class="flex items-center justify-between w-full gap-5">
+                        <label for="gd-id" class="label font-semibold w-1/3">Full</label>
+                        <input type="text" id="gd-id" name="full-name" class="input w-2/3" placeholder="Salutation Full Name" required>
                     </div>
-                    <div class="flex items-center justify-between w-1/2 gap-5">
-                        <label for="ga-id" class="label  font-semibold">Short Salutation Name</label>
-                        <input type="text" id="ga-id" name="short-name" class="input" placeholder="Salutation Short Name" required>
+                    <div class="flex items-center justify-between w-full gap-5">
+                        <label for="ga-id" class="label font-semibold w-1/3">Short</label>
+                        <input type="text" id="ga-id" name="short-name" class="input w-2/3" placeholder="Salutation Short Name" required>
                     </div>
                 </div>
                 <div class="w-full">
@@ -31,7 +31,7 @@
             </div>
         </form>
     </div>
-    <div class="w-3/12">
+    <div class="lg:w-3/12 hidden">
         <!-- Log Activity -->
     </div>
 </section>
