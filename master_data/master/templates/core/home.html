@@ -18,5 +18,33 @@
             </div>
         </div>
     </div>
+    {% if request.user.is_staff and request.user.groups.first.name == "sales" %}
+        <div class="p-4 mx-5 rounded-md border-2 border-current backdrop-blur-sm bg-opacity-10 bg-base-300 thin-scrollbar">
+            <p class="text-lg text-center font-semibold">The Doctors Groupped by Rayons</p>
+            <p class="text-sm text-center font-normal">The groupping include "Priority" and "Not Priority"</p>
+            <div class="block mx-5 mt-5">
+                <input type="text" name="search" id="search" class="input input-sm" placeholder="Search...">
+            </div>
+            <div id="page-list" class="m-5 p-5 rounded-md backdrop-blur-sm bg-opacity-80 bg-base-200 grid lg:grid-cols-4 grid-cols-1 gap-10">
+                {% for d in data %}
+                <div class="rounded-sm bg-base-100 border shadow-sm p-2">
+                    <p class="text-md font-bold text-pretty">{{ d.rayon }}</p>
+                    <div class="flex items-center justify-start gap-5 text-sm">
+                        <ul class="space-y-2">
+                            <li>Priority</li>
+                            <li>Not Priority</li>
+                            <li>Total</li>
+                        </ul>
+                        <ul class="space-y-2">
+                            <li>: {{ d.priority }} Doctor</li>
+                            <li>: {{ d.not_priority }} Doctor</li>
+                            <li>: {{ d.total_doctor }} Doctor</li>
+                        </ul>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
 </section>
 {% endblock main %}

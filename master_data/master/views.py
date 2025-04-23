@@ -1,18 +1,21 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User, auth, Group
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate, login, logout
-from django.core.paginator import Paginator
+from django.contrib.auth.models import User, auth, Group
 from django.contrib.auth.hashers import check_password
-from django.contrib import messages
 from django.http import JsonResponse, Http404
-from .models import *
-from django.urls import reverse
-from master_data.local_settings import *
-import requests
 from django.forms.models import model_to_dict
-from functools import wraps
+from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
+from master_data.local_settings import *
+from sales.models import DoctorDetail
+from collections import defaultdict
+from django.contrib import messages
+from django.db.models import Count
+from django.urls import reverse
 from datetime import datetime
+from functools import wraps
+from .models import *
+import requests
 import json
 
 def group_required(group_name) :
@@ -44,10 +47,67 @@ def admin_required(view_func) :
 @login_required
 def home(request) :
 
-    return render(request, 'core/home.html', {
-        'title' : 'Dashboard',
-        'page_name' : 'Home'
-    })
+    if request.user.is_staff :
+        search_query = request.GET.get('search', '')
+
+        group_count = defaultdict(lambda: {'priority': 0, 'not_priority': 0, 'total_doctor' : 0})
+
+        doctors = DoctorDetail.objects.using('sales').filter(is_active=True).all()
+
+        for data in doctors :
+            data.rayon = json.loads(data.rayon)
+            data.info = json.loads(data.info)
+            data.work_information = json.loads(data.work_information)
+            data.private_information = json.loads(data.private_information)
+            data.additional_information = json.loads(data.additional_information)
+            data.branch_information = json.loads(data.branch_information)
+
+            rayon_name = data.rayon.get('rayon')
+
+            sales_info = data.work_information.get('sales_information', {})
+            is_priority = sales_info.get('priority', False)
+
+            if is_priority :
+                group_count[rayon_name]['priority'] += 1
+            else :
+                group_count[rayon_name]['not_priority'] += 1
+            
+            group_count[rayon_name]['total_doctor'] += 1
+        
+        group_list = [
+            {
+                'rayon' : rayon,
+                'priority' : data['priority'],
+                'not_priority' : data['not_priority'],
+                'total_doctor' : data['total_doctor']
+            }
+            for rayon, data in group_count.items()
+        ]
+
+        if search_query :
+            group_list = [
+                r for r in group_list
+                if (
+                    search_query.lower() in str(r.get('rayon')).lower()
+                )
+            ]
+
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+            return render(request, 'core/home.html', {
+                'data' : group_list
+            })
+
+        return render(request, 'core/home.html', {
+            'title' : 'Dashboard',
+            'page_name' : 'Home',
+            'data' : group_list
+        })
+    
+    else :
+        return render(request, 'core/home.html', {
+            'title' : 'Dashboard',
+            'page_name' : 'Home'
+        })
 
 def gu_data(request, gu_id) :
 
