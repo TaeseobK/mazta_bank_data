@@ -542,11 +542,11 @@ def doctor_detail(request, user_id, doc_id) :
                             'branch_zip' : branch_zip
                         })
 
-                    initial_first = str(first_name)[:3].upper()
-                    initial_last = str(last_name)[:3].upper()
-                    salutation_code = str(Salutation.objects.using('master').get(id=salutation).salutation)[:2].upper()
+                    initial_first = str(first_name)[:3].upper().replace(' ', '')
+                    initial_full_name = ''.join([str(name[0]).upper() for name in str(full_name).split()])
+                    salutation_code = str(Salutation.objects.using('master').get(id=salutation).salutation)[:2].upper().replace(' ','')
                     random_number = ''.join(random.choices(string.digits, k=4))
-                    code = f"{salutation_code}/{initial_first}/{initial_last}/{random_number}"
+                    code = f"{salutation_code}/{initial_first}/{initial_full_name}/{random_number}"
 
                     rayon = {
                         'id' : int(request.session['detail'].get('id_user')),
@@ -555,7 +555,7 @@ def doctor_detail(request, user_id, doc_id) :
 
                     while DoctorDetail.objects.using('sales').filter(code=code).exists() :
                         random_number = ''.join(random.choices(string.digits, k=4))
-                        code = f"{salutation_code}/{initial_first}/{initial_last}/{random_number}"
+                        code = f"{salutation_code}/{initial_first}/{initial_full_name}/{random_number}"
 
                     if DoctorDetail.objects.using('sales').filter(jamet_id=int(doc_id)).exists() :
                         dd = DoctorDetail.objects.using('sales').get(jamet_id=int(doc_id))
