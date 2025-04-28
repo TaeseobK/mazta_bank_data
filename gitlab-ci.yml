@@ -13,11 +13,11 @@ deploy_stagging:
         pip install pipenv
         pipenv shell
         pipenv install -r requirements.txt
-        pipenv run python3 server/manage.py makemigrations
-        pipenv run python3 server/manage.py migrate
-        pipenv run python3 server/manage.py migrate sales --database=sales
-        pipenv run python3 server/manage.py migrate master --database=master
-        pipenv run python3 server/manage.py migrate
+        pipenv run python server/manage.py makemigrations
+        pipenv run python server/manage.py migrate
+        pipenv run python server/manage.py migrate sales --database=sales
+        pipenv run python server/manage.py migrate master --database=master
+        pipenv run python server/manage.py migrate
         exit
         sudo systemctl restart gunicorn
       EOF
