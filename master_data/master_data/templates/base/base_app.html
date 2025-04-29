@@ -51,6 +51,47 @@
         });
 
         $(document).ready(function() {
+          $(document).on('click', '#lost-page', function() {
+            var thisId = $(this).attr('some');
+            
+            $.ajax({
+              url : '/api/dr-detail/',
+              method : 'POST',
+              data : {
+                'rayon_name' : thisId,
+                'csrfmiddlewaretoken' : '{{ csrf_token }}',
+              },
+              success : function(data) {
+                $('#modal-data').empty();
+                data.doctors.forEach(function(val, index) {
+                  $('#modal-data').append(`
+                    <div class="card shadow-lg rounded-sm p-3 bg-base-200 border border-primary border-2">
+                      <div class="flex items-center justify-start gap-5">
+                        <ul class="space-y-2 text-sm font-semibold">
+                          <li>First Name</li>
+                          <li>Middle Name</li>
+                          <li>Last Name</li>
+                          <li>Full Name</li>
+                        </ul>
+                        <ul class="space-y-2 text-sm font-semibold">
+                          <li class="capitalize text-sm font-semibold">: ${val.info.first_name}</li>
+                          <li class="capitalize text-sm font-semibold">: ${val.info.middle_name}</li>
+                          <li class="capitalize text-sm font-semibold">: ${val.info.last_name}</li>
+                          <li class="capitalize text-sm font-semibold">: ${val.info.full_name}</li>
+                        </ul>
+                      </div>
+                    </div>
+                  `);
+                });
+              },
+              error : function() {
+                console.log("Error System...");
+              }
+            });
+          });
+        });
+
+        $(document).ready(function() {
             $('#search').on('input', function() {
                 var searchQuery = $(this).val();
 

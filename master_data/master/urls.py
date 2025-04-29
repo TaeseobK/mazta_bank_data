@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/grade-clinic/<int:gc_id>/', views.gc_data, name='api_gc'),
     path('api/salutation/<int:sal_id>/', views.sal_data, name='api_salutation'),
     path('api/title/<int:tit_id>/', views.title_data, name='api_title'),
+    path('api/dr-detail/', views.datadoctor, name='dr_detail'),
 
     #List Page
     path('grade-clinic-list/', views.gc_list, name='gc_list'),

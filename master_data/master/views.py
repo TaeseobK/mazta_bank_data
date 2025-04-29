@@ -45,12 +45,38 @@ def admin_required(view_func) :
     return _wrapped_view
 
 @login_required
+def datadoctor(request) :
+    if request.method == 'POST' and request.user.is_authenticated :
+        rayon_name = request.POST.get('rayon_name')
+
+        doctors = DoctorDetail.objects.using('sales').filter(is_active=True).all()
+
+        filtered_doctors = []
+
+        for doc in doctors :
+            try :
+                rayon_data = json.loads(doc.rayon)
+                if rayon_data.get('rayon') == rayon_name :
+                    doc.rayon = json.loads(doc.rayon)
+                    doc.info = json.loads(doc.info)
+
+                    filtered_doctors.append({
+                        'rayon' : doc.rayon,
+                        'info' : doc.info
+                    })
+            except :
+                continue
+
+        return JsonResponse({'doctors' : filtered_doctors})
+    return JsonResponse({'error' : 'Invalid Request'}, status=400)
+
+@login_required
 def home(request) :
 
     if request.user.is_staff :
         search_query = request.GET.get('search', '')
 
-        group_count = defaultdict(lambda: {'priority': 0, 'not_priority': 0, 'total_doctor' : 0})
+        group_count = defaultdict(lambda: {'priority': 0, 'not_priority': 0, 'total_doctor' : 0, 'id' : None})
 
         doctors = DoctorDetail.objects.using('sales').filter(is_active=True).all()
 
@@ -73,9 +99,11 @@ def home(request) :
                 group_count[rayon_name]['not_priority'] += 1
             
             group_count[rayon_name]['total_doctor'] += 1
+            group_count[rayon_name]['id'] = data.pk
         
         group_list = [
-            {
+            {   
+                'id' : data['id'],
                 'rayon' : rayon,
                 'priority' : data['priority'],
                 'not_priority' : data['not_priority'],
