@@ -293,7 +293,7 @@ class Command(BaseCommand) :
                     Database Doctor Extraction Successfull
                     """,
                 from_email="satriodasmdi@gmail.com",
-                to=["bayuafrizal830@gmail.com"]
+                to=["satriodasmdi@gmail.com"]
             )
 
             email2.attach_file(os.path.join(folder_path, "doctor_database.xlsx"))
