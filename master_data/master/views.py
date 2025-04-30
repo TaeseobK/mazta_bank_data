@@ -256,11 +256,12 @@ def login_view(request) :
 @login_required
 def logout_view(request) :
     token = request.session.get('token')
+    print(token)
     user = request.user
 
     if token :
         headers = {
-            'Authorization' : token
+            'Authorization' : f"Bearer {token}"
         }
         response = requests.post(logout_url(), headers=headers)
 
