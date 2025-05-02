@@ -200,10 +200,10 @@ def doctor_detail(request, user_id, doc_id) :
 
                 if doctor.additional_information :
                     text_re = re.findall(r"\d{2}:\d{2}", doctor.additional_information.get('base_time').get('time'))
-                    if text_re :
+                    try :
                         start_time = text_re[0]
                         end_time = text_re[1]
-                    else :
+                    except :
                         start_time = None
                         end_time = None
             
