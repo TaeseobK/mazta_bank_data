@@ -691,11 +691,11 @@
                                 </div>
                                 <div class="flex gap-2 justify-start items-center">
                                     <label for="time-start" class="label lg:block hidden w-1/3">Start Time</label>
-                                    <input type="time" class="input w-full lg:w-2/3" name="time-start" id="time-start" value="{{ data.0.date.start_time }}">
+                                    <input type="time" class="input w-full lg:w-2/3" name="time-start" id="time-start" value="{% if data.0.date.start_time %}{{ data.0.date.start_time }}{% endif %}">
                                 </div>
                                 <div class="flex gap-2 justify-start items-center">
                                     <label for="time-end" class="label lg:block hidden w-1/3">End Time</label>
-                                    <input type="time" class="input w-full lg:w-2/3" name="time-end" id="time-end" value="{{ data.0.date.end_time }}">
+                                    <input type="time" class="input w-full lg:w-2/3" name="time-end" id="time-end" value="{% if data.0.date.end_time %}{{ data.0.date.end_time }}{% endif %}">
                                 </div>
                             </div>
                         </div>

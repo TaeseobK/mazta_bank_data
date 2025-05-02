@@ -188,6 +188,9 @@ def doctor_detail(request, user_id, doc_id) :
             specialists = Specialist.objects.using('master').filter(is_active=True).all()
             days_of_week = [str(day).title() for day in calendar.day_name]
             tanggal = list(range(1, last_day + 1))
+            start_time = None
+            end_time = None
+            doctor = None
 
             if DoctorDetail.objects.using('sales').filter(jamet_id=doc_id).exists() :
                 doctor = DoctorDetail.objects.using('sales').get(jamet_id=doc_id)
@@ -198,15 +201,16 @@ def doctor_detail(request, user_id, doc_id) :
                 doctor.additional_information = json.loads(doctor.additional_information)
                 doctor.rayon = json.loads(doctor.rayon)
 
-                if doctor.additional_information :
-                    text_re = re.findall(r"\d{2}:\d{2}", doctor.additional_information.get('base_time').get('time'))
-                    try :
-                        start_time = text_re[0]
-                        end_time = text_re[1]
-                    except :
-                        start_time = None
-                        end_time = None
-            
+                if doctor :
+                    if doctor.additional_information :
+                        text_re = re.findall(r"\d{2}:\d{2}", doctor.additional_information.get('base_time').get('time'))
+                        try :
+                            start_time = text_re[0]
+                            end_time = text_re[1]
+                        except :
+                            start_time = None
+                            end_time = None
+
             else :
                 doctor = None
 
