@@ -18,5 +18,5 @@ pipenv run py master_data/manage.py migrate
 Write-Host "Collect static files..."
 pipenv run py master_data/manage.py collectstatic
 
-Write-Host "Running server..."
+Write-Host "Running server.."
 pipenv run py master_data/manage.py runserver
