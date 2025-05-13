@@ -185,10 +185,16 @@ def login_view(request) :
         })
 
         if response.status_code == 200 :
-            token = response.json().get('token')
-            detail = response.json().get('data')
-            request.session['token'] = token
-            request.session['detail'] = detail
+
+            try :
+                token = response.json().get('token')
+                detail = response.json().get('data')
+                request.session['token'] = token
+                request.session['detail'] = detail
+            
+            except ValueError :
+                messages.error(request, f"Email and Password doesn't match any user. Please check your email or password.")
+                return redirect('master:login')
 
             try :
                 user = User.objects.get(email=email)
