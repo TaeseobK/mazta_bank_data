@@ -189,8 +189,6 @@ def login_view(request) :
             detail = response.json().get('data')
             request.session['token'] = token
             request.session['detail'] = detail
-            
-            print(detail.get('email'))
 
             try :
                 user = User.objects.get(email=email)
@@ -203,11 +201,9 @@ def login_view(request) :
 
                     login(request, user)
 
-                    print(f"User dengan username {user.username} berhasil.")
                     return redirect(next_url)
                 
                 else :
-                    print(f"Error creating user with email {email}.")
                     return redirect('master:login')
                 
             except User.DoesNotExist :
@@ -246,7 +242,8 @@ def login_view(request) :
                     return redirect('master:login')
                 
             except User.DoesNotExist :
-                raise Http404("Please check your email or password")
+                messages.error(request, f"Username and Password doesn't match any user. If you have entered the right Username and Password, Please contact our support team.")
+                return redirect('master:login')
             
     return render(request, 'core/login.html', {
         'title' : 'Login',

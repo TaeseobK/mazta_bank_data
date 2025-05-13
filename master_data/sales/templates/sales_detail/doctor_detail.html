@@ -43,22 +43,16 @@
                     </div>
                     <div class="flex items-center justify-start gap-5">
                         <label for="fl-id" class="label text-md font-semibold lg:block hidden w-1/4">Full Name</label>
-                        <input type="text" id="fl-id" name="full-name" class="input input-sm px-2 w-full lg:w-3/4" placeholder="Full Name" {% if not data.0.doctor %} value="{{ data.0.dr_api.nama_dokter }}" {% else %} value="{{ data.0.doctor.info.full_name }}" {% endif %} required>
+                        <input type="text" id="fl-id" name="full-name" class="input disabled input-sm px-2 w-full lg:w-3/4" placeholder="Full Name" {% if not data.0.doctor %} value="{{ data.0.dr_api.nama_dokter }}" {% else %} value="{{ data.0.doctor.info.full_name }}" {% endif %} required>
                     </div>
                     <div class="flex items-center justify-start gap-5 w-full">
                         <label for="sal-num" class="label text-md font-semibold lg:block hidden w-1/4">Salutation</label>
                         <div class="flex items-center justify-start gap-5 w-full lg:w-3/4">
                             <select name="sal-num" id="sal-id" class="select select-sm px-2 cursor-pointer" required>
-                                {% if data.0.doctor %}
-                                    {% for d in data.0.salutations %}
-                                    <option value="{{ d.pk }}" {% if data.0.doctor.info.salutation == d.pk %} selected {% endif %} >{{ d.short_salutation }}</option>
-                                    {% endfor %}
-                                {% else %}
-                                    <option value="" selected disabled>Select Salutations</option>
-                                    {% for d in data.0.salutations %}
-                                    <option value="{{ d.pk }}">{{ d.short_salutation }}</option>
-                                    {% endfor %}
-                                {% endif %}
+                                    <option value="" {% if not data.0.doctor.info.salutation %} selected {% endif %} >Select Salutations</option>
+                                {% for d in data.0.salutations %}
+                                    <option value="{{ d.pk }}" {% if data.0.doctor.info.salutation == d.pk %} selected {% endif %}>{{ d.short_salutation }}</option>
+                                {% endfor %}
                             </select>
                             <div id="sal-tooltip-false" class="flex items-center justify-center w-1/12">
                                 <div class="tooltip">
@@ -78,17 +72,10 @@
                         <label for="tit-num" class="label text-md font-semibold lg:block hidden w-1/4">Title</label>
                         <div class="flex items-center justify-start gap-5 w-full lg:w-3/4">
                             <select name="tit-num" id="tit-id" class="select select-sm px-2 cursor-pointer" required>
-                                <option value="" selected disabled>Select Titles</option>
-                                {% if data.0.doctor %}
-                                    {% for d in data.0.titles %}
-                                    <option value="{{ d.pk }}" {% if data.0.doctor.info.title == d.pk %} selected {% endif %} >{{ d.short_name }}</option>
-                                    {% endfor %}
-                                {% else %}
-                                    <option value="" selected disabled>Select Titles</option>
-                                    {% for d in data.0.titles %}
-                                    <option value="{{ d.pk }}">{{ d.short_name }}</option>
-                                    {% endfor %}
-                                {% endif %}
+                                <option value="" {% if not data.0.doctor.info.title %} selected {% endif %}>Select Titles</option>
+                                {% for d in data.0.titles %}
+                                    <option value="{{ d.pk }}" {% if data.0.doctor.info.title == d.pk %} selected {% endif %}>{{ d.short_name }}</option>
+                                {% endfor %}
                             </select>
                             <div id="tit-tooltip-false" class="flex items-center justify-center w-1/12">
                                 <div class="tooltip">
@@ -354,8 +341,8 @@
                                 <label for="gdr" class="label w-1/4 font-semibold lg:block hidden">Gender</label>
                                 <select name="gender" id="gdr" class="input input-px-2 w-full lg:w-3/4 cursor-pointer">
                                     <option value="" {% if not data.0.doctor %} selected {% endif %} disabled>Select Gender</option>
-                                    <option value="Male" {% if data.0.doctor.private_information.citizenship.gender == "Male" %} selected {% endif %}>Male</option>
-                                    <option value="Female" {% if data.0.doctor.private_information.citizenship.gender == "Female" %} selected {% endif %}>Female</option>
+                                    <option value="Male" {% if data.0.doctor.private_information.citizenship.gender == "MALE" %} selected {% endif %}>Male</option>
+                                    <option value="Female" {% if data.0.doctor.private_information.citizenship.gender == "FEMALE" %} selected {% endif %}>Female</option>
                                 </select>
                             </div>
                             <div class="flex items-start justify-between gap-5">
