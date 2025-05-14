@@ -36,10 +36,13 @@ def group_required(group_name) :
 def admin_required(view_func) :
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs) :
-        detail = request.session.get('detail')
 
-        if not detail and not request.user.is_superuser or not request.user.is_staff and not request.user.is_superuser :
-            raise Http404("Not Found!")
+        if request.user.is_staff or request.user.is_superuser :
+            pass
+        
+        else :
+            messages.error(request, "You Don't have permission to access this page.")
+            return redirect('master:home')
         
         return view_func(request, *args, **kwargs)
     
