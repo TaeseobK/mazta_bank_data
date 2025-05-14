@@ -17,28 +17,31 @@ urlpatterns = [
     path('api/dr-detail/', views.datadoctor, name='dr_detail'),
 
     #List Page
-    path('grade-clinic-list/', views.gc_list, name='gc_list'),
-    path('grade-user-list/', views.gu_list, name='gu_list'),
-    path('title-list/', views.title_list, name='title_list'),
-    path('salutation-list/', views.salutation_list, name='salutation_list'),
+    path('grade-clinics/', views.gc_list, name='gc_list'),
+    path('grade-users/', views.gu_list, name='gu_list'),
+    path('titles/', views.title_list, name='title_list'),
+    path('salutations/', views.salutation_list, name='salutation_list'),
     path('specialists/', views.specialists, name='specialist_list'),
-    path('pic/', views.pic_list, name='pic_list'),
+    path('pics/', views.pic_list, name='pic_list'),
+    path('classifications/', views.classfication_list, name='classification_list'),
 
     #New Page
-    path('grade-clinic-list/new/', views.new_gc, name='new_gc'),
-    path('grade-user-list/new/', views.new_gu, name='new_gu'),
-    path('title-list/new/', views.new_title, name='new_title'),
-    path('salutation-list/new/', views.new_salutation, name='new_salutation'),
+    path('grade-clinics/new/', views.new_gc, name='new_gc'),
+    path('grade-users/new/', views.new_gu, name='new_gu'),
+    path('titles/new/', views.new_title, name='new_title'),
+    path('salutations/new/', views.new_salutation, name='new_salutation'),
     path('specialists/new/', views.new_specialist, name='new_specialist'),
-    path('pic/new/', views.new_pic, name='new_pic'),
+    path('pics/new/', views.new_pic, name='new_pic'),
+    path('classifications/new/', views.new_classification, name='new_classification'),
     
     #Detail Page
-    path('grade-clinic-list/detail/<int:gc_id>/', views.detail_gc, name='detail_gc'),
-    path('grade-user-list/detail/<int:gu_id>/', views.detail_gu, name='detail_gu'),
-    path('title-list/detail/<int:title_id>/', views.detail_title, name='detail_title'),
-    path('salutation-list/detail/<int:sal_id>/', views.detail_salutation, name='detail_salutation'),
+    path('grade-clinics/detail/<int:gc_id>/', views.detail_gc, name='detail_gc'),
+    path('grade-users/detail/<int:gu_id>/', views.detail_gu, name='detail_gu'),
+    path('titles/detail/<int:title_id>/', views.detail_title, name='detail_title'),
+    path('salutations/detail/<int:sal_id>/', views.detail_salutation, name='detail_salutation'),
     path('specialists/detail/<int:sp_id>/', views.detail_specialist, name='detail_specialist'),
-    path('pic/detail/<int:pic_id>/', views.detail_pic, name='detail_pic'),
+    path('pics/detail/<int:pic_id>/', views.detail_pic, name='detail_pic'),
+    path('classifications/<int:class_id>/', views.detail_classification, name='detail_classification'),
 ]
 
 if settings.DEBUG :

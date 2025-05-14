@@ -1,0 +1,34 @@
+{% extends 'base/base_app.html' %}
+{% load static %}
+
+{% block header %}
+    {% include 'head/nav_1.html' %}
+{% endblock header %}
+{% block main %}
+<section class="mx-5 flex gap-5">
+    <div class="lg:w-9/12 w-full">
+        <form action="." method="post" class="space-y-5 mt-5">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-md">Submit</button>
+            <input type="text" name="metode" value="post" class="hidden is-hidden">
+            <div class="w-full rounded-md border border-current p-5 space-y-5 glass">
+                <p class="text-md font-bold uppercase text-pretty font-sans">Detail Classification</p>
+                <div class="grid lg:grid-cols-2 grid-cols-1 lg:gap-20 gap-5">
+                    <div class="flex items-center justify-between w-full gap-5">
+                        <label for="csn-id" class="label font-semibold w-1/3">Classification Name</label>
+                        <input type="text" id="csn-id" name="class-name" class="input w-2/3" value="{{ data.name }}" placeholder="Classification Name" required>
+                    </div>
+                </div>
+                <div class="w-full">
+                    <p class="w-full block text-sm font-bold text-pretty font-sans">Description</p>
+                    <hr class="border border-current">
+                </div>
+                <textarea name="description" id="" class="textarea rounded-md w-full">{{ data.description }}</textarea>
+            </div>
+        </form>
+    </div>
+    <div class="lg:w-3/12 hidden">
+        <!-- Log Activity -->
+    </div>
+</section>
+{% endblock main %}

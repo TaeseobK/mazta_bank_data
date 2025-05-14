@@ -1,0 +1,33 @@
+{% extends 'base/base_app.html' %}
+{% load static %}
+
+{% block header %}
+    {% include 'head/nav_1.html' %}
+    {% include 'head/nav_2.html' %}
+{% endblock header %}
+
+{% block main %}
+<main class="lg:mx-10 mx-5 my-5 p-5 bg-base-200 rounded-md">
+    <table class="lg:table hidden table-zebra">
+        <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody id="page-list">
+            {% for data in page_obj %}
+            <tr class="border-b border-current">
+                <th><a href="{% url 'master:detail_classification' data.pk %}">{{ data.name }}</a></th>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div id="page-list-2" class="space-y-2 lg:hidden block">
+        {% for data in page_obj %}
+        <div class="rounded-sm bg-base-100 p-2">
+            <a href="{% url 'master:detail_classification' data.pk %}" class="text-left text-md font-semibold">{{ data.name }}</a>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+{% endblock main %}

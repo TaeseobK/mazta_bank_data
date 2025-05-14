@@ -37,6 +37,7 @@
                                         {% endif %}
                                         {% if request.user.is_staff and request.user.groups.first.name == "supplier" or request.user.is_superuser %}
                                         <li><a href="{% url 'master:pic_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">PIC</a></li>
+                                        <li><a href="{% url 'master:classification_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Classifications</a></li>
                                         {% endif %}
                                     </ul>
                                 </div>

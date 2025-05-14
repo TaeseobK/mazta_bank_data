@@ -368,7 +368,8 @@ def new_gc(request) :
                 range_clinic=json.dumps(range_clinic),
                 description=desc
             ).save()
-
+            
+            messages.success(request, f"Object with {name}, successfully created.")
             return redirect('master:gc_list')
 
     return render(request, 'master_new/new_gc.html', {
@@ -406,6 +407,7 @@ def detail_gc(request, gc_id) :
 
             grade.save()
 
+            messages.success(request, f"Object with {name} successfully edited.")
             return redirect('master:gc_list')
         
         elif metode == 'delete' :
@@ -414,6 +416,7 @@ def detail_gc(request, gc_id) :
             
             grade.save()
 
+            messages.success(request, f"Object with {grade.name} successfully deleted.")
             return redirect('master:gc_list')
 
     return render(request, 'master_detail/gc_detail.html', {
@@ -512,7 +515,8 @@ def new_gu(request) :
                 range_user=json.dumps(range_user),
                 description=desc
             ).save()
-
+            
+            messages.success(request, f"Object with {name}, successfully created.")
             return redirect('master:gu_list')
 
     return render(request, 'master_new/new_gu.html', {
@@ -557,6 +561,7 @@ def detail_gu(request, gu_id) :
 
             gu.save()
 
+            messages.success(request, f"Object with {name}, successfully edited.")
             return redirect('master:gu_list')
         
         elif metode == 'delete' :
@@ -565,6 +570,7 @@ def detail_gu(request, gu_id) :
 
             gu.save()
 
+            messages.success(request, f"Object with {gu.name}, successfully deleted.")
             return redirect('master:gu_list')
 
     return render(request, 'master_detail/gu_detail.html', {
@@ -632,6 +638,7 @@ def new_title(request) :
                     description=description
                 ).save()
 
+                messages.success(request, f"Object with {short_name}, successfully created.")
                 return redirect('master:title_list')
         
     return render(request, 'master_new/new_title.html', {
@@ -663,6 +670,7 @@ def detail_title(request, title_id) :
 
                 title.save()
 
+                messages.success(request, f"Object with {title.name}, successfully edited.")
                 return redirect('master:title_list')
         
         elif metode == 'delete' :
@@ -670,6 +678,7 @@ def detail_title(request, title_id) :
 
             title.save()
 
+            messages.success(request, f"Object with {title.name}, successfully deleted.")
             return redirect('master:title_list')
 
     return render(request, 'master_detail/title_detail.html', {
@@ -743,6 +752,7 @@ def new_salutation(request) :
                     short_salutation=str(short_name).upper()
                 ).save()
 
+                messages.success(request, f"Object with {full_name}, successfully created.")
                 return redirect('master:salutation_list')
             
     return render(request, 'master_new/new_salutation.html', {
@@ -775,6 +785,7 @@ def detail_salutation(request, sal_id) :
 
                 salutation.save()
 
+                messages.success(request, f"Object with {salutation.salutation}, successfully edited.")
                 return redirect('master:salutation_list')
             
         elif metode == 'delete' :
@@ -782,6 +793,7 @@ def detail_salutation(request, sal_id) :
 
             salutation.save()
 
+            messages.success(request, f"Object with {salutation.salutation}, successfully deleted.")
             return redirect('master:salutation_list')
 
     return render(request, 'master_detail/salutation_detail.html', {
@@ -847,6 +859,7 @@ def new_specialist(request) :
                     description=description
                 ).save()
 
+                messages.success(request, f"Object with {full_name}, successfully created.")
                 return redirect('master:specialist_list')
             
     return render(request, 'master_new/new_specialist.html', {
@@ -879,6 +892,7 @@ def detail_specialist(request, sp_id) :
 
                 specialist.save()
 
+                messages.success(request, f"Object with {specialist.full}, successfully edited.")
                 return redirect('master:specialists')
             
         elif metode == 'delete' :
@@ -886,6 +900,7 @@ def detail_specialist(request, sp_id) :
 
             specialist.save()
 
+            messages.success(request, f"Object with {specialist.full}, successfully deleted.")
             return redirect('master:specialists')
 
     return render(request, 'master_detail/specialist_detail.html', {
@@ -914,9 +929,9 @@ def pic_list(request) :
         data = [
             d for d in data
             if (
-                search_query.lower() in str(d['name']).lower() or
-                search_query.lower() in str(d['company']).lower() or
-                search_query.lower() in str(d['contact'].get('email')).lower()
+                search_query.lower() in str(d.name).lower() or
+                search_query.lower() in str(d.company).lower() or
+                search_query.lower() in str(d.contact.get('email')).lower()
             )
         ]
 
@@ -981,6 +996,7 @@ def new_pic(request) :
                     updated=request.user.id
                 )
 
+                messages.success(request, f"Object with {name}, successfully created.")
                 return redirect('master:pic_list')
 
     return render(request, 'master_new/new_pic.html', {
@@ -1021,7 +1037,17 @@ def detail_pic(request, pic_id) :
             pic.updated = request.user.id
 
             pic.save()
+            
+            messages.success(request, f"Object with {pic.name}, successfully edited.")
+            return redirect('master:pic_list')
+        
+        elif metode == 'delete' :
+            pic.address = json.dumps(pic.address)
+            pic.contact = json.dumps(pic.contact)
+            pic.is_active = False
+            pic.save()
 
+            messages.success(request, f"Object with {pic.name}, successfully deleted.")
             return redirect('master:pic_list')
 
     return render(request, 'master_detail/pic_detail.html', {
@@ -1030,3 +1056,104 @@ def detail_pic(request, pic_id) :
         'api' : "False",
         'data' : pic
     })      
+
+@login_required
+@admin_required
+@group_required('supplier')
+def classfication_list(request) :
+    search_query = request.GET.get('search', '')
+
+    classes = Classification.objects.using('master').filter(is_active=True).order_by('-updated_at')
+
+    if search_query :
+        classes = [
+            data for data in classes
+            if (
+                search_query.lower() in str(data.name).lower()
+            )
+        ]
+
+    paginator = Paginator(classes, 12)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+        return render(request, 'master_pages/classification_list.html', {
+            'page_obj' : page_obj
+        })
+    
+    return render(request, 'master_pages/classification_list.html', {
+        'title' : "Classification List",
+        'page_name' : "Classification List",
+        'api' : "False",
+        'page_obj' : page_obj,
+        'new_url' : reverse('master:new_classification')
+    })
+
+@login_required
+@admin_required
+@group_required('supplier')
+def new_classification(request) :
+    if request.method == 'POST' :
+        metode = request.POST.get('metode', '')
+
+        if metode == 'post' :
+            class_name = request.POST.get('class-name', '')
+            description = request.POST.get('description', '')
+
+            if Classification.objects.using('master').filter(name__in=class_name).exists() :
+                messages.error(request, f"Object with {class_name} already exists.")
+                return redirect('master:classification_list')
+            
+            Classification.objects.using('master').create(
+                name=str(class_name).strip(),
+                description=description,
+                created_by=request.user.id,
+                updated_by=request.user.id
+            )
+
+            messages.success(request, f"Object with {class_name}, Successfully added.")
+            return redirect('master:classification_list')
+
+    return render(request, 'master_new/new_classification.html', {
+        'title' : "New Classification",
+        'page_name' : "New Classification",
+        'api' : "False"
+    })
+
+@login_required
+@admin_required
+@group_required('supplier')
+def detail_classification(request, class_id) :
+    classif = Classification.objects.using('master').get(id=int(class_id))
+
+    if request.method == 'POST' :
+        metode = request.POST.get('metode', '')
+
+        if metode == 'post' :
+            name = request.POST.get('class-name', '')
+            description = request.POST.get('description', '')
+
+            classif.name = str(name).strip()
+            classif.description = description
+            classif.updated_by = request.user.id
+
+            classif.save()
+
+            messages.success(request, f"Object with {classif.name} successfully updated.")
+            return redirect('master:classification_list')
+        
+        elif metode == 'delete' :
+            classif.is_active=False
+            classif.save()
+
+            messages.success(request, f"Object with {classif.name}, successfully deleted.")
+            return redirect('master:classification_list')
+
+    return render(request, 'master_detail/classification_detail.html', {
+        'title' : "Detail Classification",
+        'page_name' : "Detail Classification",
+        'api' : "False",
+        'data' : classif
+    })
