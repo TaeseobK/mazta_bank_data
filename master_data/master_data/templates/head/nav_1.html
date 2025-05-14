@@ -5,7 +5,7 @@
             <img src="{% static 'icon/mazta_logo.png' %}" alt="" class="rounded-full w-8 bg-white">
             <p class="text-left text-pretty font-semibold text-md" data-aos="fade-left">Mazta Farma</p>
         </a>
-        <div class="w-4/12 overflow-x-hidden">
+        <div class="w-4/12">
             <p class="text-md text-left font-sans font-semibold text-pretty capitalize lg:block hidden">{{ page_name }}</p>
         </div>
         <div class="w-6/12 flex items-center justify-end gap-5">
@@ -13,45 +13,47 @@
                 {% if not login %}
                 <div class="drawer">
                     <input id="my-drawer" type="checkbox" class="drawer-toggle" />
-                    <div class="drawer-content overflow-x-hidden">
+                    <div class="drawer-content">
                       <label for="my-drawer" class="drawer-button text-md font-semibold uppercase btn btn-sm py-1 px-2 rounded-none rounded-l-sm rounded-r-sm">Databases</label>
                     </div>
                     <div class="drawer-side z-10">
                         <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay z-10"></label>
                         <ul class="menu bg-base-200 text-base-content h-full w-44 p-4 z-10">
                             <li>
-                                <div class=" flex items-center justify-center">
+                                <div class="flex items-center justify-center">
                                     <p class="text-lg font-semibold text-pretty font-sans text-center">Databases</p>
                                 </div>
                             </li>
-                            {% if request.user.is_staff and request.user.groups.first.name == "sales" %}
-                            <li>
-                                <div class="dropdown dropdown-hover dropdown-right">
+                            <li class="flex items-center justify-center">
+                                <div class="dropdown dropdown-right">
                                     <div tabindex="0" role="button" class="link link-hover font-semibold font-sans text-md text-pretty text-center">Master</div>
                                     <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-md w-52 p-2 shadow-md">
+                                        {% if request.user.is_staff and request.user.groups.first.name == "sales" or request.user.is_superuser %}
                                         <li><a href="{% url 'master:gc_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Grade Clinic</a></li>
                                         <li><a href="{% url 'master:gu_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Grade User</a></li>
                                         <li><a href="{% url 'master:title_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Title</a></li>
                                         <li><a href="{% url 'master:salutation_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Salutation</a></li>
                                         <li><a href="{% url 'master:specialist_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Specialist</a></li>
+                                        {% endif %}
+                                        {% if request.user.is_staff and request.user.groups.first.name == "supplier" or request.user.is_superuser %}
+                                        <li><a href="{% url 'master:pic_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">PIC</a></li>
+                                        {% endif %}
                                     </ul>
                                 </div>
                             </li>
-                            {% endif %}
-                            {% if request.user.groups.first.name == "business_development" %}
-                            <li>
-                            </li>
-                            {% endif %}
-                            {% if request.user.groups.first.name == "sales" %}
-                            <li>
-                                <div class="dropdown dropdown-hover dropdown-right">
+                            <li class="flex items-center justify-center">
+                                <div class="dropdown dropdown-right">
                                     <div tabindex="0" role="button" class="link link-hover font-semibold font-sans text-md text-pretty text-center">Transaction</div>
                                     <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-md w-52 p-2 shadow-md">
+                                        {% if request.user.groups.first.name == "sales" or request.user.is_superuser %}
                                         <li><a href="{% url 'sales:doctor_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Doctor List</a></li>
+                                        {% endif %}
+                                        {% if request.user.groups.first.name == "supplier" or request.user.is_superuser %}
+                                        <li><a href="{% url 'supplier:vendor_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Vendor List</a></li>
+                                        {% endif %}
                                     </ul>
                                 </div>
                             </li>
-                            {% endif %}
                         </ul>
                     </div>
                 </div>

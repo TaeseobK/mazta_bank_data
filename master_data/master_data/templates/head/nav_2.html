@@ -44,7 +44,7 @@
         </div>
     </div>
     {% endif %}
-    <div class="w-1/12 items-center justify-center hidden">
+    <div class="w-1/12 items-center justify-center {% if api == "True" %} hidden {% endif %}">
         <a href="{{ new_url }}" class="btn btn-sm py-4 rounded-none rounded-l-sm rounded-r-sm">New</a>
     </div>
     <div class="lg:w-1/12 lg:hidden flex items-center justify-end">
@@ -94,7 +94,7 @@
                         </a>
                     </div>
                 </li>
-                <li class="items-center justify-center hidden">
+                <li class="items-center justify-center {% if api == "True" %} hidden {% else %} flex {% endif %}">
                     <a href="{{ new_url }}" class="text-sm text-center font-semibold">New</a>
                 </li>
             </ul>

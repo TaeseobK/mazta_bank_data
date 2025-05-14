@@ -27,17 +27,18 @@ def group_required(group_name) :
                 return view_func(request, *args, **kwargs)
             
             else :
-                raise Http404("You don't have permission to access this page.")
+                messages.error(request, "You don't have permissions to access this page.")
+                return redirect('master:home')
             
-            return _wrapped_view
-        return decorator
+        return _wrapped_view
+    return decorator
 
 def admin_required(view_func) :
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs) :
         detail = request.session.get('detail')
 
-        if not detail or not request.user.is_staff :
+        if not detail and not request.user.is_superuser or not request.user.is_staff and not request.user.is_superuser :
             raise Http404("Not Found!")
         
         return view_func(request, *args, **kwargs)
@@ -173,6 +174,15 @@ def title_data(request, tit_id) :
     return JsonResponse(model_to_dict(title), safe=False)
 
 def login_view(request) :
+    try :
+        user = request.user
+
+        if user.is_authenticated :
+            return redirect('master:home')
+    
+    except :
+        pass
+
     if request.method == 'POST' :
         email = request.POST.get('email', '')
         password = request.POST.get('password', '')
@@ -287,6 +297,7 @@ def logout_view(request) :
 
 @login_required
 @admin_required
+@group_required('sales')
 def gc_list(request) :
     search_query = request.GET.get('search', '')
 
@@ -330,6 +341,7 @@ def gc_list(request) :
 
 @login_required
 @admin_required
+@group_required('sales')
 def new_gc(request) :
     
     if request.method == 'POST' :
@@ -363,6 +375,7 @@ def new_gc(request) :
 
 @login_required
 @admin_required
+@group_required('sales')
 def detail_gc(request, gc_id) :
 
     grade = ClinicGrade.objects.using('master').get(id=int(gc_id))
@@ -418,6 +431,7 @@ def convert(value) :
 
 @login_required
 @admin_required
+@group_required('sales')
 def gu_list(request) :
     search_query = request.GET.get('search', '')
 
@@ -464,6 +478,7 @@ def gu_list(request) :
 
 @login_required
 @admin_required
+@group_required('sales')
 def new_gu(request) :
     if request.method == 'POST' :
         metode = request.POST['metode']
@@ -504,6 +519,7 @@ def new_gu(request) :
 
 @login_required
 @admin_required
+@group_required('sales')
 def detail_gu(request, gu_id) :
     gu = UserGrade.objects.using('master').get(id=int(gu_id))
     gu.range_user = json.loads(gu.range_user)
@@ -556,6 +572,7 @@ def detail_gu(request, gu_id) :
 
 @login_required
 @admin_required
+@group_required('sales')
 def title_list(request) :
     search_query = request.GET.get('search', '')
 
@@ -590,6 +607,7 @@ def title_list(request) :
 
 @login_required
 @admin_required
+@group_required('sales')
 def new_title(request) :
 
     if request.method == 'POST' :
@@ -620,6 +638,7 @@ def new_title(request) :
 
 @login_required
 @admin_required
+@group_required('sales')
 def detail_title(request, title_id) :
     title = Title.objects.using('master').get(id=int(title_id))
 
@@ -658,6 +677,7 @@ def detail_title(request, title_id) :
 
 @login_required
 @admin_required
+@group_required('sales')
 def salutation_list(request) :
     search_query = request.GET.get('search', '')
 
@@ -700,6 +720,7 @@ def salutation_list(request) :
 
 @login_required
 @admin_required
+@group_required('sales')
 def new_salutation(request) :
     if request.method == 'POST' :
         metode = request.POST['metode']
@@ -728,6 +749,7 @@ def new_salutation(request) :
 
 @login_required
 @admin_required
+@group_required('sales')
 def detail_salutation(request, sal_id) :
 
     salutation = Salutation.objects.using('master').get(id=int(sal_id))
@@ -767,6 +789,7 @@ def detail_salutation(request, sal_id) :
 
 @login_required
 @admin_required
+@group_required('sales')
 def specialists(request) :
     search_query = request.GET.get('search', '')
 
@@ -801,6 +824,7 @@ def specialists(request) :
 
 @login_required
 @admin_required
+@group_required('sales')
 def new_specialist(request) :
     if request.method == 'POST' :
         metode = request.POST['metode']
@@ -829,6 +853,7 @@ def new_specialist(request) :
 
 @login_required
 @admin_required
+@group_required('sales')
 def detail_specialist(request, sp_id) :
 
     specialist = Specialist.objects.using('master').get(id=int(sp_id))
@@ -865,3 +890,140 @@ def detail_specialist(request, sp_id) :
         'page_name' : f"Detail - {specialist.short_name}",
         'data' : specialist
     })
+
+@login_required
+@admin_required
+@group_required('supplier')
+def pic_list(request) :
+    search_query = request.GET.get('search', '')
+
+    pics = Pic.objects.using('master').filter(is_active=True).all()
+
+    data = []
+
+    for pic in pics :
+        pic.address = json.loads(pic.address)
+        pic.contact = json.loads(pic.contact)
+
+        data.append(pic)
+
+    if search_query :
+        data = [
+            d for d in data
+            if (
+                search_query.lower() in str(d['name']).lower() or
+                search_query.lower() in str(d['company']).lower() or
+                search_query.lower() in str(d['contact'].get('email')).lower()
+            )
+        ]
+
+    paginator = Paginator(data, 12)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+        return render(request, 'master_pages/pic_list.html', {
+            'page_obj' : page_obj
+        })
+
+    return render(request, 'master_pages/pic_list.html', {
+        'title' : "Pic List",
+        'page_name' : "Pic List",
+        'api' : "False",
+        'new_url' : reverse('master:new_pic'),
+        'page_obj' : page_obj,
+    })
+
+@login_required
+@admin_required
+@group_required('supplier')
+def new_pic(request) :
+    if request.method == 'POST' :
+        metode = request.POST.get('metode', '')
+
+        if metode == 'post' :
+            name = request.POST.get('name', '')
+            position = request.POST.get('position', '')
+            company = request.POST.get('company', '')
+
+            address = {
+                'street_1' : request.POST.get('street-1', ''),
+                'street_2' : request.POST.get('street-2', ''),
+                'city' : request.POST.get('city', ''),
+                'state' : request.POST.get('state', ''),
+                'country' : request.POST.get('country', ''),
+                'zip' : request.POST.get('zip', ''),
+                'fulladdress' : request.POST.get('fll-address', '')
+            }
+
+            contact = {
+                'telp_num' : request.POST.get('tlp-num', ''),
+                'email' : request.POST.get('eml', ''),
+                'wa_num' : request.POST.get('wa-num')
+            }
+
+            if Pic.objects.using('master').filter(name__in=name).exists() :
+                messages.error(request, f"PIC with name {name} exists. Please input the different name.")
+                return redirect('master:new_pic')
+            
+            else :
+                Pic.objects.using('master').create(
+                    name=str(name).title().strip(),
+                    position=str(position).title().strip(),
+                    company=str(company).title().strip(),
+                    address=json.dumps(address),
+                    contact=json.dumps(contact),
+                    added=request.user.id,
+                    updated=request.user.id
+                )
+
+                return redirect('master:pic_list')
+
+    return render(request, 'master_new/new_pic.html', {
+        'title' : "New Pic",
+        'page_name' : "New Pic",
+        'api' : "False"
+    })
+
+@login_required
+@admin_required
+@group_required('supplier')
+def detail_pic(request, pic_id) :
+    pic = Pic.objects.using('master').get(id=int(pic_id))
+    pic.address = json.loads(pic.address)
+    pic.contact = json.loads(pic.contact)
+
+    if request.method == 'POST' :
+        metode = request.POST.get('metode', '')
+
+        if metode == 'post' :
+            pic.name = str(request.POST.get('name', '')).title().strip()
+            pic.position = str(request.POST.get('position', '')).title().strip()
+            pic.company = str(request.POST.get('company', '')).title().strip()
+            pic.contact = json.dumps({
+                'telp_num' : request.POST.get('tlp-num', ''),
+                'email' : request.POST.get('eml', ''),
+                'wa_num' : request.POST.get('wa-num')
+            })
+            pic.address = json.dumps({
+                'street_1' : request.POST.get('street-1', ''),
+                'street_2' : request.POST.get('street-2', ''),
+                'city' : request.POST.get('city', ''),
+                'state' : request.POST.get('state', ''),
+                'country' : request.POST.get('country', ''),
+                'zip' : request.POST.get('zip', ''),
+                'fulladdress' : request.POST.get('fll-address', '')
+            })
+            pic.updated = request.user.id
+
+            pic.save()
+
+            return redirect('master:pic_list')
+
+    return render(request, 'master_detail/pic_detail.html', {
+        'title' : "Detail Pic",
+        'page_name' : f"Detail Pic {pic.name}",
+        'api' : "False",
+        'data' : pic
+    })      

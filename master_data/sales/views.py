@@ -21,8 +21,8 @@ def index_sales(request) :
 def api_login_required(view_func) :
     @wraps(view_func)
     def wrapper(request, *args, **kwargs) :
-        if not request.session.get('token') :
-            return redirect('master:login')
+        if not request.session.get('token') or request.user.is_superuser :
+            return redirect('master:home')
         
         return view_func(request, *args, **kwargs)
     return wrapper

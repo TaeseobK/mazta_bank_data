@@ -29,4 +29,7 @@ urlpatterns = [
     path('', include('human_resource.urls')),
     path('', include('master.urls')),
     path('', include('sales.urls')),
-] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+    path('', include('supplier.urls')),
+] 
+
+urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

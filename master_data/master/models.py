@@ -140,3 +140,53 @@ class Specialist(models.Model) :
     def delete(self, *args, **kwargs) :
         kwargs['using'] = 'master'
         super().delete(*args, **kwargs)
+
+class Pic(models.Model) :
+    name = models.CharField(max_length=128)
+    position = models.CharField(max_length=64)
+    company = models.CharField(max_length=128)
+    contact = models.TextField(null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    added = models.IntegerField()
+    updated = models.IntegerField()
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta :
+        app_label = 'master'
+        db_table = 'pic'
+        managed = True
+
+    def save(self, *args, **kwargs) :
+        kwargs['using'] = 'master'
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs) :
+        kwargs['using'] = 'master'
+        super().delete(*args, **kwargs)
+
+class Classification(models.Model) :
+    name = models.CharField(max_length=128)
+    description = models.TextField(null=True, blank=True)
+    created_by = models.IntegerField()
+    updated_by = models.IntegerField()
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta :
+        app_label = 'master'
+        db_table = 'classification'
+        managed = True
+    
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs) :
+        kwargs['using'] = 'master'
+        super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs) :
+        kwargs['using'] = 'master'
+        super().delete(*args, **kwargs)
