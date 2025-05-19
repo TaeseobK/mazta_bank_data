@@ -7,4 +7,51 @@
 {% endblock header %}
 
 {% block main %}
+<main class="lg:mx-10 mx-5 my-5 p-5 bg-base-200 rounded-md">
+    <table class="lg:table hidden table-zebra">
+        <thead>
+            <tr>
+                <th>Vendor Name</th>
+                <th>Entity</th>
+                <th>PIC</th>
+                <th>Classification</th>
+            </tr>
+        </thead>
+        <tbody id="page-list">
+            {% for data in page_obj %}
+            <tr class="border-b border-current">
+                <th><a href="{% url 'master:detail_pic' data.pk %}">{{ data.name }}</a></th>
+                <td>{{ data.entity }}</td>
+                <td class="flex items-center justify-start gap-1">
+                    {% for d in data.pic %}
+                        <a href="{% url 'master:detail_pic' d.pk %}" class="rounded-sm border-3 border-current bg-success p-1 text-sm font-semibold text-current">
+                            {{ d.name }} - {{ d.contact.email }}
+                        </a>
+                    {% endfor %}
+                </td>
+                <td>{{ data.classification }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div id="page-list-2" class="space-y-2 lg:hidden block">
+        {% for data in page_obj %}
+        <div class="rounded-sm bg-base-100 p-2">
+            <a href="{% url 'master:detail_pic' data.pk %}" class="text-left text-md font-semibold">{{ data.name }}</a>
+            <div class="flex items-center justify-start gap-5">
+                <ul class="w-1/4 text-xs font-semibold">
+                    <li>Company</li>
+                    <li>Position</li>
+                    <li>Email</li>
+                </ul>
+                <ul class="w-3/4 text-xs font-semibold">
+                    <li> : {{ data.company }}</li>
+                    <li> : {{ data.position }}</li>
+                    <li> : {{ data.contact.email }}</li>
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</main>
 {% endblock main %}

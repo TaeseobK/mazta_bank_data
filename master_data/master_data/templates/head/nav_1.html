@@ -10,7 +10,7 @@
         </div>
         <div class="w-6/12 flex items-center justify-end gap-5">
             <div class="flex items-center justify-center gap-3">
-                {% if not login %}
+                {% if not login and not title == 'Profile' %}
                 <div class="drawer">
                     <input id="my-drawer" type="checkbox" class="drawer-toggle" />
                     <div class="drawer-content">
@@ -26,7 +26,7 @@
                             </li>
                             <li class="flex items-center justify-center">
                                 <div class="dropdown dropdown-right">
-                                    <div tabindex="0" role="button" class="link link-hover font-semibold font-sans text-md text-pretty text-center {% if not request.user.is_staff or not request.user.is_superuser %} hidden {% endif %}">Master</div>
+                                    <div tabindex="0" role="button" class="link link-hover font-semibold font-sans text-md text-pretty text-center {% if request.user.is_staff or request.user.is_superuser %} block {% else %} hidden {% endif %}">Master</div>
                                     <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-md w-52 p-2 shadow-md">
                                         {% if request.user.is_staff and request.user.groups.first.name == "sales" or request.user.is_superuser %}
                                         <li><a href="{% url 'master:gc_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Grade Clinic</a></li>
@@ -69,8 +69,7 @@
                         </svg>                          
                     </div>
                     <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-auto mx-2 p-2 shadow-md">
-                        <li class="flex items-center justify-center"><a href="" class="text-md font-semibold link link-hover">Settings</a></li>
-                        <li class="flex items-center justify-center"><a href="" class="text-md font-semibold link link-hover">Profile</a></li>
+                        <li class="flex items-center justify-center"><a href="{% url 'master:profile' %}" class="text-md font-semibold link link-hover">Profile</a></li>
                         <li class="flex items-center justify-center"><a href="{% url 'master:logout' %}" class="text-md font-semibold link link-hover">LogOut</a></li>
                         <li class="flex items-center justify-center"><a 
                             {% if request.user.is_staff and request.user.groups.all.0 %}

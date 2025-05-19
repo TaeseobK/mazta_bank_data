@@ -41,6 +41,25 @@ class UserGrade(models.Model) :
         kwargs['using'] = 'master'
         super().delete(*args, **kwargs)
 
+class Profile(models.Model) :
+    user_id = models.IntegerField()
+    about = models.TextField(null=True, blank=True)
+    addresses = models.TextField(null=True, blank=True)
+    photos = models.ImageField(null=True, blank=True)
+
+    class Meta :
+        app_label = 'master'
+        db_table = 'profile'
+        managed = True
+
+    def save(self, *args, **kwargs) :
+        kwargs['using'] = 'master'
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs) :
+        kwargs['using'] = 'master'
+        super().delete(*args, **kwargs)
+
 class Title(models.Model) :
     name = models.TextField()
     short_name = models.CharField(max_length=64, null=True, blank=True)

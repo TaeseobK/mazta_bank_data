@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, auth, Group
+from master_data.rules import *
 from django.contrib.auth.hashers import check_password
 from django.http import JsonResponse, Http404
 from django.forms.models import model_to_dict
@@ -10,43 +11,10 @@ from master_data.local_settings import *
 from sales.models import DoctorDetail
 from collections import defaultdict
 from django.contrib import messages
-from django.db.models import Count
 from django.urls import reverse
-from datetime import datetime
-from functools import wraps
 from .models import *
 import requests
 import json
-
-def group_required(group_name) :
-    def decorator(view_func) :
-        @wraps(view_func)
-        def _wrapped_view(request, *args, **kwargs) :
-            user = request.user
-            if (user.is_authenticated and user.groups.filter(name=group_name).exists()) or user.is_superuser :
-                return view_func(request, *args, **kwargs)
-            
-            else :
-                messages.error(request, "You don't have permissions to access this page.")
-                return redirect('master:home')
-            
-        return _wrapped_view
-    return decorator
-
-def admin_required(view_func) :
-    @wraps(view_func)
-    def _wrapped_view(request, *args, **kwargs) :
-
-        if request.user.is_staff or request.user.is_superuser :
-            pass
-        
-        else :
-            messages.error(request, "You Don't have permission to access this page.")
-            return redirect('master:home')
-        
-        return view_func(request, *args, **kwargs)
-    
-    return _wrapped_view
 
 @login_required
 def datadoctor(request) :
@@ -220,9 +188,11 @@ def login_view(request) :
 
                     login(request, user)
 
+                    messages.success(request, f"Login Success, Welcome Back {user.username}.")
                     return redirect(next_url)
                 
                 else :
+                    messages.error(request, "Login failed, please check your username, email, or password.")
                     return redirect('master:login')
                 
             except User.DoesNotExist :
@@ -255,9 +225,11 @@ def login_view(request) :
 
                 if user.check_password(password) :
                     login(request, user)
+                    messages.success(request, f"Welcome back {request.user.username}.")
                     return redirect(next_url)
                 
                 else :
+                    messages.error(request, "Login failed, please check your username, email, or password.")
                     return redirect('master:login')
                 
             except User.DoesNotExist :
@@ -267,6 +239,119 @@ def login_view(request) :
     return render(request, 'core/login.html', {
         'title' : 'Login',
         'login' : True
+    })
+
+@login_required
+@group_required('supplier')
+def profile(request) :
+    user = request.user
+
+    try :
+        profile = Profile.objects.using('master').get(user_id=int(user.id))
+
+        try :
+            profile.addresses = json.loads(profile.addresses)
+        
+        except TypeError :
+            profile.addresses = None
+
+    except Profile.DoesNotExist :
+        profile = None
+
+    data = {
+        'user' : user,
+        'profile' : profile
+    }
+
+    if request.method == 'POST' :
+        metode = request.POST.get('metode', '')
+        usr = request.user
+
+        if metode == 'change_usrnm' :
+            new_usrnm = request.POST.get('usrnm', '')
+            about = request.POST.get('abt', '')
+
+            usr.username = new_usrnm
+            usr.save()
+
+            prfl, created = Profile.objects.using('master').get_or_create(
+                user_id = int(usr.id)
+            )
+
+            if not created :
+                prfl.about = about
+                prfl.save()
+
+            if created or prfl.about != about :
+                prfl.about = about
+                prfl.save()
+
+            messages.success(request, f"Username successfully updated.")
+            return redirect('master:profile')
+        
+        if metode == 'profile_update' :
+            frst_nm = request.POST.get('nw-frstnm', '')
+            lst_nm = request.POST.get('nw-lstnm', '')
+            eml = request.POST.get('eml', '')
+
+            country = request.POST.get('ctry', '')
+            city = request.POST.get('cty', '')
+            state = request.POST.get('stt', '')
+            zp = request.POST.get('zp', '')
+            flladdrs = request.POST.get('flladdrs', '')
+
+            address = json.dumps({
+                'country' : country,
+                'city' : city,
+                'state' : state,
+                'zip' : zp,
+                'full_address' : flladdrs
+            })
+
+            usr.first_name = frst_nm
+            usr.last_name = lst_nm
+            usr.email = eml
+            usr.save()
+
+            prfl_1, crtd = Profile.objects.using('master').get_or_create(
+                user_id=int(usr.id)
+            )
+
+            if not crtd :
+                prfl_1.addresses = address
+                prfl_1.save()
+            
+            if crtd or prfl_1.addresses != address :
+                prfl_1.addresses = address
+                prfl_1.save()
+
+            messages.success(request, "Profile update successfully.")
+            return redirect('master:profile')
+        
+        if metode == 'change_pw' :
+            old_password = request.POST.get('old-psswrd', '')
+            new_password = request.POST.get('nw-psswrd', '')
+            cnfrm_pass = request.POST.get('cnfrm-psswrd', '')
+
+            if not check_password(old_password, usr.password) :
+                messages.error(request, "Password doesn't match with the old password.")
+                return redirect('master:profile')
+            
+            if new_password != cnfrm_pass :
+                messages.error(request, "New password with confirm password doesn't match.")
+                return redirect('master:profile')
+            
+            usr.set_password(new_password)
+            usr.save()
+
+            messages.success(request, "Change password success, remember your password. Don't share your password with anyone.")
+            return redirect('master:login')
+
+    return render(request, 'core/profile.html', {
+        'title' : 'Profile',
+        'page_name' : 'Profile Detail',
+        'api' : "False",
+        'data' : data,
     })
 
 @login_required

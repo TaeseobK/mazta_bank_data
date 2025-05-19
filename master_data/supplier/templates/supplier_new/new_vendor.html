@@ -1,0 +1,169 @@
+{% extends 'base/base_app.html' %}
+{% load static %}
+
+{% block header %}
+    {% include 'head/nav_1.html' %}
+{% endblock header %}
+{% block main %}
+<section class="m-5 flex gap-5 z-0">
+    <div class="lg:w-9/12 w-full">
+        <form action="." method="post" class="space-y-5">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-md btn-success">Submit</button>
+            <input type="text" name="metode" value="post" class="hidden">
+            <div class="w-full rounded-md border border-current p-5 space-y-5 glass mb-5">
+                <div class="border-base-100 bg-base-300 rounded-md m-5 p-5 grid lg:grid-cols-2 grid-cols-1 gap-5">
+                    <div class="flex items-center justify-start gap-5">
+                        <label for="name-id" class="label text-md font-semibold lg:block hidden w-1/4">Name*</label>
+                        <input type="text" id="name-id" name="name" class="input input-sm px-2 w-full lg:w-3/4" autocomplete="off" placeholder="Name" required>
+                    </div>
+                    <div class="flex items-center justify-start gap-5">
+                        <label for="ety-id" class="label text-md font-semibold lg:block hidden w-1/4">Entity*</label>
+                        <input type="text" id="ety-id" name="entity" class="input input-sm px-2 w-full lg:w-3/4" placeholder="Entity" required>
+                    </div>
+                    <div class="flex items-center justify-start gap-5">
+                        <label for="clss-id" class="label text-md font-semibold lg:block hidden w-1/4">Classification</label>
+                        <select name="clss" id="clss-id" class="select select-sm px-2 w-full lg:w-3/4 cursor-pointer">
+                            <option value="" selected>Select Classification</option>
+                            {% for d in data.0.pics %}
+                            <option value="d.pk">{{ d.name }} - {{ d.company }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="flex items-center justify-start gap-5">
+                        <label for="npwp-id" class="label text-md font-semibold lg:block hidden w-1/4">NPWP*</label>
+                        <input type="text" id="npwp-id" name="npwp" class="input input-sm px-2 w-full lg:w-3/4" autocomplete="off" placeholder="Npwp" required>
+                    </div>
+                </div>
+                <hr class="border-b-2 border-current m-5">
+                <div id="wi-tab-id">
+                    <div class="grid lg:grid-cols-2 grid-cols-1 gap-10 p-5">
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-start gap-1 w-full border-b-2 border-current">
+                                <p class="text-md font-semibold font-sans uppercase">Address</p>
+                                <div class="tooltip tooltip-info font-semibold" data-tip="Only Full Adress is Mandatory">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 cursor-pointer">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="flex justify-center gap-5 items-start">
+                                <p class="w-1/4 font-semibold label lg:block hidden">Address Line</p>
+                                <ul class="lg:w-3/4 w-full space-y-2">
+                                    <li>
+                                        <input type="text" id="" name="street-1" class="input input-sm px-2 w-full" placeholder="Line 1...">
+                                    </li>
+                                    <li>
+                                        <input type="text" id="" name="street-2" class="input input-sm px-2 w-full" placeholder="Line 2...">
+                                    </li>
+                                    <li>
+                                        <input type="text" id="" name="city" class="input input-sm px-2 w-full" placeholder="City...">
+                                    </li>
+                                    <li class="flex items-center justify-center gap-3">
+                                        <input type="text" id="" name="state" class="input input-sm px-2 w-full" placeholder="State...">
+                                        <input type="text" id="" name="country" class="input input-sm px-2 w-full" placeholder="Country...">
+                                        <input type="text" id="" name="zip" class="input input-sm px-2 w-full" placeholder="Zip...">
+                                    </li>
+                                </ul>
+                            </div>
+                            <textarea name="fll-address" type="text" class="textarea rounded-md w-full" placeholder="Full Address*" required></textarea>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-start gap-1 w-full border-b-2 border-current">
+                                <p class="text-md font-semibold font-sans uppercase">Bank Account</p>
+                                <div class="tooltip tooltip-info font-semibold" data-tip="This is Optional Information, Not Mandatory">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 cursor-pointer">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <ul class="space-y-2 w-full" id="bank-details-id">
+                                {% if data.acc %}
+                                    <li class="space-y-2">
+                                        <div class="flex items-center justify-start gap-5">
+                                            <p class="text-sm label font-mono font-semibold">1. Details Bank</p>
+                                            <button class="btn btn-xs rounded-none rounded-l-sm rounded-r-sm" type="button" id="remove-bank-detail">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div class="grid lg:grid-cols-2 grid-cols-1 gap-2">
+                                            <input type="text" class="input input-sm px-2" name="bank-name[]" id="" placeholder="Bank Name">
+                                            <input type="text" class="input input-sm px-2" name="acc-num[]" id="" placeholder="Account Number">
+                                            <input type="text" class="input input-sm px-2" name="tlp-num[]" id="" placeholder="Bank Telp Number">
+                                            <input type="text" class="input input-sm px-2" name="swt-code[]" id="" placeholder="SWIFT Code">
+                                        </div>
+                                        <textarea name="bank-addrs[]" id="" class="textarea textarea-sm px-2 w-full" placeholder="Bank Address"></textarea>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                            <button id="add-bank" class="btn btn-sm btn-success" type="button">Add Bank</button>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-start gap-1 w-full border-b-2 border-current">
+                                <p class="text-md font-semibold font-sans uppercase">Person In Contact</p>
+                                <div class="tooltip tooltip-info font-semibold" data-tip="All of ths field is mandatory, try to click it.">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 cursor-pointer">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <ul class="space-y-2 w-full" id="pics-id">
+                                {% if data.pic %}
+                                    <li class="flex items-center justify-between">
+                                        <label for="tlp-id" class="font-semibold label hidden lg:block">PIC ${count}*</label>
+                                        <select name="pic[]" id="pic-id" class="select select-sm px-2 cursor-pointer" required>
+                                            <option value="" selected disabled>Select PIC ${count}</option>
+                                        </select>
+                                        <button class="btn btn-xs rounded-none rounded-r-sm rounded-l-sm btn-success" type="button" id="remove-pic">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                            </svg>
+                                        </button>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                            <button class="btn btn-sm rounded-none rounded-l-sm rounded-r-sm btn-success" id="add-pic" type="button">Add PIC</button>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-start gap-1 w-full border-b-2 border-current">
+                                <p class="text-md font-semibold font-sans uppercase">Verifications</p>
+                                <div class="tooltip tooltip-info font-semibold" data-tip="All of this field is mandatory, give it a try.">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 cursor-pointer">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <ul class="space-y-2 w-full" id="verif-id">
+                                {% if data.item %}
+                                    <li class="space-y-2">
+                                        <div class="flex items-center justify-start gap-5">
+                                            <p class="text-sm label font-mono font-semibold">Verif 1</p>
+                                            <button class="btn btn-xs rounded-none rounded-l-sm rounded-r-sm" type="button" id="remove-bank-detail">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div class="grid lg:grid-cols-2 grid-cols-1 gap-2">
+                                            <input type="text" class="input input-sm px-2" name="verif[]" id="" placeholder="Verifications*" required>
+                                            <input type="text" class="input input-sm px-2" name="verif-sts[]" id="" placeholder="Verification Status*" required>
+                                        </div>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                            <button class="btn btn-sm rounded-none rounded-l-sm rounded-r-sm btn-success" id="add-verif" type="button">Add Verif</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="w-3/12 lg:block hidden">
+        <!-- Log Activity -->
+    </div>
+</section>
+<script>
+</script>
+{% endblock main %}

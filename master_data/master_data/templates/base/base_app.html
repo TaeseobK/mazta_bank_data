@@ -44,17 +44,15 @@
     <script src="https://cdn.jsdelivr.net/npm/tailwindcss-animated@2.0.0/src/index.min.js"></script>
     <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js" integrity="sha256-lFA8dPmfmR4AQorTbla7C2W0aborhztLt0IQFLAVBTQ=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
     <script>
       AOS.init();
     </script>
     <script>
         $(document).ready(function() {
-          // Cek jika ada theme tersimpan di localStorage
           var savedTheme = localStorage.getItem('theme');
           if (savedTheme) {
-            // Set theme pada elemen <html> (atau <body> sesuai kebutuhan DaisyUI)
             $('html').attr('data-theme', savedTheme);
-            // Tandai radio input yang sesuai sebagai checked
             $('input[name="theme-dropdown"][value="'+savedTheme+'"]').prop('checked', true);
           }
       
@@ -478,6 +476,106 @@
 
             $('#fl-id').val(fullName);
           });
+        });
+
+        $(document).ready(function() {
+            $('#add-bank').on('click', function() {
+              let count = $('#bank-details-id li').length;
+
+              if (count === 0) {
+                count = 1;
+              } else {
+                count += 1;
+              }
+
+              $('#bank-details-id').append(`
+                <li class="space-y-2">
+                    <div class="flex items-center justify-start gap-5">
+                        <p class="text-sm label font-mono font-semibold">${count}. Details Bank</p>
+                        <button class="btn btn-xs rounded-none rounded-l-sm rounded-r-sm" type="button" id="remove-bank-detail">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="grid lg:grid-cols-2 grid-cols-1 gap-2">
+                        <input type="text" class="input input-sm px-2" name="bank-name[]" id="" placeholder="Bank Name">
+                        <input type="text" class="input input-sm px-2" name="acc-num[]" id="" placeholder="Account Number">
+                        <input type="text" class="input input-sm px-2" name="tlp-num[]" id="" placeholder="Bank Telp Number">
+                        <input type="text" class="input input-sm px-2" name="swt-code[]" id="" placeholder="SWIFT Code">
+                    </div>
+                    <textarea name="bank-add[]" id="" class="textarea textarea-sm px-2 w-full" placeholder="Bank Address"></textarea>
+                </li>
+              `);
+            });
+        });
+
+        $(document).ready(function() {
+            $('#add-verif').on('click', function() {
+              let count = $('#verif-id li').length;
+
+              if (count === 0) {
+                count = 1;
+              } else {
+                count += 1;
+              }
+
+              $('#verif-id').append(`
+                <li class="space-y-2">
+                    <div class="flex items-center justify-start gap-5">
+                        <p class="text-sm label font-mono font-semibold">Verif ${count}</p>
+                        <button class="btn btn-xs rounded-none rounded-l-sm rounded-r-sm" type="button" id="remove-bank-detail">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="grid lg:grid-cols-2 grid-cols-1 gap-2">
+                        <input type="text" class="input input-sm px-2" name="verif[]" id="" placeholder="Verifications*" required>
+                        <input type="text" class="input input-sm px-2" name="verif-sts[]" id="" placeholder="Verification Status*" required>
+                    </div>
+                </li>
+              `);
+            });
+        });
+
+        $(document).on('click', '#remove-bank-detail', function() {
+          $(this).parent().parent().remove();
+        });
+
+        $(document).ready(function() {
+          $('#add-pic').on('click', function() {
+            let count = $('#pics-id li').length;
+
+            if (count === 0) {
+              count = 1;
+            } else {
+              count += 1;
+            }
+
+            console.log(count);
+
+            $('#pics-id').append(`
+              <li class="flex items-center justify-between">
+                  <label for="tlp-id" class="font-semibold label hidden lg:block">PIC ${count}*</label>
+                  <select name="pic[]" id="pic-id" class="select select-sm px-2 cursor-pointer" required>
+                  <option value="" selected disabled>Select PIC ${count}</option>
+                  {% for d in data.0.class %}
+                  <option value="{{ d.pk }}">{{ d.name }}</option>
+                  {% endfor %}
+                  </select>
+                  <button class="btn btn-xs rounded-none rounded-r-sm rounded-l-sm btn-success" type="button" id="remove-pic">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                      </svg>
+                  </button>
+              </li>
+            `);
+          });
+        });
+
+        $(document).on('click', '#remove-pic', function() {
+          $(this).parent().remove();
         });
     </script>
 </body>

@@ -9,6 +9,7 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    path('profile/', views.profile, name='profile'),
 
     path('api/grade-user/<int:gu_id>/', views.gu_data, name='api_gu'),
     path('api/grade-clinic/<int:gc_id>/', views.gc_data, name='api_gc'),
