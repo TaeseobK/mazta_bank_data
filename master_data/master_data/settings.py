@@ -100,6 +100,7 @@ DATABASE_ROUTERS = [
     'human_resource.routers.HumanResourceRouter',
     'master.routers.MasterRouter',
     'sales.routers.SalesRouter',
+    'supplier.routers.SupplierRouter',
 ]
 
 AUTO_LOGOUT_TIME = int(60 * 60)

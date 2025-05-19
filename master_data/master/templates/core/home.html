@@ -23,9 +23,9 @@
             <p class="text-lg text-center font-semibold">The Doctors Groupped by Rayons</p>
             <p class="text-sm text-center font-normal">The groupping include "Priority" and "Not Priority"</p>
             <div class="w-full mx-5 mt-5 flex items-center justify-start gap-5">
-                <input type="text" name="search" id="search" class="input input-sm" placeholder="Search...">
-                <div class="rounded-sm border-2 border-base-300 shadow-md">
-                    <p class="text-md font-semibold font-sans text-base-300">Doctor Priority : {{ total.priority }}</p>
+                <input type="text" name="search" id="search" class="input input-sm rounded-none rounded-l-sm rounded-r-sm" placeholder="Search...">
+                <div class="rounded-sm border-2 border-base-100 shadow-md py-1 px-2">
+                    <p class="text-sm font-semibold font-sans text-current bg-base">Priority : {{ total.doctor_priority }} Doctor | Not Priority : {{ total.doctor_not_priority }} Doctor | Total : {{ total.total_doctor }} Doctor</p>
                 </div>
             </div>
             <div id="page-list" class="card shadow-md m-5 p-5 rounded-md backdrop-blur-sm bg-opacity-80 bg-base-200 grid lg:grid-cols-4 grid-cols-1 gap-10">
@@ -50,6 +50,7 @@
         </div>
         <dialog id="modal_1" class="modal">
             <div class="modal-box w-11/12 max-w-5xl border-2 border-primary">
+                <p class="text-md font-semibold block px-2" id="rayon_name"></p>
                 <div class="p-2 grid lg:grid-cols-3 grid-cols-1 gap-5" id="modal-data">
                 </div>
                 <div class="modal-action">

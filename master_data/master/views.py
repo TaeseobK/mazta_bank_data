@@ -23,7 +23,10 @@ def datadoctor(request) :
 
         doctors = DoctorDetail.objects.using('sales').filter(is_active=True).all()
 
-        filtered_doctors = []
+        filtered_doctors = {
+            'rayon_name' : rayon_name,
+            'doctors' : []
+        }
 
         for doc in doctors :
             try :
@@ -32,12 +35,14 @@ def datadoctor(request) :
                     doc.rayon = json.loads(doc.rayon)
                     doc.info = json.loads(doc.info)
 
-                    filtered_doctors.append({
+                    filtered_doctors.get('doctors').append({
                         'rayon' : doc.rayon,
                         'info' : doc.info
                     })
             except :
                 continue
+        
+        print(filtered_doctors)
 
         return JsonResponse({'doctors' : filtered_doctors})
     return JsonResponse({'error' : 'Invalid Request'}, status=400)
@@ -96,8 +101,6 @@ def home(request) :
             'doctor_not_priority' : nt_prty_doctor,
             'total_doctor' : ttl_doctor
         }
-
-        print(all_list)
 
         if search_query :
             group_list = [

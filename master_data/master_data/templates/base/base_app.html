@@ -81,8 +81,9 @@
                 'csrfmiddlewaretoken' : '{{ csrf_token }}',
               },
               success : function(data) {
+                $('#rayon_name').text(data.doctors.rayon_name);
                 $('#modal-data').empty();
-                data.doctors.forEach(function(val, index) {
+                data.doctors.doctors.forEach(function(val, index) {
                   $('#modal-data').append(`
                     <div class="card shadow-lg rounded-sm p-3 bg-base-200 border border-primary border-2">
                       <div class="flex items-center justify-start gap-5">
