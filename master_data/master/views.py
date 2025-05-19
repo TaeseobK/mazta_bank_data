@@ -52,6 +52,10 @@ def home(request) :
 
         doctors = DoctorDetail.objects.using('sales').filter(is_active=True).all()
 
+        prty_doctor = 0
+        nt_prty_doctor = 0
+        ttl_doctor = 0
+
         for data in doctors :
             data.rayon = json.loads(data.rayon)
             data.info = json.loads(data.info)
@@ -67,11 +71,14 @@ def home(request) :
 
             if is_priority :
                 group_count[rayon_name]['priority'] += 1
+                prty_doctor += 1
             else :
                 group_count[rayon_name]['not_priority'] += 1
+                nt_prty_doctor += 1
             
             group_count[rayon_name]['total_doctor'] += 1
             group_count[rayon_name]['id'] = data.pk
+            ttl_doctor += 1
         
         group_list = [
             {   
@@ -83,6 +90,14 @@ def home(request) :
             }
             for rayon, data in group_count.items()
         ]
+
+        all_list = {
+            'doctor_priority' : prty_doctor,
+            'doctor_not_priority' : nt_prty_doctor,
+            'total_doctor' : ttl_doctor
+        }
+
+        print(all_list)
 
         if search_query :
             group_list = [
@@ -100,7 +115,8 @@ def home(request) :
         return render(request, 'core/home.html', {
             'title' : 'Dashboard',
             'page_name' : 'Home',
-            'data' : group_list
+            'data' : group_list,
+            'total' : all_list
         })
     
     else :

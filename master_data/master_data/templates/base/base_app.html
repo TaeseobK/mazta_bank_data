@@ -380,6 +380,7 @@
 
           $('#gu-id').on('change', function() {
             $('#gu-tooltip-false').removeClass('flex').addClass('hidden');
+            $('#gu-tooltip-true').empty();
             var thisPk = $(this).val();
 
             $.ajax({
@@ -402,6 +403,7 @@
 
           $('#gc-id').on('change', function() {
             $('#gc-tooltip-false').removeClass('flex').addClass('hidden');
+            $('#gc-tooltip-true').empty();
             var thisPk = $(this).val();
 
             $.ajax({
@@ -424,6 +426,7 @@
 
           $('#sal-id').on('change', function() {
             $('#sal-tooltip-false').removeClass('flex').addClass('hidden');
+            $('#sal-tooltip-true').empty();
             var thisPk = $(this).val();
 
             $.ajax({

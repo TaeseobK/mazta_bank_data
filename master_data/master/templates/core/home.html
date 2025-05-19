@@ -22,8 +22,11 @@
         <div class="p-4 mx-5 rounded-md border-2 border-current backdrop-blur-sm bg-opacity-10 bg-base-300 thin-scrollbar">
             <p class="text-lg text-center font-semibold">The Doctors Groupped by Rayons</p>
             <p class="text-sm text-center font-normal">The groupping include "Priority" and "Not Priority"</p>
-            <div class="block mx-5 mt-5">
+            <div class="w-full mx-5 mt-5 flex items-center justify-start gap-5">
                 <input type="text" name="search" id="search" class="input input-sm" placeholder="Search...">
+                <div class="rounded-sm border-2 border-base-300 shadow-md">
+                    <p class="text-md font-semibold font-sans text-base-300">Doctor Priority : {{ total.priority }}</p>
+                </div>
             </div>
             <div id="page-list" class="card shadow-md m-5 p-5 rounded-md backdrop-blur-sm bg-opacity-80 bg-base-200 grid lg:grid-cols-4 grid-cols-1 gap-10">
                 {% for d in data %}
