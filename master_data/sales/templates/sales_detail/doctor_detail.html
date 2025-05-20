@@ -164,7 +164,7 @@
                                     <li class="flex items-center justify-center gap-3">
                                         <input type="text" id="" name="work-state" class="input input-sm px-2 w-full" placeholder="State..." {% if not data.0.doctor %} value="{{ data.0.dr_api.provinsi }}" {% else %} value="{{ data.0.doctor.work_information.address.street_1 }}" {% endif %}>
                                         <input type="text" id="" name="work-country" class="input input-sm px-2 w-full" placeholder="Country..." {% if data.0.doctor %} value="{{ data.0.doctor.work_information.address.country }}" {% endif %}>
-                                        <input type="text" id="" name="work-zip" class="input input-sm px-2 w-full" placeholder="Zip..." {% if not data.0.doctor %} value="{{ data.0.doctor.work_information.address.zip }}" {% endif %}>
+                                        <input type="text" id="" name="work-zip" class="input input-sm px-2 w-full" placeholder="Zip..." {% if data.0.doctor %} value="{{ data.0.doctor.work_information.address.zip }}" {% endif %}>
                                     </li>
                                 </ul>
                             </div>
@@ -184,11 +184,11 @@
                                 </li>
                                 <li class="flex items-center justify-between">
                                     <label for="wp-id" class="font-semibold label hidden lg:block">Work Phone</label>
-                                    <input type="text" id="wp-id" placeholder="Work Phone" value="{% if not data.0.doctor %}+62 Work Phone{% else %}{{ data.0.doctor.work_information.job_information.work_phone }}{% endif %}" name="work-phone" class="input input-sm px-2">
+                                    <input type="text" id="wp-id" placeholder="Work Phone" value="{% if not data.0.doctor %}+62 Work Phone{% else %}{{ data.0.doctor.work_information.job_information.work_phone }}{% endif %}" name="work-phone" class="input input-sm px-2" required >
                                 </li>
                                 <li class="flex items-center justify-between">
                                     <label for="wm-id" class="font-semibold label hidden lg:block">Work Mobile</label>
-                                    <input type="text" id="wm-id" name="work-mobile" class="input input-sm px-2" placeholder="Work Mobile" value="{% if not data.0.doctor %}+62 Work Mobile {% else %}{{ data.0.doctor.work_information.job_information.work_mobile }}{% endif %}">
+                                    <input type="text" id="wm-id" name="work-mobile" class="input input-sm px-2" placeholder="Work Mobile" value="{% if not data.0.doctor %}+62 Work Mobile {% else %}{{ data.0.doctor.work_information.job_information.work_mobile }}{% endif %}" required >
                                 </li>
                                 <li class="flex items-center justify-between">
                                     <label for="we-id" class="font-semibold label hidden lg:block">Work Email</label>
@@ -203,17 +203,10 @@
                                     <label for="gu-id" class="font-semibold label w-1/3 hidden lg:block">Grade User</label>
                                     <div class="flex items-center justify-start gap-5 lg:w-2/3 w-full">
                                         <select name="grade-user" id="gu-id" class="input w-full input-sm px-2 cursor-pointer" required>
-                                            {% if data.0.doctor %}
-                                                <option value="" disabled>Select Grade Users</option>
+                                                <option value="" {% if not data.0.doctor.work_information.sales_information.grade_user %} selected {% else %} disabled {% endif %}>Select Grade Users</option>
                                                 {% for d in data.0.grade_user %}
-                                                <option value="{{ d.pk }}" {% if data.0.doctor.sales_information.grade_user == d.pk %} selected {% endif %}>{{ d.alias }}</option>
+                                                <option value="{{ d.pk }}" {% if data.0.doctor.work_information.sales_information.grade_user == d.pk %} selected {% endif %}>{{ d.alias }}</option>
                                                 {% endfor %}
-                                            {% else %}
-                                                <option value="" selected disabled>Select Grade Users</option>
-                                                {% for d in data.0.grade_user %}
-                                                <option value="{{ d.pk }}">{{ d.alias }}</option>
-                                                {% endfor %}
-                                            {% endif %}
                                         </select>
                                         <div id="gu-tooltip-false" class="flex items-center justify-end">
                                             <div class="tooltip">
@@ -233,17 +226,10 @@
                                     <label for="gc-id" class="font-semibold label w-1/3 hidden lg:block">Grade Clinic</label>
                                     <div class="flex items-center justify-start gap-5 lg:w-2/3 w-full">
                                         <select name="grade-clinic" id="gc-id" class="input input-sm px-2 cursor-pointer" required>
-                                            {% if data.0.doctor %}
-                                                <option value="" disabled>Select Grade Clinics</option>
+                                                <option value="" {% if not data.0.doctor.work_information.sales_information.grade_clinic %} selected {% else %} disabled {% endif %}>Select Grade Clinics</option>
                                                 {% for d in data.0.grade_clinic %}
-                                                <option value="{{ d.pk }}" {% if data.0.doctor.sales_information.grade_clinic == d.pk %} selected {% endif %}>{{ d.alias }}</option>
+                                                <option value="{{ d.pk }}" {% if data.0.doctor.work_information.sales_information.grade_clinic == d.pk %} selected {% endif %}>{{ d.alias }}</option>
                                                 {% endfor %}
-                                            {% else %}
-                                                <option value="" selected disabled>Select Grade Clinics</option>
-                                                {% for d in data.0.grade_clinic %}
-                                                <option value="{{ d.pk }}">{{ d.alias }}</option>
-                                                {% endfor %}
-                                            {% endif %}
                                         </select>
                                         <div id="gc-tooltip-false" class="flex items-center">
                                             <div class="tooltip">
@@ -275,17 +261,10 @@
                                 <li class="flex items-center justify-between">
                                     <label for="sp-id" class="font-semibold label lg:block hidden">Specialist</label>
                                     <select name="specialists" id="sp-id" class="input input-sm px-2 cursor-pointer" required>
-                                        {% if data.0.doctor %}
-                                            <option value="" disabled>Select Specialists</option>
+                                            <option value="" {% if not data.0.doctor.work_information.sales_information.specialist_id %} selected {% else %} disabled {% endif %}>Select Specialists</option>
                                             {% for d in data.0.specialists %}
-                                            <option value="{{ d.pk }}" {% if data.0.doctor.sales_information.specialist_id == d.pk %} selected {% endif %}>{{ d.short_name }}</option>
+                                            <option value="{{ d.pk }}" {% if data.0.doctor.work_information.sales_information.specialist_id == d.pk %} selected {% endif %}>{{ d.short_name }}</option>
                                             {% endfor %}
-                                        {% else %}
-                                            <option value="" selected disabled>Select Specialists</option>
-                                            {% for d in data.0.specialists %}
-                                            <option value="{{ d.pk }}">{{ d.short_name }}</option>
-                                            {% endfor %}
-                                        {% endif %}
                                     </select>
                                 </li>
                             </ul>
@@ -386,12 +365,12 @@
                             <div class="flex items-start justify-between gap-5">
                                 <label for="mrtl-sts" class="label w-1/4 font-semibold lg:block hidden">Marital Status</label>
                                 <select name="marital-status" id="mrtl-sts" class="input input-sm px-2 w-full lg:w-3/4 cursor-pointer">
-                                    <option value="" {% if not data.0.doctor %} selected {% endif %} disabled>Select Marital Status</option>
-                                    <option value="Single" {% if data.0.doctor.private_information.family.marital_status == "Single" %} selected {% endif %}>Single</option>
-                                    <option value="Married" {% if data.0.doctor.private_information.family.marital_status == "Married" %} selected {% endif %}>Married</option>
-                                    <option value="Divorced" {% if data.0.doctor.private_information.family.marital_status == "Divorced" %} selected {% endif %}>Divorced</option>
-                                    <option value="Widowed" {% if data.0.doctor.private_information.family.marital_status == "Widowed" %} selected {% endif %}>Widowed</option>
-                                    <option value="Separated" {% if data.0.doctor.private_information.family.marital_status == "Separated" %} selected {% endif %}>Separated</option>
+                                    <option value="" {% if not data.0.doctor.private_information.family.marital_status %} selected {% else %} disabled {% endif %}>Select Marital Status</option>
+                                    <option value="Single" {% if data.0.doctor.private_information.family.marital_status == "SINGLE" %} selected {% endif %}>Single</option>
+                                    <option value="Married" {% if data.0.doctor.private_information.family.marital_status == "MARRIED" %} selected {% endif %}>Married</option>
+                                    <option value="Divorced" {% if data.0.doctor.private_information.family.marital_status == "DIVORCED" %} selected {% endif %}>Divorced</option>
+                                    <option value="Widowed" {% if data.0.doctor.private_information.family.marital_status == "WIDOWED" %} selected {% endif %}>Widowed</option>
+                                    <option value="Separated" {% if data.0.doctor.private_information.family.marital_status == "SEPARATED" %} selected {% endif %}>Separated</option>
                                 </select>
                             </div>
                         </div>
@@ -672,7 +651,7 @@
                                     <select name="date-input" class="select w-full lg:w-2/3" id="date-input">
                                         <option value="" selected disabled>Select Date</option>
                                         {% for d in data.0.date.tanggal %}
-                                        <option value="{{ d }}" {% if d in data.0.doctor.additional_information.base_time.base %} selected {% endif %} >{{ d }}</option>
+                                        <option value="{{ d }}" {% if data.0.strstr == d %} selected {% endif %} >{{ d }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>

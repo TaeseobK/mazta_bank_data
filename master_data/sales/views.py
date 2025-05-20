@@ -200,7 +200,14 @@ def doctor_detail(request, user_id, doc_id) :
                 doctor.branch_information = json.loads(doctor.branch_information)
                 doctor.additional_information = json.loads(doctor.additional_information)
                 doctor.rayon = json.loads(doctor.rayon)
+                days_date = doctor.additional_information['base_time']['base']
 
+                if "date" in str(days_date) :
+                    strstr = int(doctor.additional_information['base_time']['base'].replace("Every date ", ""))
+                
+                else :
+                    strstr = None
+                
                 if doctor :
                     if doctor.additional_information :
                         text_re = re.findall(r"\d{2}:\d{2}", doctor.additional_information.get('base_time').get('time'))
@@ -227,7 +234,8 @@ def doctor_detail(request, user_id, doc_id) :
                     'tanggal' : tanggal,
                     'start_time' : start_time,
                     'end_time' : end_time
-                }
+                },
+                'strstr' : strstr if strstr else None,
             })
 
             if request.method == 'POST' :
