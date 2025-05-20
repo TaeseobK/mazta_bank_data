@@ -192,7 +192,7 @@
                                 </li>
                                 <li class="flex items-center justify-between">
                                     <label for="we-id" class="font-semibold label hidden lg:block">Work Email</label>
-                                    <input type="text" id="we-id" name="work-email" class="input input-sm px-2" placeholder="Work Email" value="{{ data.0.doctor.work_information.job_information.work_email }}">
+                                    <input type="email" id="we-id" name="work-email" class="input input-sm px-2" placeholder="Work Email" value="{{ data.0.doctor.work_information.job_information.work_email }}">
                                 </li>
                             </ul>
                         </div>
@@ -692,7 +692,7 @@
                     <div class="flex items-center gap-10 w-full border-b border-current p-2 mr-10">
                         <p class="w-1/2 text-lg font-semibold font-sans text-center">Branches</p>
                         <div class="flex w-1/2 items-center justify-end">
-                            <button type="button" id="add-branch" class="btn btn-xs py-4 items-center" onclick="branch_modal.showModal()">
+                            <button type="button" id="add-branch" class="btn btn-xs py-4 items-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                 </svg>
@@ -773,7 +773,7 @@
                             </div>
                             <div class="flex w-full justify-end items-center">
                                 <div class="flex w-1/2 mt-10 items-center justify-end gap-5">
-                                    <button type="button" onclick="branch_modal.close()" class="btn btn-xs py-4">Close</button>
+                                    <button type="button" id="branch-btn-close" onclick="branch_modal.close()" class="btn btn-xs py-4">Close</button>
                                     <button type="button" id="branch-btn-sbmt" onclick="branch_modal.close()" class="btn btn-xs py-4">Submit</button>
                                 </div>
                             </div>
