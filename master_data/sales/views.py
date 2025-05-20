@@ -207,7 +207,7 @@ def doctor_detail(request, user_id, doc_id) :
                 
                 else :
                     strstr = None
-                
+
                 if doctor :
                     if doctor.additional_information :
                         text_re = re.findall(r"\d{2}:\d{2}", doctor.additional_information.get('base_time').get('time'))
