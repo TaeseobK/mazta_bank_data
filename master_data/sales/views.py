@@ -191,6 +191,7 @@ def doctor_detail(request, user_id, doc_id) :
             start_time = None
             end_time = None
             doctor = None
+            strstr = None
 
             if DoctorDetail.objects.using('sales').filter(jamet_id=doc_id).exists() :
                 doctor = DoctorDetail.objects.using('sales').get(jamet_id=doc_id)
@@ -200,12 +201,16 @@ def doctor_detail(request, user_id, doc_id) :
                 doctor.branch_information = json.loads(doctor.branch_information)
                 doctor.additional_information = json.loads(doctor.additional_information)
                 doctor.rayon = json.loads(doctor.rayon)
-                days_date = doctor.additional_information['base_time']['base']
 
-                if "date" in str(days_date) :
-                    strstr = int(doctor.additional_information['base_time']['base'].replace("Every date ", ""))
+                try :
+                    days_date = doctor.additional_information['base_time']['base']
+                    if "date" in str(days_date) :
+                        strstr = int(doctor.additional_information['base_time']['base'].replace("Every date ", ""))
+                    
+                    else :
+                        strstr = None
                 
-                else :
+                except :
                     strstr = None
 
                 if doctor :
@@ -235,7 +240,7 @@ def doctor_detail(request, user_id, doc_id) :
                     'start_time' : start_time,
                     'end_time' : end_time
                 },
-                'strstr' : strstr if strstr else None,
+                'strstr' : strstr,
             })
 
             if request.method == 'POST' :
