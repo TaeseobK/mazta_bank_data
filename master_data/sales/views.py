@@ -136,7 +136,7 @@ def doctor_list(request) :
                     d for d in data
                     if (
                         search_query.lower() in str(d['data'].get('nama_dokter')).lower() or
-                        search_query.lower() in str(d['data'].get('kode_pelanggan')).lower() or
+                        search_query.lower() in str(d['data'].get('kode_pelanggan_old')).lower() or
                         search_query.lower() in str(d['priority']).lower()
                     )
                 ]

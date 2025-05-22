@@ -206,7 +206,6 @@ def login_view(request) :
                         user.groups.add(group)
 
                     login(request, user)
-
                     messages.success(request, f"Login Success, Welcome Back {user.username}.")
                     return redirect(next_url)
                 
@@ -244,7 +243,13 @@ def login_view(request) :
 
                 if user.check_password(password) :
                     login(request, user)
-                    messages.success(request, f"Welcome back {request.user.username}.")
+
+                    if user.groups.filter(name="supplier").exists() and not user.first_name :
+                        messages.success(request, f"Welcome back {user.username}, Don't forget to update your data <a href='{reverse('master:profile')}' class='link link-hover'>Here</a>")
+
+                    else :
+                        messages.success(request, f"Welcome back {request.user.username}.")
+                    
                     return redirect(next_url)
                 
                 else :
@@ -394,12 +399,15 @@ def logout_view(request) :
             request.session.flush()
             logout(request)
 
+            messages.success(request, f"Log out success, see you next time.")
             return redirect('master:login')
         else :
-            return JsonResponse({'error' : 'Logout Gagal, Coba lagi nanti...'})
+            messages.error(request, f"Log out failed, please try again later.")
+            return redirect('master:home')
     
     else :
         logout(request)
+        messages.success(request, f"Log out success, see you next time.")
         return redirect('master:login')
 
 @login_required
