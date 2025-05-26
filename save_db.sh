@@ -1,2 +1,1 @@
-cd ./master_data/
-python manage.py save_db
+python master_data/manage.py save_db
