@@ -1,0 +1,59 @@
+{% extends 'base/base_app.html' %}
+{% load static %}
+
+{% block header %}
+    {% include 'head/nav_1.html' %}
+    {% include 'head/nav_2.html' %}
+{% endblock header %}
+
+{% block main %}
+<main class="lg:mx-10 mx-5 my-5 bg-base-200 rounded-md max-w-screen">
+    <table class="lg:table table-zebra my-5 hidden">
+        <thead>
+            <tr>
+                <th>Doctor Name</th>
+                <th>New Code</th>
+                <th>Priority</th>
+                <th>Cover</th>
+                <th>Update At</th>
+            </tr>
+        </thead>
+        <tbody id="page-list">
+            {% for data in page_obj %}
+            <tr class="border-b border-current hover:bg-base-100">
+                <th>
+                    <a {% if request.user.is_staff %} href="{% url 'sales:doctor_detail_admin' data.pk %}" {% else %} href="{% url 'sales:doctor_detail' request.session.detail.id_user data.data.id_dokter %}" {% endif %} class="link link-hover">
+                        {{ data.info.full_name }}
+                    </a>
+                </th>
+                <td>{{ data.code }}</td>
+                <td>{% if data.work_information.sales_information.priority == 1 %}Priority{% else %}Not Priority{% endif %}</td>
+                <td>{{ data.rayon.rayon }}</td>
+                <td>{{ data.updated_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div id="page-list-2" class="lg:hidden block p-2">
+        {% for data in page_obj %}
+        <div class="rounded-sm bg-base-100 p-2 m-2">
+            <a {% if request.user.is_staff %} href="{% url 'sales:doctor_detail_admin' data.pk %}" {% else %} href="{% url 'sales:doctor_detail' request.session.detail.id_user data.data.id_dokter %}" {% endif %} class="text-left text-md font-semibold">{{ data.data.nama_dokter }}</a>
+            <div class="flex items-center justify-start gap-5">
+                <ul class="w-1/4 text-xs font-semibold">
+                    <li>Old Code</li>
+                    <li>Priority</li>
+                    <li>Cover</li>
+                    <li>Update At</li>
+                </ul>
+                <ul class="w-3/4 text-xs font-semibold">
+                    <li> : {{ data.data.kode_pelanggan }}</li>
+                    <li> : {% if data.work_information.sales_information.priority == 1 %}Priority{% else %}Not Priority{% endif %}</li>
+                    <li> : {{ data.rayon.rayon }}</li>
+                    <li> : {{ data.updated_at }}</li>
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</main>
+{% endblock main %}

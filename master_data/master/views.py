@@ -41,8 +41,6 @@ def datadoctor(request) :
                     })
             except :
                 continue
-        
-        print(filtered_doctors)
 
         return JsonResponse({'doctors' : filtered_doctors})
     return JsonResponse({'error' : 'Invalid Request'}, status=400)

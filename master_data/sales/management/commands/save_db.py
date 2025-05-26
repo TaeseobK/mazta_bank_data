@@ -5,6 +5,8 @@ from master.models import *
 from django.core.mail import EmailMessage
 from datetime import datetime
 import json
+import zipfile
+from django.conf import settings
 import os
 import logging
 
@@ -270,35 +272,28 @@ class Command(BaseCommand) :
                 brc_data.to_excel(writer, sheet_name="Branches", index=False)
             logging.info("Saving database successfully")
             print("Saving database successfully")
+            
+            logging.info("Merging to zip fle")
+            output_dir = os.path.join(settings.MEDIA_ROOT, 'output')
+            zip_filename = os.path.join(output_dir, 'data_doctor.zip')
 
-            tomail = ["satrio.it@maztafarma.co.id", "taufan.it@maztafarma.co.id"]
+            files_to_zip = [
+                os.path.join(output_dir, 'doctor_database.xlsx'),
+                os.path.join(output_dir, 'db_to_excel.log')
+            ]
 
-            email = EmailMessage(
-                subject=f"Doctor Databases Extracted at {datetime.now()}",
-                body="""
-                    Dear Team,\n\n
-                    Please Find the extracted data from the doctor database as requested. Let me know if you need further detail or another format.\n\n
-                    Best Regards,
-                    Afrizal Bayu Satrio [Data Engineer].
-                    """,
-                from_email="satriodasmdi@gmail.com",
-                to=tomail
-            )
-            email.attach_file(os.path.join(folder_path, "doctor_database.xlsx"))
-            email.send()
-
-            email2 = EmailMessage(
-                subject=f"Extraction Database Success at {datetime.now()}",
-                body=f"""
-                    Database Doctor Extraction Successfull
-                    """,
-                from_email="satriodasmdi@gmail.com",
-                to=["satriodasmdi@gmail.com"]
-            )
-
-            email2.attach_file(os.path.join(folder_path, "doctor_database.xlsx"))
-            email2.attach_file(os.path.join(folder_path, "db_to_excel.log"))
-            email2.send()
+            try :
+                with zipfile.ZipFile(zip_filename, 'w') as zipf :
+                    for file in files_to_zip :
+                        if os.path.exists(file) :
+                            arcname = os.path.basename(file)
+                            zipf.write(file, arcname=arcname)
+                
+                self.stdout.write(self.style.SUCCESS(f"ZIP file created success filename : {zip_filename}"))
+                
+            
+            except Exception as e :
+                self.stderr.write(self.style.ERROR(f"Failed to create ZIP file: {str(e)}"))
 
         except Exception as e :
             email = EmailMessage(

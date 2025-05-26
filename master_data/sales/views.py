@@ -1,9 +1,14 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
-from django.http import JsonResponse
+import os
+import zipfile
+from django.conf import settings
+from django.http import FileResponse, Http404
+from django.views import View
 from functools import wraps
 from master_data.local_settings import *
+from master_data.rules import *
 import json
 import random
 import calendar
@@ -615,3 +620,104 @@ def doctor_detail(request, user_id, doc_id) :
         
     else:
         return render(request, 'error.html', {'message': 'Dokter tidak ditemukan'})
+
+@admin_required
+@group_required('sales')
+@login_required(login_url='login/')
+def dctr_adm(request) :
+    search_query = request.GET.get('search', '')
+
+    doctors = DoctorDetail.objects.using('sales').filter(is_active=True).all().order_by('-created_at')
+
+    data = []
+    for doctor in doctors :
+        doctor.rayon = json.loads(doctor.rayon)
+        doctor.info = json.loads(doctor.info)
+        doctor.work_information = json.loads(doctor.work_information)
+        doctor.private_information = json.loads(doctor.private_information)
+        doctor.additional_information = json.loads(doctor.additional_information)
+        doctor.branch_information = json.loads(doctor.branch_information)
+
+        data.append(doctor)
+
+    if search_query :
+        data = [
+            d for d in data
+            if (
+                search_query.lower() in str(d.rayon.get('rayon')).lower() or
+                search_query.lower() in str(d.info.get('first_name')).lower() or
+                search_query.lower() in str(d.info.get('middle_name')).lower() or
+                search_query.lower() in str(d.info.get('last_name')).lower() or
+                search_query.lower() in str(d.info.get('full_name')).lower()
+            )
+        ]   
+
+    paginator = Paginator(data, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+        return render(request, 'sales_pages/doctor_list_admin.html', {
+            'page_obj' : page_obj
+        }) 
+    
+    return render(request, 'sales_pages/doctor_list_admin.html', {
+        'title' : "Doctor List",
+        'page_name' : "Doctor List",
+        'page_obj' : page_obj,
+        'api' : "False"
+    })
+
+@admin_required
+@group_required('sales')
+@login_required(login_url='login/')
+def adm_doctor_detail(request, dr_id) :
+    doctor = DoctorDetail.objects.using('sales').get(id=int(dr_id))
+
+    doctor.rayon = json.loads(doctor.rayon)
+    doctor.info = json.loads(doctor.info)
+    doctor.work_information = json.loads(doctor.work_information)
+    doctor.private_information = json.loads(doctor.private_information)
+    doctor.additional_information = json.loads(doctor.additional_information)
+    doctor.branch_information = json.loads(doctor.branch_information)
+
+    grade_users = UserGrade.objects.using('master').filter(is_active=True).all()
+    grade_clinics = ClinicGrade.objects.using('master').filter(is_active=True).all()
+    salutations = Salutation.objects.using('master').filter(is_active=True).all()
+    titles = Title.objects.using('master').filter(is_active=True).all()
+    specialists = Specialist.objects.using('master').filter(is_active=True).all()
+
+    data = {
+        'grade_users' : grade_users,
+        'grade_clinics' : grade_clinics,
+        'salutations' : salutations,
+        'titles' : titles,
+        'specialists' : specialists
+    }
+
+    return render(request, 'sales_detail/doctor_detail_admin.html', {
+        'title' : "Doctor Detail",
+        'page_name' : "Doctor Detail",
+        'data' : doctor,
+        'datadata' : data,
+        'api' : "False"
+    })
+
+@admin_required
+@group_required('sales')
+@login_required(login_url='login/')
+def download_doctor_data(request) :
+    zip_path = os.path.join(settings.MEDIA_ROOT, 'output', 'data_doctor.zip')
+
+    if os.path.exists(zip_path) :
+        try :
+            file = open(zip_path, 'rb')
+            messages.success(request, "Downloaded the database as a zip file")
+            return FileResponse(file, as_attachment=True, filename='data_doctor.zip')
+        
+        except Exception as e :
+            messages.error(request, f"An error occured, {str(e)}")
+            return redirect('sales:doctor_admin')
+    else :
+        messages.error(request, "File not found.")
+        return redirect('master:home')

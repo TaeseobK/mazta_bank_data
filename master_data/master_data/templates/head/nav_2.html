@@ -6,6 +6,7 @@
             <input type="text" name="search" id="search" class="lg:block grow  hidden" placeholder="Search..."/>
             <input type="text" name="search-2" id="search-2" class="lg:hidden block grow" placeholder="Search...">
         </label>
+        <a href="{% url 'sales:download_doctor_data' %}" class="btn btn-sm rounded-none rounded-l-sm rounded-r-sm">Download Data</a>
     </div>
     {% if api == "False" %}
     <div class="w-2/12 lg:flex hidden justify-center items-center">
