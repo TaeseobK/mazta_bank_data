@@ -49,7 +49,7 @@ On the Databases section you see the database settings, here's the explaination 
 - __'USER'__ is user for your XAMPP
 - __'PASSWORD'__ password your XAMPP for user
 - __'HOST'__ is your host database
-- __'POST'__ port database
+- __'POST'__ port data_base
 
 for Example :
 
