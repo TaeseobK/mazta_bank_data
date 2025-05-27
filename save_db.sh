@@ -1,1 +1,0 @@
-python master_data/manage.py save_db
