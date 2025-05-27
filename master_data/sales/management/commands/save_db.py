@@ -31,7 +31,7 @@ class Command(BaseCommand) :
     def handle(self, *args, **kwargs):
         w = datetime.now().time()
 
-        if 16 <= w.hour <= 18 :
+        if time(16, 30) <= w.hour <= time(17, 30) :
 
             now = datetime.now()
             print(f"Saving Database to Excel Start at {datetime.now()}")
