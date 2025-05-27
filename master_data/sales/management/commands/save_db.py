@@ -3,7 +3,7 @@ import pandas as pd
 from sales.models import *
 from master.models import *
 from django.core.mail import EmailMessage
-from datetime import datetime, time
+from datetime import datetime
 import json
 import zipfile
 from django.conf import settings
