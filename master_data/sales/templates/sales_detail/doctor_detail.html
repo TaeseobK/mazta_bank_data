@@ -43,7 +43,7 @@
                     </div>
                     <div class="flex items-center justify-start gap-5">
                         <label for="fl-id" class="label text-md font-semibold lg:block hidden w-1/4">Full Name</label>
-                        <input type="text" id="fl-id" name="full-name" class="input input-sm px-2 w-full lg:w-3/4" disabled placeholder="Full Name" {% if not data.0.doctor %} value="{{ data.0.dr_api.nama_dokter }}" {% else %} value="{{ data.0.doctor.info.full_name }}" {% endif %} required>
+                        <input type="text" id="fl-id" name="full-name" class="input input-sm px-2 w-full lg:w-3/4" readonly placeholder="Full Name" {% if not data.0.doctor %} value="{{ data.0.dr_api.nama_dokter }}" {% else %} value="{{ data.0.doctor.info.full_name }}" {% endif %} required>
                     </div>
                     <div class="flex items-center justify-start gap-5 w-full">
                         <label for="sal-num" class="label text-md font-semibold lg:block hidden w-1/4">Salutation</label>
