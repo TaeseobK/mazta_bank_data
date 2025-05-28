@@ -19,6 +19,10 @@ media
 
 local_settings.py
 
+save_db_stagging.sh
+save_db_production.sh
+save_db.sh
+
 theme
 
 
