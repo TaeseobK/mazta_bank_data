@@ -31,7 +31,7 @@ class Command(BaseCommand) :
     def handle(self, *args, **kwargs):
         w = datetime.now().time()
 
-        if 9 <= w.hour <= 11 :
+        if 12 <= w.hour < 13 :
 
             print(f"Begin process at {w.hour} o'clock.")
             now = datetime.now()
