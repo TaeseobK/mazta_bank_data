@@ -31,8 +31,9 @@ class Command(BaseCommand) :
     def handle(self, *args, **kwargs):
         w = datetime.now().time()
 
-        if 9 <= w.hour <= 10 :
+        if 9 <= w.hour <= 11 :
 
+            print(f"Begin process at {w.hour} o'clock.")
             now = datetime.now()
             print(f"Saving Database to Excel Start at {datetime.now()}")
             logging.info("Start exporting database at %s", now)
@@ -311,4 +312,5 @@ class Command(BaseCommand) :
                 raise e
         
         else :
+            print(f"Pass, now is {w.hour} o'clock.")
             pass
