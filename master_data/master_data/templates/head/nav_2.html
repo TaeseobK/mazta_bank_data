@@ -6,7 +6,9 @@
             <input type="text" name="search" id="search" class="lg:block grow  hidden" placeholder="Search..."/>
             <input type="text" name="search-2" id="search-2" class="lg:hidden block grow" placeholder="Search...">
         </label>
+        {% if request.user.is_staff %}
         <a href="{% url 'sales:download_doctor_data' %}" class="btn btn-sm rounded-none rounded-l-sm rounded-r-sm">Download Data</a>
+        {% endif %}
     </div>
     {% if api == "False" %}
     <div class="w-2/12 lg:flex hidden justify-center items-center">
@@ -46,8 +48,56 @@
     </div>
     {% endif %}
     <div class="w-1/12 items-center justify-center {% if api == "True" %} hidden {% endif %}">
+        {% if not request.user.is_staff %}
         <a href="{{ new_url }}" class="btn btn-sm py-4 rounded-none rounded-l-sm rounded-r-sm">New</a>
+        {% else %}
+        <button role="button" type="button" onclick="modal_rayon.showModal()" class="btn btn-sm py-4 rounded-none rounded-l-sm rounded-r-sm">Switch Rayon</button>
+        {% endif %}
     </div>
+    <dialog id="modal_rayon" class="modal">
+        <div class="modal-box w-11/12 max-w-5xl">
+            <h3 class="text-lg font-bold">Switch Rayon</h3>
+            <div class="modal-action">
+                <form method="post" action="." class="w-full">
+                    {% csrf_token %}
+                    <input type="hidden" name="metode" value="post">
+                    <div class="flex items-center justify-start gap-5 my-5">
+                        <div class="space-y-5 w-full">
+                            <div class="flex items-center justify-start gap-5 w-full">
+                                <div class="flex items-center justify-start gap-5 w-full">
+                                    <label for="id-ryn" class="label text-md font-semibold">Select Rayon</label>
+                                    <select name="id-ryn" id="id-ryn" class="select select-sm cursor-pointer">
+                                        <option value="" selected>Select Rayon</option>
+                                        {% for t in rayons %}
+                                        <option value="{{ t.id_user }}">{{ t.kode_rayon }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="flex items-center justify-start gap-5 w-full">
+                                    <label for="id-dctrs" class="label text-md font-semibold">Select Doctors</label>
+                                    <select name="id-dctrs" id="id-dctrs" class="select select-sm cursor-pointer">
+                                        <option value="" selected>Select Doctor</option>
+                                        {% for t in data %}
+                                        <option value="{{ t.pk }}">{{ t.info.full_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-start gap-5 w-full">
+                                <label for="" class="label text-md font-semibold">Doctors :</label>
+                                <div id="dctrs-lst" class="grid grid-cols-5 items-center justify-start gap-2 w-full">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end w-full gap-5">
+                        <button id="cls-mdl" role="button" type="button" onclick="modal_rayon.close()" class="btn btn-sm rounded-none rounded-l-sm rounded-r-sm">Close</button>
+                        <button type="submit" class="btn btn-sm rounded-none rounded-l-sm rounded-r-sm">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </dialog>
     <div class="lg:w-1/12 lg:hidden flex items-center justify-end">
         <div class="dropdown dropdown-left flex items-center justify-center">
             <div tabindex="0" role="button" class="btn btn-xs py-4 rounded-none rounded-l-sm rounded-r-sm">

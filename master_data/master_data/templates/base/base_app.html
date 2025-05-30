@@ -564,6 +564,29 @@
         });
 
         $(document).ready(function() {
+          $('#id-dctrs').on('change', function() {
+            const idDoctor = $(this).find('option:selected').val();
+            const doctorName = $(this).find('option:selected').text();
+
+            $('#dctrs-lst').append(`
+              <div class="flex items-center justify-between gap-2 w-full shadow-md p-2">
+                <p class="text-xs block">${doctorName}</p>
+                <input type="hidden" name="id-dctr" value="${idDoctor}">
+                <span id="dlt-ths" class="btn btn-xs rounded-none rounded-l-sm rounded-r-sm">X</span>
+              </div>
+            `);
+          });
+
+          $(document).on('click', '#dlt-ths', function() {
+            $(this).parent().remove();
+          });
+
+          $('#cls-mdl').on('click', function() {
+            $('#dctrs-lst').empty();
+          });
+        });
+
+        $(document).ready(function() {
             $('#add-verif').on('click', function() {
               let count = $('#verif-id li').length;
 

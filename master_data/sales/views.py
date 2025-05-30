@@ -19,6 +19,7 @@ from datetime import datetime
 from .models import *
 from master.models import *
 from human_resource.models import *
+from master_data.local_settings import *
 
 def index_sales(request) :
     return redirect('master:login')
@@ -628,7 +629,19 @@ def dctr_adm(request) :
     search_query = request.GET.get('search', '')
 
     doctors = DoctorDetail.objects.using('sales').filter(is_active=True).all().order_by('-created_at')
+    rayon_api = requests.get(api_rayon())
 
+    if rayon_api.status_code == 200 :
+        rayo = rayon_api.json().get('data')
+        rayons = []
+        for r in rayo :
+            if not ("TIDAK AKTIF" in r.get('kode_rayon')) and not ("TESTING" in r.get('kode_rayon')) and not ("DUMMY" in r.get('kode_rayon')) :
+                rayons.append(r)
+    
+    else :
+        rayons = None
+
+    data_ = []
     data = []
     for doctor in doctors :
         doctor.rayon = json.loads(doctor.rayon)
@@ -639,6 +652,7 @@ def dctr_adm(request) :
         doctor.branch_information = json.loads(doctor.branch_information)
 
         data.append(doctor)
+        data_.append(doctor)
 
     if search_query :
         data = [
@@ -659,12 +673,36 @@ def dctr_adm(request) :
     if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
         return render(request, 'sales_pages/doctor_list_admin.html', {
             'page_obj' : page_obj
-        }) 
+        })
+    
+    if request.method == 'POST' :
+        metode = request.POST.get('metode', '')
+
+        if metode == 'post' :
+            idrayon = request.POST.get('id-ryn', '')
+            iddctr = request.POST.getlist('id-dctr')
+
+            rayon = None
+
+            for r in rayons :
+                if r.get('id_user') == int(idrayon) :
+                    rayon = r
+
+            DoctorDetail.objects.using('sales').filter(id__in=iddctr).update(
+                rayon=json.dumps({
+                    'id' : rayon.get('id_user'),
+                    'rayon' : rayon.get('kode_rayon')
+                })
+            )
+            messages.success(request, "Rayon updated successfully.")
+            return redirect('sales:doctor_admin')
     
     return render(request, 'sales_pages/doctor_list_admin.html', {
         'title' : "Doctor List",
         'page_name' : "Doctor List",
         'page_obj' : page_obj,
+        'rayons' : rayons,
+        'data' : data_,
         'api' : "False"
     })
 
@@ -687,13 +725,42 @@ def adm_doctor_detail(request, dr_id) :
     titles = Title.objects.using('master').filter(is_active=True).all()
     specialists = Specialist.objects.using('master').filter(is_active=True).all()
 
+    rayon_api = requests.get(api_rayon())
+    
+    if rayon_api.status_code == 200 :
+        rp = rayon_api.json().get('data')
+    
+    else :
+        rp = None
+
     data = {
         'grade_users' : grade_users,
         'grade_clinics' : grade_clinics,
         'salutations' : salutations,
         'titles' : titles,
-        'specialists' : specialists
+        'specialists' : specialists,
+        'rayon' : doctor.rayon,
+        'rp' : rp
     }
+
+    if request.method == 'POST' :
+        id_user = request.POST.get('id_user', '')
+
+        rayon = None
+
+        for d in rp :
+            if d.get('id_user') == int(id_user) :
+                rayon = d
+
+
+        dctr = DoctorDetail.objects.using('sales').get(id=int(dr_id))
+        dctr.rayon = json.dumps({
+            'id' : rayon.get('id_user'),
+            'rayon' : rayon.get('kode_rayon')
+        })
+        dctr.save()
+        messages.success(request, "Rayon has been changed.")
+        return redirect('sales:doctor_admin')
 
     return render(request, 'sales_detail/doctor_detail_admin.html', {
         'title' : "Doctor Detail",
