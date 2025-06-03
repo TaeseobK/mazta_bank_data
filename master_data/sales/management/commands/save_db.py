@@ -9,13 +9,16 @@ import zipfile
 from django.conf import settings
 import os
 import logging
+from pathlib import Path
 
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
-folder_path = "master_data/media/output"
-log_file = os.path.join(folder_path, "db_to_excel.log")
+folder_path = os.path.join(BASE_DIR, "media", "output")
 
 if not os.path.exists(folder_path) :
-    os.makedirs(folder_path)
+    os.makedirs(os.path.join(BASE_DIR, "media", "output"))
+
+log_file = os.path.join(BASE_DIR, "media", "output", "db_to_excel.log")
 
 logging.basicConfig(
     filename=log_file,
@@ -45,16 +48,24 @@ class Command(BaseCommand) :
                 info = []
                 for d in doctors :
                     d.info = json.loads(d.info)
-                    salutation = Salutation.objects.using('master').get(id=int(d.info.get('salutation')))
-                    title = Title.objects.using('master').get(id=int(d.info.get('title')))
+                    try :
+                        salutation = Salutation.objects.using('master').get(id=int(d.info.get('salutation')))
+                    except :
+                        salutation = None
+
+                    try :
+                        title = Title.objects.using('master').get(id=int(d.info.get('title')))
+                    except :
+                        title = None
+
                     infos = {
                         "doctor_id" : d.pk,
                         "first_name" : d.info.get('first_name'),
                         "middle_name" : d.info.get('middle_name'),
                         "last_name" : d.info.get('last_name'),
                         "full_name" : d.info.get('full_name'),
-                        "salutation" : f"{salutation.short_salutation} - {salutation.salutation}",
-                        "title" : f"{title.short_name} - {title.name}"
+                        "salutation" : f"{salutation.short_salutation} - {salutation.salutation}" if salutation else None,
+                        "title" : f"{title.short_name} - {title.name}" if title else None
                     }
                     info.append(infos)
                 logging.info("Proceed 'Info' data for doctors")
@@ -277,7 +288,7 @@ class Command(BaseCommand) :
                 logging.info("Saving database successfully")
                 print("Saving database successfully")
                 
-                logging.info("Merging to zip fle")
+                logging.info("Merging to zip file")
                 output_dir = os.path.join(settings.MEDIA_ROOT, 'output')
                 zip_filename = os.path.join(output_dir, 'data_doctor.zip')
 
@@ -286,18 +297,20 @@ class Command(BaseCommand) :
                     os.path.join(output_dir, 'db_to_excel.log')
                 ]
 
-                try :
-                    with zipfile.ZipFile(zip_filename, 'w') as zipf :
-                        for file in files_to_zip :
-                            if os.path.exists(file) :
+                try:
+                    with zipfile.ZipFile(zip_filename, 'w') as zipf:
+                        for file in files_to_zip:
+                            if os.path.exists(file):
                                 arcname = os.path.basename(file)
                                 zipf.write(file, arcname=arcname)
-                    
-                    self.stdout.write(self.style.SUCCESS(f"ZIP file created success filename : {zip_filename}"))
-                    
-                
-                except Exception as e :
-                    self.stderr.write(self.style.ERROR(f"Failed to create ZIP file: {str(e)}"))
+                            else:
+                                logging.warning(f"File not found and skipped: {file}")
+
+                    self.stdout.write(self.style.SUCCESS(f"ZIP file created successfully: {zip_filename}"))
+                except Exception as e:
+                    logging.error(f"Failed to create ZIP file: {e}")
+                    self.stdout.write(self.style.ERROR(f"Failed to create ZIP file: {e}"))
+
 
             except Exception as e :
                 email = EmailMessage(
