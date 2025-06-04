@@ -259,6 +259,111 @@ class Command(BaseCommand) :
                 logging.info("Proceed 'Branch' data for doctors")
                 print("Proceed 'Branch' data for doctors")
 
+                all_data = []
+                for z in doctors :
+                    z.rayon = json.loads(z.rayon) if isinstance(z.rayon, str) else z.rayon
+                    z.info = json.loads(z.info) if isinstance(z.info, str) else z.info
+                    z.work_information = json.loads(z.work_information) if isinstance(z.work_information, str) else z.work_information
+                    z.private_information = json.loads(z.private_information) if isinstance(z.private_information, str) else z.private_information
+                    z.additional_information = json.loads(z.additional_information) if isinstance(z.additional_information, str) else z.additional_information
+                    z.branch_information = json.loads(z.branch_information) if isinstance(z.branch_information, str) else z.branch_information
+
+                    family = z.private_information.get('family', {})
+
+                    spss = []
+                    try :
+                        for i in family.get('spouse') :
+                            spss.append(f"{i.get('fullname')}/{i.get('phone')}/{i.get('birthdate')}")
+                    
+                    except Exception :
+                        spss.append(None)
+                    
+                    chss = []
+                    try :
+                        for i in family.get('children') :
+                            chss.append(f"{i.get('fullname')}/{i.get('phone')}/{i.get('birthdate')}")
+                    
+                    except Exception :
+                        chss.append(None)
+                    
+                    intss = []
+                    try :
+                        for i in z.additional_information.get('interests') :
+                            intss.append(f"{i.get('category')}/{i.get('name')}")
+                    
+                    except Exception :
+                        intss.append(None)
+
+                    socmet = []
+                    try :
+                        for i in z.additional_information.get('social_media') :
+                            socmet.append(f"{i.get('name')} / {i.get('account_name')}")
+
+                    except :
+                        socmet.append(None)
+                    
+                    brcss = []
+                    try :
+                        for i in z.branch_information :
+                            brcss.append(f"{i.get('branch_name')}/{i.get('branch_established_date')}/{i.get('branch_street_1')}/{i.get('branch_street_2')}/{i.get('branch_city')}/{i.get('branch_state')}/{i.get('branch_country')}/{i.get('branch_zip')}")
+                    
+                    except Exception :
+                        brcss.append(None)
+                    
+                    
+                    all_data.append({
+                        'code' : z.code,
+                        'apps_bco_id' : z.jamet_id,
+                        'rayon_code' : z.rayon.get('rayon'),
+                        'first_name' : z.info.get('first_name'),
+                        'middle_name' : z.info.get('middle_name'),
+                        'last_name' : z.info.get('last_name'),
+                        'full_name' : z.info.get('full_name'),
+                        'salutation' : Salutation.objects.using('master').get(id=int(z.info.get('salutation'))).short_salutation if z.info.get('salutation') else None,
+                        'title' : Title.objects.using('master').get(id=int(z.info.get('title'))).short_name if z.info.get('title') else None,
+                        'work_street_1' : z.work_information.get('address').get('street_1'),
+                        'work_street_2' : z.work_information.get('address').get('street_2'),
+                        'work_city' : z.work_information.get('address').get('city'),
+                        'work_country' : z.work_information.get('address').get('country'),
+                        'work_zip_address' : z.work_information.get('address').get('zip'),
+                        'work_full_address' : z.work_information.get('address').get('fulladdress'),
+                        'workspace_name' : z.work_information.get('job_information').get('workspace_name'),
+                        'job_position' : z.work_information.get('job_information').get('job_position'),
+                        'work_phone' : z.work_information.get('job_information').get('work_phone'),
+                        'work_mobile' : z.work_information.get('job_information').get('work_mobile'),
+                        'work_email' : z.work_information.get('job_information').get('work_email'),
+                        'grade_user' : UserGrade.objects.using('master').get(id=int(z.work_information.get('sales_information').get('grade_user'))).name if z.work_information.get('sales_information').get('grade_user') else None,
+                        'grade_clinic' : ClinicGrade.objects.using('master').get(id=int(z.work_information.get('sales_information').get('grade_clinic'))).name,
+                        'priority' : True if z.work_information.get('sales_information').get('priority') == 1 else False,
+                        'specialist' : Specialist.objects.using('master').get(id=int(z.work_information.get('sales_information').get('specialist_id'))).short_name,
+                        'accurate_code' : z.work_information.get('system_information').get('accurate_code'),
+                        'private_address_street_1' : z.private_information.get('private_contact').get('address').get('street_1'),
+                        'private_address_street_2' : z.private_information.get('private_contact').get('address').get('street_2'),
+                        'private_address_city' : z.private_information.get('private_contact').get('address').get('city'),
+                        'private_address_state' : z.private_information.get('private_contact').get('address').get('state'),
+                        'private_address_country' : z.private_information.get('private_contact').get('address').get('country'),
+                        'private_address_zip' : z.private_information.get('private_contact').get('address').get('zip'),
+                        'private_email' : z.private_information.get('private_contact').get('email'),
+                        'private_phone' : z.private_information.get('private_contact').get('phone'),
+                        'nationality' : z.private_information.get('citizenship').get('nationality'),
+                        'gender' : z.private_information.get('citizenship').get('gender'),
+                        'birth_date' : z.private_information.get('citizenship').get('birth_date'),
+                        'birth_place' : z.private_information.get('citizenship').get('birth_place'),
+                        'religion' : z.private_information.get('citizenship').get('religion'),
+                        'certification' : z.private_information.get('education').get('certification'),
+                        'field_of_study' : z.private_information.get('education').get('field_study'),
+                        'school_name' : z.private_information.get('education').get('school_name'),
+                        'marital_status' : z.private_information.get('family').get('marital_status'),
+                        'spouses' : str(spss),
+                        'childrens' : str(chss),
+                        'interests' : str(intss),
+                        'social_media' : str(socmet),
+                        'best_time' : f"{z.additional_information.get('base_time').get('base')}, {z.additional_information.get('base_time').get('time')}",
+                        'branches' : str(brcss)
+                    })
+                logging.info("Proceed 'Summary' data for doctors")
+                print("Proceed 'Summary' data for doctors")
+
                 info_data = pd.DataFrame(info)
                 rayon_data = pd.DataFrame(rayon)
                 woi_data = pd.DataFrame(woi)
@@ -269,6 +374,7 @@ class Command(BaseCommand) :
                 sos_data = pd.DataFrame(sosmed)
                 bst_data = pd.DataFrame(best_time)
                 brc_data = pd.DataFrame(branch)
+                qwe_data = pd.DataFrame(all_data)
                 logging.info("Proceed to zipping all data for doctors")
                 print("Proceed to zipping all data for doctors")
                 
@@ -285,9 +391,10 @@ class Command(BaseCommand) :
                     sos_data.to_excel(writer, sheet_name="Social_Media", index=False)
                     bst_data.to_excel(writer, sheet_name="Best_Time", index=False)
                     brc_data.to_excel(writer, sheet_name="Branches", index=False)
+                    qwe_data.to_excel(writer, sheet_name="Summary", index=False)
                 logging.info("Saving database successfully")
                 print("Saving database successfully")
-                
+
                 logging.info("Merging to zip file")
                 output_dir = os.path.join(settings.MEDIA_ROOT, 'output')
                 zip_filename = os.path.join(output_dir, 'data_doctor.zip')
