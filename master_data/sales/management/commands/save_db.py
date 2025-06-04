@@ -5,9 +5,11 @@ from master.models import *
 from django.core.mail import EmailMessage
 from datetime import datetime, time
 import json
+import sys
 import zipfile
 from django.conf import settings
 import os
+import subprocess
 import logging
 from pathlib import Path
 
@@ -35,11 +37,28 @@ class Command(BaseCommand) :
         w = datetime.now().time()
 
         if 2 <= w.hour <= 3 :
+            print(f"Begin process to generate excel at {w.hour} o'clock.")
+            logging.info(f"Begin generate excel at {datetime.now()}")
+            self.backup_db()
+        
+        elif 3 <= w.hour <= 18 :
+            print(f"Begin process to backup database at {w.hour} o'clock.")
+            logging.info(f"Begin backup databases at {datetime.now()}")
+            apps_to_backup = [
+                {"app": "master", "database": "master"},
+                {"app": "sales", "database": "sales"},
+                {"app": "supplier", "database": "supplier"},
+                {"app": "human_resource", "database": "human_resource"},
+                {"app": "auth", "database": "default"},
+            ]
 
-            print(f"Begin process at {w.hour} o'clock.")
-            now = datetime.now()
-            print(f"Saving Database to Excel Start at {datetime.now()}")
-            logging.info("Start exporting database at %s", now)
+            self.backup_database(apps_to_backup)
+
+        else :
+            print(f"Pass, now is {w.hour} o'clock.")
+            pass
+
+    def backup_db(self) :
 
             try :
                 doctors = DoctorDetail.objects.using('sales').filter(is_active=True).all()
@@ -430,7 +449,35 @@ class Command(BaseCommand) :
                 email.send()
                 logging.error("Error Occured: %s", str(e))
                 raise e
-        
-        else :
-            print(f"Pass, now is {w.hour} o'clock.")
-            pass
+    
+    def backup_database(self, apps_and_dbs):
+
+        os.makedirs('data_backup', exist_ok=True)
+        python_cmd = os.environ.get("PYTHON_CMD", sys.executable)  # default to current Python
+
+        for entry in apps_and_dbs:
+            app_label = entry["app"]
+            db_alias = entry["database"]
+            filename = f"{app_label}.json"
+            output_path = os.path.join('data_backup', filename)
+
+            command = [
+                python_cmd, "manage.py", "dumpdata", app_label,
+                f"--database={db_alias}",
+                f"--output={output_path}"
+            ]
+
+            try:
+                subprocess.run(command, check=True)
+                print(f"✔ Backup completed for '{app_label}' to '{output_path}'")
+            except subprocess.CalledProcessError as e:
+                print(f"❌ Error backing up '{app_label}': {e}")
+                email = EmailMessage(
+                    subject=f"BACKUP DATABASE ERROR: {str(e)} at {datetime.now()}",
+                    body=f"ERROR COOKKKK",
+                    from_email="satriodasmdi@gmail.com",
+                    to=["satrio.it@maztafarma.co.id", "taufan.it@maztafarma.co.id", "satriodasmdi@gmail.com"]
+                )
+                email.send()
+                logging.error("Error Occured: %s", str(e))
+                continue
