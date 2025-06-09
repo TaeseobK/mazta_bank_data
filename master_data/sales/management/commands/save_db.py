@@ -41,7 +41,7 @@ class Command(BaseCommand) :
             logging.info(f"Begin generate excel at {datetime.now()}")
             self.backup_db()
         
-        elif 3 <= w.hour <= 18 :
+        elif 3 <= w.hour <= 4 :
             print(f"Begin process to backup database at {w.hour} o'clock.")
             logging.info(f"Begin backup databases at {datetime.now()}")
             apps_to_backup = [
