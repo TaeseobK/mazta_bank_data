@@ -43,7 +43,7 @@ and __*ALLOWED_HOSTS*__ to set the project to just run on your domains
 ### Databases
 
 On the Databases section you see the database settings, here's the explaination :
-- __'default'__ is for the _Alias_ database that i call on the controller or views.py
+- __'default'__ is for the _alias_ database that i call on the controller or views.py
 - __'ENGINE'__ used for the engine of the database it can be __mysql__, __postgresql__, __sqlite3__, __etc__
 - __'NAME'__ is the name of database you setup on your XAMPP
 - __'USER'__ is user for your XAMPP
