@@ -58,6 +58,6 @@ for Example :
         'NAME': 'core',
         'USER': 'root',
         'PASSWORD': 'mypassword',
-        'HOST': 'localhost,
-        'PORT': '3306,
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
