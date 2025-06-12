@@ -4,6 +4,7 @@ from sales.models import *
 from master.models import *
 from django.core.mail import EmailMessage
 from datetime import datetime, time
+from master_data.local_settings import settings_for_backup as sfb
 import json
 import sys
 import zipfile
@@ -36,12 +37,12 @@ class Command(BaseCommand) :
     def handle(self, *args, **kwargs):
         w = datetime.now().time()
 
-        if 2 <= w.hour <= 3 :
+        if sfb() == "generate" :
             print(f"Begin process to generate excel at {w.hour} o'clock.")
             logging.info(f"Begin generate excel at {datetime.now()}")
             self.backup_db()
         
-        elif 3 <= w.hour <= 4 :
+        elif sfb() == "backup" :
             print(f"Begin process to backup database at {w.hour} o'clock.")
             logging.info(f"Begin backup databases at {datetime.now()}")
             apps_to_backup = [
