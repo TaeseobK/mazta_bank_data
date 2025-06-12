@@ -184,7 +184,7 @@
                                 </li>
                                 <li class="flex items-center justify-between">
                                     <label for="wp-id" class="font-semibold label hidden lg:block">Work Phone</label>
-                                    <input type="text" id="wp-id" placeholder="Work Phone" value="{% if not data.0.doctor %}+62 Work Phone{% else %}{{ data.0.doctor.work_information.job_information.work_phone }}{% endif %}" name="work-phone" class="input input-sm px-2" required >
+                                    <input type="text" id="wp-id" placeholder="+62 Work Phone" value="{{ data.0.doctor.work_information.job_information.work_phone }}" name="work-phone" class="input input-sm px-2" required >
                                 </li>
                                 <li class="flex items-center justify-between">
                                     <label for="wm-id" class="font-semibold label hidden lg:block">Work Mobile</label>
