@@ -13,6 +13,7 @@ import os
 import subprocess
 import logging
 from pathlib import Path
+from django.db.models import Q
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
@@ -54,6 +55,11 @@ class Command(BaseCommand) :
             ]
 
             self.backup_database(apps_to_backup)
+        
+        elif sfb() == "fullname" :
+            print(f"Begin generating full name for the database at {datetime.now().time()}.")
+            logging.info(f"Begin generating full name for databases at {datetime.now().time()}.")
+            self.full_name()
 
         else :
             print(f"Pass, now is {w.hour} o'clock.")
@@ -482,3 +488,41 @@ class Command(BaseCommand) :
                 email.send()
                 logging.error("Error Occured: %s", str(e))
                 continue
+    
+    def full_name(self) :
+        print(f"Checking if it can run or not?")
+        try :
+            print(f"Begin loopnig the databases at {datetime.now().time()}.")
+            logging.info(f"Begin loopnig the databases at {datetime.now().time()}.")
+            doctors = DoctorDetail.objects.using('sales').filter(
+                Q(info__icontains='"full_name": null') |
+                Q(info__icontains='"full_name": ""') |
+                ~Q(info__icontains='"full_name"')
+            )
+
+            print(f"Begin updating the databases at {datetime.now().time()}")
+            logging.info(f"Begin updating the databases at {datetime.now().time()}")
+            for d in doctors :
+                ww = json.loads(d.info)
+                dd = DoctorDetail.objects.using('sales').get(id=d.pk)
+                dd.info = json.dumps({
+                    'first_name' : ww.get('first_name'),
+                    'middle_name' : ww.get('middle_name'),
+                    'last_name' : ww.get('last_name'),
+                    'full_name' : f"{ww.get('first_name')} {ww.get('middle_name')} {ww.get('last_name')}".strip(),
+                    'salutation' : ww.get('salutation'),
+                    'title' : ww.get('title')
+                })
+                dd.save()
+            print(f"Success updating the databases at {datetime.now().time()}.")
+            logging.info(f"Success updating the databases at {datetime.now().time()}.")
+        
+        except Exception as e :
+            email = EmailMessage(
+                subject=f"Generate Full_Name ERROR: {str(e)} at {datetime.now()}",
+                body=f"ERROR COOKKKK",
+                from_email="satriodasmdi@gmail.com",
+                to=["satrio.it@maztafarma.co.id", "taufan.it@maztafarma.co.id", "satriodasmdi@gmail.com"]
+            )
+            email.send()
+            logging.error("Error Occured: %s", str(e))
