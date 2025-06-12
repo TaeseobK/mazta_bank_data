@@ -188,7 +188,7 @@
                                 </li>
                                 <li class="flex items-center justify-between">
                                     <label for="wm-id" class="font-semibold label hidden lg:block">Work Mobile</label>
-                                    <input type="text" id="wm-id" name="work-mobile" class="input input-sm px-2" placeholder="Work Mobile" value="{% if not data.0.doctor %}+62 Work Mobile {% else %}{{ data.0.doctor.work_information.job_information.work_mobile }}{% endif %}" required >
+                                    <input type="number" id="wm-id" name="work-mobile" class="input input-sm px-2" placeholder="Work Mobile" value="{{ data.0.doctor.work_information.job_information.work_mobile }}">
                                 </li>
                                 <li class="flex items-center justify-between">
                                     <label for="we-id" class="font-semibold label hidden lg:block">Work Email</label>
@@ -307,7 +307,7 @@
                             </div>
                             <div class="flex items-start justify-between gap-5">
                                 <label for="pvt-phone" class="label w-1/4 font-semibold lg:block hidden">Private Phone</label>
-                                <input type="text" id="pvt-phone" name="private-phone" class="input input-sm px-2 lg:w-3/4 w-full" placeholder="+62 (Private Phone)" value="{% if data.0.doctor %}{{ data.0.doctor.private_information.private_contact.phone }}{% else %}+62 {% endif %}">
+                                <input type="number" id="pvt-phone" name="private-phone" class="input input-sm px-2 lg:w-3/4 w-full" placeholder="+62 (Private Phone)" value="{{ data.0.doctor.private_information.private_contact.phone }}">
                             </div>
                         </div>
                         <div class="space-y-2">
