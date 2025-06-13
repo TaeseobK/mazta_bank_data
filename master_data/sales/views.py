@@ -21,6 +21,28 @@ from master.models import *
 from human_resource.models import *
 from master_data.local_settings import *
 
+def update_data(request) :
+    if request.method == 'POST' :
+        ids = request.POST.getlist('jamet_id')
+        rayon_id = request.POST.get('rayon_id', '')
+        nama_rayon = request.POST.get('nama_rayon', '')
+
+        try :
+            for id in ids :
+                try :
+                    dr = DoctorDetail.objects.using('sales').get(jamet_id=int(id))
+                    dr.rayon = json.dumps({
+                        'id' : int(rayon_id),
+                        'rayon' : nama_rayon
+                    })
+                    dr.save()
+                
+                except DoctorDetail.DoesNotExist :
+                    continue
+        
+        except Exception as e :
+            print(f"an error occured {e}.")
+
 def index_sales(request) :
     return redirect('master:login')
 
