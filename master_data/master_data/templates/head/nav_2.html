@@ -48,44 +48,37 @@
     </div>
     {% endif %}
     <div class="w-1/12 items-center justify-center {% if api == "True" %} hidden {% endif %}">
-        {% if not request.user.is_staff %}
+        {% if show_section %}
         <a href="{{ new_url }}" class="btn btn-sm py-4 rounded-none rounded-l-sm rounded-r-sm">New</a>
         {% else %}
-        <button role="button" type="button" onclick="modal_rayon.showModal()" class="btn btn-sm items-center py-4 rounded-none lg:block hidden rounded-l-sm rounded-r-sm">Switch Rayon</button>
+        <button role="button" id="opn-mdl" type="button" onclick="modal_rayon.showModal()" class="btn btn-sm items-center justify-center py-4 rounded-none lg:flex hidden rounded-l-sm rounded-r-sm"><p class="font-semibold text-medium">Switch Rayon</p></button>
         {% endif %}
     </div>
     <dialog id="modal_rayon" class="modal">
-        <div class="modal-box w-11/12 max-w-5xl">
+        <div class="modal-box w-1/2 max-w-5xl">
             <h3 class="text-lg font-bold">Switch Rayon</h3>
             <div class="modal-action">
                 <form method="post" action="." class="w-full">
                     {% csrf_token %}
                     <input type="hidden" name="metode" value="post">
-                    <div class="flex items-center justify-start gap-5 my-5">
-                        <div class="space-y-5 w-full">
-                            <div class="flex items-center justify-start gap-5 w-full">
-                                <div class="flex items-center justify-start gap-5 w-full">
-                                    <label for="id-ryn" class="label text-md font-semibold hidden lg:block">Select Rayon</label>
-                                    <select name="id-ryn" id="id-ryn" class="select select-sm cursor-pointer">
-                                        <option value="" selected>Select Rayon</option>
+                    <div class="flex items-center justify-center gap-5 my-5">
+                        <div class="flex items-center justify-center w-full">
+                            <div class="items-center w-full space-y-5">
+                                <div class="flex items-center justify-between gap-5 w-full">
+                                    <label for="id-ryn" class="label text-md font-semibold hidden lg:block w-2/10">Select Rayon</label>
+                                    <select name="id-ryn" id="id-ryn" class="select select-sm cursor-pointer w-8/10">
                                         {% for t in rayons %}
                                         <option value="{{ t.id_user }}">{{ t.kode_rayon }}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="flex items-center justify-start gap-5 w-full">
-                                    <label for="id-dctrs" class="label text-md font-semibold hidden lg:block">Select Doctors</label>
-                                    <select name="id-dctrs" id="id-dctrs" class="select select-sm cursor-pointer">
-                                        <option value="" selected>Select Doctor</option>
+                                <div class="flex items-center justify-between gap-5 w-full">
+                                    <label for="id-dctrs" class="label text-md font-semibold hidden lg:block w-2/10">Select Doctors</label>
+                                    <select name="id-dctrs" id="id-dctrs" class="select select-sm cursor-pointer w-8/10" multiple="multiple">
                                         {% for t in data %}
-                                        <option value="{{ t.pk }}">{{ t.info.full_name }}</option>
+                                        <option value="{{ t.pk }}">{{ t.code }} || {{ t.info.full_name }}</option>
                                         {% endfor %}
                                     </select>
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-start gap-5 w-full">
-                                <label for="" class="label text-md font-semibold">Doctors :</label>
-                                <div id="dctrs-lst" class="grid grid-cols-5 items-center justify-start gap-2 w-full">
                                 </div>
                             </div>
                         </div>
@@ -135,7 +128,7 @@
                             {% endif %}
                         {% elif api == "False" %}
                             {% if page_obj.has_next %} 
-                                href="?page={{ page_obj.next_page_number }}" 
+                                href="?page={{ page_obj.next_page_number }}"
                             {% endif %}
                         {% endif %}
                         class="btn-xs btn" data-aos="fade-up-left">

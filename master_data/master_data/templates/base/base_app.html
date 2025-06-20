@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'src/styles.css' %}" type="text/css">
     <link rel="icon" type="image/png" href="{% static 'icon/icon.png' %}" class="rounded-full">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <title>Mazta Bank Data - {{ title }}</title>
 </head>
 <body class="overflow-y-scroll overflow-x-hidden">
@@ -45,6 +46,7 @@
     <script src="https://code.jquery.com/ui/1.8.23/jquery-ui.js" integrity="sha256-lFA8dPmfmR4AQorTbla7C2W0aborhztLt0IQFLAVBTQ=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
       AOS.init();
     </script>
@@ -108,6 +110,25 @@
                 console.log("Error System...");
               }
             });
+          });
+        });
+
+        $(document).ready(function() {
+          $('#id-dctrs').select2({
+            dropdownParent: $('#modal_rayon')
+          });
+        });
+
+        $(document).ready(function() {
+          $('#id-ryn').select2({
+            dropdownParent: $('#modal_rayon')
+          });
+        });
+
+        $(document).ready(function() {
+          $('#opn-mdl').click(function() {
+            $('#id-ryn').val('').trigger('change');
+            $('#id-dctrs').val('').trigger('change');
           });
         });
 
@@ -561,29 +582,6 @@
                 </li>
               `);
             });
-        });
-
-        $(document).ready(function() {
-          $('#id-dctrs').on('change', function() {
-            const idDoctor = $(this).find('option:selected').val();
-            const doctorName = $(this).find('option:selected').text();
-
-            $('#dctrs-lst').append(`
-              <div class="flex items-center justify-between gap-2 w-full shadow-md p-2">
-                <p class="text-xs block">${doctorName}</p>
-                <input type="hidden" name="id-dctr" value="${idDoctor}">
-                <span id="dlt-ths" class="btn btn-xs rounded-none rounded-l-sm rounded-r-sm">X</span>
-              </div>
-            `);
-          });
-
-          $(document).on('click', '#dlt-ths', function() {
-            $(this).parent().remove();
-          });
-
-          $('#cls-mdl').on('click', function() {
-            $('#dctrs-lst').empty();
-          });
         });
 
         $(document).ready(function() {

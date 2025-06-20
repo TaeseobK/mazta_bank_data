@@ -13,6 +13,7 @@ from collections import defaultdict
 from django.contrib import messages
 from django.urls import reverse
 from .models import *
+from django.db.models import Q
 import requests
 import json
 
@@ -121,9 +122,107 @@ def home(request) :
         })
     
     else :
+        src_query = request.GET.get('search', '')
+
+        id_rayon = request.session.get('detail').get('id_user')
+        print(id_rayon)
+
+        response = requests.get(rayon_api(int(id_rayon)))
+
+        try :
+            datadata = response.json().get('data')[0] if response.status_code == 200 else None
+            atasan = datadata.get('atasan')
+            bawahan = datadata.get('bawahan')
+            print(f"{atasan}, {bawahan}")
+
+            dd = []
+
+            if atasan :
+                dd.extend(DoctorDetail.objects.using('sales').filter(
+                    Q(rayon__icontains=atasan), is_active=True
+                ))
+            
+            for i_d_b in bawahan :
+                drs = DoctorDetail.objects.using('sales').filter(
+                    Q(rayon__icontains=i_d_b), is_active=True
+                )
+
+                for i in drs :
+                    dd.append(i)
+        
+        except IndexError :
+            dd = []
+            dd.extend(
+                DoctorDetail.objects.using('sales').filter(
+                    Q(rayon__icontains=request.session.get('detail').get('id_user')), is_active=True
+                )
+            )
+
+        gp_count = defaultdict(lambda: {'priority': 0, 'not_priority': 0, 'total_doctor': 0, 'id': None})
+
+        prty_dctr = 0
+        nt_prty_dctr = 0
+        ttl_dctr = 0
+
+        for tt in dd :
+            tt.rayon = json.loads(tt.rayon)
+            tt.info = json.loads(tt.info)
+            tt.work_information = json.loads(tt.work_information)
+            tt.private_information = json.loads(tt.private_information)
+            tt.additional_information = json.loads(tt.additional_information)
+            tt.branch_information = json.loads(tt.branch_information)
+
+            rayon_nm = tt.rayon.get('rayon')
+
+            sales_inf = tt.work_information.get('sales_information', [])
+            is_prty = sales_inf.get('priority', False)
+
+            if is_prty :
+                gp_count[rayon_nm]['priority'] += 1
+                prty_dctr += 1
+            else :
+                gp_count[rayon_nm]['not_priority'] += 1
+                nt_prty_dctr += 1
+            
+            gp_count[rayon_nm]['total_doctor'] += 1
+            gp_count[rayon_nm]['id'] = tt.pk
+            ttl_dctr += 1
+
+        grp_list = [
+            {
+                'id' : data['id'],
+                'rayon' : rayon,
+                'priority' : data['priority'],
+                'not_priority' : data['not_priority'],
+                'total_doctor' : data['total_doctor']
+            }
+            for rayon, data in gp_count.items()
+        ]
+
+        all_list = {
+            'doctor_priority' : prty_dctr,
+            'doctor_not_priority' : nt_prty_dctr,
+            'total_doctor' : ttl_dctr
+        }
+
+        if src_query :
+            grp_list = [
+                p for p in grp_list
+                if (
+                    search_query.lower() in str(p.get('rayon')).lower()
+                )
+            ]
+        
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+            return render(request, 'core/home.html', {
+                'data' : grp_list
+            })
+
         return render(request, 'core/home.html', {
             'title' : 'Dashboard',
-            'page_name' : 'Home'
+            'page_name' : 'Home',
+            'data' : grp_list,
+            'total' : all_list
         })
 
 def gu_data(request, gu_id) :

@@ -110,6 +110,7 @@ def doctor_list(request) :
                     'priority' : priority,
                     'cover' : rayon
                 })
+            show_section = not request.user.is_staff and not "bco" in request.user.email
 
         return render(request, 'sales_pages/doctor_list.html', {
             'title' : 'Doctor List',
@@ -119,6 +120,7 @@ def doctor_list(request) :
             'last_page' : dt.get('data').get('last_page'),
             'next_page' : dt.get('data').get('next_page_url'),
             'prev_page' : dt.get('data').get('prev_page_url'),
+            'show_section' : show_section,
             'api' : "True"
         })
 
@@ -158,6 +160,8 @@ def doctor_list(request) :
                     'priority' : priority,
                     'cover' : rayon
                 })
+            
+            show_section = not request.user.is_staff and not "bco" in request.user.email
 
             if search_query :
                 data = [                
@@ -183,7 +187,8 @@ def doctor_list(request) :
             'title' : 'Doctor List',
             'page_name' : 'Doctor List',
             'page_obj' : page_obj,
-            'api' : "False"
+            'api' : "False",
+            'show_section' : show_section
         })
 
 @api_login_required
@@ -662,6 +667,8 @@ def dctr_adm(request) :
     
     else :
         rayons = None
+    
+    show_section = not request.user.is_staff and not "bco" in request.user.email
 
     data_ = []
     data = []
@@ -702,7 +709,7 @@ def dctr_adm(request) :
 
         if metode == 'post' :
             idrayon = request.POST.get('id-ryn', '')
-            iddctr = request.POST.getlist('id-dctr')
+            iddctr = request.POST.getlist('id-dctrs')
 
             rayon = None
 
@@ -724,6 +731,7 @@ def dctr_adm(request) :
         'page_name' : "Doctor List",
         'page_obj' : page_obj,
         'rayons' : rayons,
+        'show_section' : show_section,
         'data' : data_,
         'api' : "False"
     })

@@ -19,7 +19,7 @@
             <input type="text" name="metode" value="post" class="hidden">
             <div class="w-full rounded-md border border-current p-5 space-y-5 glass mb-5">
                 <div class="flex items-center justify-between mx-5">
-                    <p class="text-md font-bold uppercase text-pretty font-sans">{{ data.0.dr_api.nama_dokter }}</p>
+                    <p class="text-md font-bold uppercase text-pretty font-sans">{{ data.0.dr_api.nama_dokter }} {% if data.0.doctor %}|| {{ data.0.doctor.code }}{% endif %}</p>
                     <p class="text-md font-bold uppercase text-pretty font-sans">
                         {% if data.0.doctor %}
                             {{ data.0.doctor.rayon.rayon }}
