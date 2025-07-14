@@ -28,16 +28,20 @@
                                 <div class="dropdown dropdown-right">
                                     <div tabindex="0" role="button" class="link link-hover font-semibold font-sans text-md text-pretty text-center {% if request.user.is_staff or request.user.is_superuser %} block {% else %} hidden {% endif %}">Master</div>
                                     <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-md w-52 p-2 shadow-md">
-                                        {% if request.user.is_staff and request.user.groups.first.name == "sales" or request.user.is_superuser %}
-                                        <li><a href="{% url 'master:gc_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Grade Clinic</a></li>
-                                        <li><a href="{% url 'master:gu_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Grade User</a></li>
-                                        <li><a href="{% url 'master:title_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Title</a></li>
-                                        <li><a href="{% url 'master:salutation_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Salutation</a></li>
-                                        <li><a href="{% url 'master:specialist_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Specialist</a></li>
-                                        {% endif %}
-                                        {% if request.user.is_staff and request.user.groups.first.name == "supplier" or request.user.is_superuser %}
-                                        <li><a href="{% url 'master:pic_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">PIC</a></li>
-                                        <li><a href="{% url 'master:classification_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Classifications</a></li>
+                                        {% if request.user.is_superuser and request.user.is_staff %}
+                                            {% for group in request.user.groups.all %}
+                                                {% if group.name == "sales" %}
+                                                    <li><a href="{% url 'master:gc_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Grade Clinic</a></li>
+                                                    <li><a href="{% url 'master:gu_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Grade User</a></li>
+                                                    <li><a href="{% url 'master:title_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Title</a></li>
+                                                    <li><a href="{% url 'master:salutation_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Salutation</a></li>
+                                                    <li><a href="{% url 'master:specialist_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Specialist</a></li>
+                                                {% endif %}
+                                                {% if group.name == "supplier" %}
+                                                    <li><a href="{% url 'master:pic_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">PIC</a></li>
+                                                    <li><a href="{% url 'master:classification_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Classifications</a></li>
+                                                {% endif %}
+                                            {% endfor %}
                                         {% endif %}
                                     </ul>
                                 </div>
@@ -46,11 +50,14 @@
                                 <div class="dropdown dropdown-right">
                                     <div tabindex="0" role="button" class="link link-hover font-semibold font-sans text-md text-pretty text-center">Transaction</div>
                                     <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-md w-52 p-2 shadow-md">
-                                        {% if request.user.groups.first.name == "sales" or request.user.is_superuser %}
-                                        <li><a {% if request.user.is_staff %} href="{% url 'sales:doctor_admin' %}" {% else %} href="{% url 'sales:doctor_list' %}" {% endif %} class="text-md font-semibold link link-hover font-sans text-pretty">Doctor List</a></li>
-                                        {% elif request.user.groups.first.name == "supplier" or request.user.is_superuser %}
-                                        <li><a href="{% url 'supplier:vendor_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Vendor List</a></li>
-                                        {% endif %}
+                                        {% for group in request.user.groups.all %}
+                                            {% if group.name == "sales" %}
+                                                <li><a {% if request.user.is_staff %} href="{% url 'sales:doctor_admin' %}" {% else %} href="{% url 'sales:doctor_list' %}" {% endif %} class="text-md font-semibold link link-hover font-sans text-pretty">Doctor List</a></li>
+                                            {% endif %}
+                                            {% if group.name == "supplier" %}
+                                                <li><a href="{% url 'supplier:vendor_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Vendor List</a></li>
+                                            {% endif %}
+                                        {% endfor %}
                                     </ul>
                                 </div>
                             </li>
