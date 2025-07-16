@@ -48,9 +48,7 @@
     </div>
     {% endif %}
     <div class="w-1/12 items-center justify-center {% if api == "True" %} hidden {% endif %}">
-        {% if show_section %}
-        <a href="{{ new_url }}" class="btn btn-sm py-4 rounded-none rounded-l-sm rounded-r-sm">New</a>
-        {% else %}
+        {% if request.user.is_staff and title == "Doctor List" %}
         <button role="button" id="opn-mdl" type="button" onclick="modal_rayon.showModal()" class="btn btn-sm items-center justify-center py-4 rounded-none lg:flex hidden rounded-l-sm rounded-r-sm"><p class="font-semibold text-medium">Switch Rayon</p></button>
         {% endif %}
     </div>
@@ -139,9 +137,7 @@
                     </div>
                 </li>
                 <li class="items-center justify-center {% if api == "True" %} hidden {% else %} flex {% endif %}">
-                    {% if not request.user.is_staff or title == "Doctor List" %}
-                    <a href="{{ new_url }}" class="text-sm text-center font-semibold">New</a>
-                    {% else %}
+                    {% if request.user.is_staff and title == "Doctor List" %}
                     <button role="button" type="button" onclick="modal_rayon.showModal()" class="btn btn-sm py-4 rounded-none rounded-l-sm rounded-r-sm">Switch Rayon</button>
                     {% endif %}
                 </li>
