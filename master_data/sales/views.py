@@ -90,6 +90,7 @@ def doctor_list(request) :
                 if DoctorDetail.objects.using('sales').filter(jamet_id=int(t.get('id_dokter'))).exists() :
                     dr = DoctorDetail.objects.using('sales').get(jamet_id=int(t.get('id_dokter')))
                     last_update = dr.updated_at
+                    created_at = dr.created_at
                     rayon = json.loads(dr.rayon)
                     i = json.loads(dr.work_information).get('sales_information').get('priority')
 
@@ -101,12 +102,14 @@ def doctor_list(request) :
                     
                 else :
                     last_update = "Not Found"
+                    created_at = "Not Found"
                     priority = "Not Set"
                     rayon = None
                 
                 page_obj.append({
                     'data' : t,
                     'last_update' : last_update,
+                    'created_at': created_at,
                     'priority' : priority,
                     'cover' : rayon
                 })

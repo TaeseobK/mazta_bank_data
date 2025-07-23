@@ -16,6 +16,7 @@
                 <th>Priority</th>
                 <th>Cover</th>
                 <th>Update At</th>
+                <th>Created At</th>
             </tr>
         </thead>
         <tbody id="page-list">
@@ -30,6 +31,7 @@
                 <td>{% if data.work_information.sales_information.priority == 1 %}Priority{% else %}Not Priority{% endif %}</td>
                 <td>{{ data.rayon.rayon }}</td>
                 <td>{{ data.updated_at }}</td>
+                <td>{{ data.created_at }}</td>
             </tr>
             {% endfor %}
         </tbody>
