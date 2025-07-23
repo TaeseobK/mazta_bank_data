@@ -144,8 +144,8 @@ def doctor_list(request) :
                     dd = DoctorDetail.objects.using('sales').get(jamet_id=d.get('id_dokter'))
                     last_update = dd.updated_at
                     created_at = dd.created_at
-                    info = json.loads(dd.info)
-                    rayon = json.loads(dd.rayon).get('rayon')
+                    info = json.loads(dd.info).get('rayon')
+                    rayon = json.loads(dd.rayon)
                     i = json.loads(dd.work_information).get('sales_information').get('priority')
 
                     if i == 1 :
