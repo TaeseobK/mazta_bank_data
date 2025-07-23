@@ -143,6 +143,8 @@ def doctor_list(request) :
                 if DoctorDetail.objects.using('sales').filter(jamet_id=d.get('id_dokter')).exists() :
                     dd = DoctorDetail.objects.using('sales').get(jamet_id=d.get('id_dokter'))
                     last_update = dd.updated_at
+                    created_at = dd.created_at
+                    info = json.loads(dd.info)
                     rayon = json.loads(dd.rayon)
                     i = json.loads(dd.work_information).get('sales_information').get('priority')
 
@@ -155,12 +157,16 @@ def doctor_list(request) :
                 else :
                     last_update = "Not Found"
                     priority = "Not Set"
+                    created_at = "Nof Found"
+                    info = None
                     rayon = None
                 
                 data.append({
                     'data' : d,
                     'last_update' : last_update,
+                    'created_at': created_at,
                     'priority' : priority,
+                    'full_name': info.get('full_name') if info else None,
                     'cover' : rayon
                 })
             
@@ -172,7 +178,8 @@ def doctor_list(request) :
                     if (
                         search_query.lower() in str(d['data'].get('nama_dokter')).lower() or
                         search_query.lower() in str(d['data'].get('kode_pelanggan_old')).lower() or
-                        search_query.lower() in str(d['priority']).lower()
+                        search_query.lower() in str(d['priority']).lower() or
+                        search_query.lower() in str(d['full_name']).lower()
                     )
                 ]
 
@@ -694,7 +701,8 @@ def dctr_adm(request) :
                 search_query.lower() in str(d.info.get('first_name')).lower() or
                 search_query.lower() in str(d.info.get('middle_name')).lower() or
                 search_query.lower() in str(d.info.get('last_name')).lower() or
-                search_query.lower() in str(d.info.get('full_name')).lower()
+                search_query.lower() in str(d.info.get('full_name')).lower() or
+                search_query.lower() in str(d.code).lower()
             )
         ]   
 
