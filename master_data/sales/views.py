@@ -145,7 +145,7 @@ def doctor_list(request) :
                     last_update = dd.updated_at
                     created_at = dd.created_at
                     info = json.loads(dd.info)
-                    rayon = json.loads(dd.rayon)
+                    rayon = json.loads(dd.rayon).get('rayon')
                     i = json.loads(dd.work_information).get('sales_information').get('priority')
 
                     if i == 1 :
@@ -179,7 +179,8 @@ def doctor_list(request) :
                         search_query.lower() in str(d['data'].get('nama_dokter')).lower() or
                         search_query.lower() in str(d['data'].get('kode_pelanggan_old')).lower() or
                         search_query.lower() in str(d['priority']).lower() or
-                        search_query.lower() in str(d['full_name']).lower()
+                        search_query.lower() in str(d['full_name']).lower() or
+                        search_query.lower() in str(d['cover']).lower()
                     )
                 ]
 

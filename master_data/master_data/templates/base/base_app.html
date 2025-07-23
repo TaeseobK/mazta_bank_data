@@ -133,7 +133,7 @@
         });
 
         $(document).ready(function() {
-            $('#search').on('input', function() {
+            $('#search').on('blur', function() {
                 var searchQuery = $(this).val();
 
                 $.ajax({
@@ -150,7 +150,7 @@
         });
 
         $(document).ready(function() {
-            $('#search-2').on('input', function() {
+            $('#search-2').on('blur', function() {
                 var searchQuery = $(this).val();
 
                 $.ajax({
