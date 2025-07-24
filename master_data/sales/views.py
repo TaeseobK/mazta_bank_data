@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, redirect
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import os
 import zipfile
 from django.conf import settings
@@ -124,7 +124,8 @@ def doctor_list(request) :
             'next_page' : dt.get('data').get('next_page_url'),
             'prev_page' : dt.get('data').get('prev_page_url'),
             'show_section' : show_section,
-            'api' : "True"
+            'api' : "True",
+            'search_query': search
         })
 
     else :
@@ -133,7 +134,7 @@ def doctor_list(request) :
         response = requests.get(api_url)
 
         if response.status_code == 200 :
-            search_query = request.GET.get('search')
+            search_query = request.GET.get('search', '')
 
             api_data = response.json()
 
@@ -186,12 +187,13 @@ def doctor_list(request) :
 
             paginator = Paginator(data, 12)
 
-            page_number = request.GET.get('page')
+            page_number = request.GET.get('page', 1)
             page_obj = paginator.get_page(page_number)
 
             if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
                 return render(request, 'sales_pages/doctor_list.html', {
-                    'page_obj' : page_obj
+                    'page_obj' : page_obj,
+                    'search_query': search_query
                 })
 
         return render(request, 'sales_pages/doctor_list.html', {
@@ -199,7 +201,8 @@ def doctor_list(request) :
             'page_name' : 'Doctor List',
             'page_obj' : page_obj,
             'api' : "False",
-            'show_section' : show_section
+            'show_section' : show_section,
+            'search_query': search_query
         })
 
 @api_login_required

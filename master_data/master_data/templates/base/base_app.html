@@ -133,37 +133,41 @@
         });
 
         $(document).ready(function() {
-            $('#search').on('blur', function() {
-                var searchQuery = $(this).val();
+          // Global variabel untuk menyimpan search query
+          let currentSearch = '';
 
-                $.ajax({
-                    url: window.location.href,
-                    data: {
-                        'search' : searchQuery
-                    },
-                    dataType: 'html',
-                    success: function(response) {
-                        $('#page-list').html($(response).find('#page-list').html());
-                    }
-                });
-            });
-        });
+          // Ketika user selesai mengetik dan keluar dari input
+          $('#search').on('blur', function () {
+              currentSearch = $(this).val(); // simpan ke variabel global
 
-        $(document).ready(function() {
-            $('#search-2').on('blur', function() {
-                var searchQuery = $(this).val();
+              loadDoctorList(1, currentSearch);
+          });
 
-                $.ajax({
-                    url: window.location.href,
-                    data: {
-                        'search' : searchQuery
-                    },
-                    dataType: 'html',
-                    success: function(response) {
-                        $('#page-list-2').html($(response).find('#page-list-2').html());
-                    }
-                });
-            });
+          // Delegasi event click pagination
+          $('#page-list').on('click', '.page-link', function (e) {
+              e.preventDefault();
+              let href = $(this).attr('href');
+              let page = new URLSearchParams(href.split('?')[1]).get('page');
+
+              loadDoctorList(page, currentSearch);
+          });
+
+          function loadDoctorList(page, search) {
+              $.ajax({
+                  url: window.location.pathname,
+                  data: {
+                      page: page,
+                      search: search
+                  },
+                  dataType: 'html',
+                  success: function (response) {
+                      $('#page-list').html($(response).find('#page-list').html());
+                  },
+                  error: function () {
+                      alert('Gagal memuat data.');
+                  }
+              });
+          }
         });
 
         $(document).ready(function() {

@@ -1,3 +1,4 @@
+import http.client
 from django.core.management.base import BaseCommand
 import pandas as pd
 from sales.models import *
@@ -9,6 +10,7 @@ import json
 import sys
 import zipfile
 from django.conf import settings
+import requests
 import os
 import subprocess
 import logging
@@ -60,6 +62,11 @@ class Command(BaseCommand) :
             print(f"Begin generating full name for the database at {datetime.now().time()}.")
             logging.info(f"Begin generating full name for databases at {datetime.now().time()}.")
             self.full_name()
+        
+        elif sfb() == "rayon" :
+            print(f"Begin generating rayon_name for the database at {datetime.now().time()}.")
+            logging.info(f"Begin generating rayon_name for databases at {datetime.now().time()}.")
+            self.nam_rayon()
 
         else :
             print(f"Pass, now is {w.hour} o'clock.")
@@ -103,7 +110,8 @@ class Command(BaseCommand) :
                     rayons = {
                         "doctor_id" : r.pk,
                         "rayon_id" : r.rayon.get('id'),
-                        "rayon_name" : r.rayon.get('rayon')
+                        "rayon_name" : r.rayon.get('rayon'),
+                        "rayon_asal": r.rayon.get('rayon_cvr')
                     }
                     rayon.append(rayons)
                 logging.info("Proceed 'Rayon' data for doctors")
@@ -341,6 +349,7 @@ class Command(BaseCommand) :
                         'code' : z.code,
                         'apps_bco_id' : z.jamet_id,
                         'rayon_code' : z.rayon.get('rayon'),
+                        'rayon_asal': z.rayon.get('rayon_cvr'),
                         'first_name' : z.info.get('first_name'),
                         'middle_name' : z.info.get('middle_name'),
                         'last_name' : z.info.get('last_name'),
@@ -526,3 +535,40 @@ class Command(BaseCommand) :
             )
             email.send()
             logging.error("Error Occured: %s", str(e))
+    
+    def nam_rayon(self) :
+        print(f"Checking the database")
+        try :
+            conn = requests.get('https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/7')
+            logging.info(f"Begin updating Data on database")
+            
+            for i in range(1, int(conn.json().get('data').get('last_page')) + 1):
+                res = requests.get(f'https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/7?page={i}')
+
+                the_data = res.json().get('data').get('data')
+                logging.info(f"Hit on: Page {i}")
+
+                for r in the_data :
+                    id_dokter = r.get('id_dokter')
+                    try:
+                        doctor = DoctorDetail.objects.using('sales').get(jamet_id=int(id_dokter))
+                        rayon = json.loads(doctor.rayon)
+                        
+                        id_rayon = rayon.get('id')
+                        rayon = rayon.get('rayon')
+
+                        doctor.rayon = json.dumps({
+                            'id': id_rayon,
+                            'rayon': rayon,
+                            'rayon_cvr': r.get('rayon_asal')
+                        })
+
+                        doctor.save()
+                        logging.info(f"Updated doctor with first_name: {json.loads(doctor.info).get('first_name')}")
+
+                    except DoctorDetail.DoesNotExist :
+                        logging.error("Error Occured: %s")
+                        print("Doctor doesn't exist")
+
+        except Exception as e:
+            print(f"Error like: {e}")
