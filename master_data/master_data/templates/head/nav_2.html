@@ -3,10 +3,10 @@
     <div class="w-9/12 flex items-center justify-start gap-5">
         <label class="input z-0" data-aos="fade-right">
             <svg class="h-8 opacity-50 z-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></g></svg>
-            <input type="text" name="search" id="search" class="lg:block grow  hidden" value="{{ search_query }}" placeholder="Search..."/>
+            <input type="text" name="search" id="search" class="lg:block grow" value="{{ search_query }}" placeholder="Search..."/>
         </label>
         {% if request.user.is_staff and title == "Doctor List" %}
-        <a href="{% url 'sales:download_doctor_data' %}" class="btn btn-sm rounded-none rounded-l-sm rounded-r-sm">Download Data</a>
+        <a href="{% url 'sales:download_doctor_data' %}" class="btn btn-sm rounded-none py-auto rounded-l-sm rounded-r-sm hidden lg:block">Download Data</a>
         {% endif %}
     </div>
     {% if api == "False" %}
@@ -140,6 +140,15 @@
                     <button role="button" type="button" onclick="modal_rayon.showModal()" class="btn btn-sm py-4 rounded-none rounded-l-sm rounded-r-sm">Switch Rayon</button>
                     {% endif %}
                 </li>
+                {% for group in request.user.groups.all %}
+                    {% if request.user.is_staff and group.name == "sales" %}
+                        <li class="items-center justify-center {% if api == "True" %} hidden {% else %} flex {% endif %}">
+                            <a href="{% url 'sales:download_doctor_data' %}" class="btn btn-sm rounded-none rounded-l-sm rounded-r-sm block lg:hidden">
+                                <p>Download Data</p>
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
             </ul>
         </div>
     </div>

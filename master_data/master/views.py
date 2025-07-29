@@ -48,6 +48,7 @@ def datadoctor(request) :
 
 @login_required
 def home(request) :
+    request.session['back_url'] = request.get_full_path()
 
     if request.user.is_staff :
         search_query = request.GET.get('search', '')
@@ -125,7 +126,6 @@ def home(request) :
         src_query = request.GET.get('search', '')
 
         id_rayon = request.session.get('detail').get('id_user')
-        print(id_rayon)
 
         response = requests.get(rayon_api(int(id_rayon)))
 
@@ -133,30 +133,26 @@ def home(request) :
             datadata = response.json().get('data')[0] if response.status_code == 200 else None
             atasan = datadata.get('atasan')
             bawahan = datadata.get('bawahan')
-            print(f"{atasan}, {bawahan}")
+            # print(f"{atasan}, {bawahan}")
 
             dd = []
 
             if atasan :
-                dd.extend(DoctorDetail.objects.using('sales').filter(
-                    Q(rayon__icontains=atasan), is_active=True
-                ))
+                for i in DoctorDetail.objects.using('sales').filter(is_active=True).all() :
+                    if int(json.loads(i.rayon).get('id')) == int(atasan) :
+                        dd.append(i)
             
             for i_d_b in bawahan :
-                drs = DoctorDetail.objects.using('sales').filter(
-                    Q(rayon__icontains=i_d_b), is_active=True
-                )
-
-                for i in drs :
-                    dd.append(i)
+                for i in DoctorDetail.objects.using('sales').filter(is_active=True).all() :
+                    if int(json.loads(i.rayon).get('id')) == int(i_d_b) :
+                        dd.append(i)
         
         except IndexError :
+            id_user = request.session.get('detail').get('id_user')
             dd = []
-            dd.extend(
-                DoctorDetail.objects.using('sales').filter(
-                    Q(rayon__icontains=request.session.get('detail').get('id_user')), is_active=True
-                )
-            )
+            for i in DoctorDetail.objects.using('sales').filter(is_active=True).all() :
+                if int(json.loads(i.rayon).get('id')) == int(id_user) :
+                    dd.append(i)
 
         gp_count = defaultdict(lambda: {'priority': 0, 'not_priority': 0, 'total_doctor': 0, 'id': None})
 
@@ -261,14 +257,16 @@ def title_data(request, tit_id) :
     return JsonResponse(model_to_dict(title), safe=False)
 
 def login_view(request) :
-    try :
-        user = request.user
+    if request.method == 'GET':
 
-        if user.is_authenticated :
-            return redirect('master:home')
-    
-    except :
-        pass
+        try :
+            user = request.user
+
+            if user.is_authenticated :
+                return redirect('master:home')
+        
+        except :
+            pass
 
     if request.method == 'POST' :
         email = request.POST.get('email', '')
@@ -282,16 +280,10 @@ def login_view(request) :
         })
 
         if response.status_code == 200 :
-
-            try :
-                token = response.json().get('token')
-                detail = response.json().get('data')
-                request.session['token'] = token
-                request.session['detail'] = detail
-            
-            except ValueError :
-                messages.error(request, f"Email and Password doesn't match any user. Please check your email or password.")
-                return redirect('master:login')
+            token = response.json().get('token')
+            detail = response.json().get('data')
+            request.session['token'] = token
+            request.session['detail'] = detail
 
             try :
                 user = User.objects.get(email=email)
@@ -307,8 +299,16 @@ def login_view(request) :
                     return redirect(next_url)
                 
                 else :
-                    messages.error(request, "Login failed, please check your username, email, or password.")
-                    return redirect('master:login')
+                    user.set_password(password)
+                    user.save()
+                    group, _ = Group.objects.get_or_create(name="sales")
+
+                    if not user.groups.filter(name="sales").exists():
+                        user.groups.add(group)
+                    
+                    login(request, user)
+                    messages.success(request, f"Login Success, You Changed you password on the another apps {user.username}.")
+                    return redirect(next_url)
                 
             except User.DoesNotExist :
                 if "admin" in str(detail.get('name')).lower() :
@@ -447,7 +447,8 @@ def profile(request) :
                 prfl_1.save()
 
             messages.success(request, "Profile update successfully.")
-            return redirect('master:profile')
+            back_url = request.session.get('back_url')
+            return redirect(back_url ,'master:home')
         
         if metode == 'change_pw' :
             old_password = request.POST.get('old-psswrd', '')

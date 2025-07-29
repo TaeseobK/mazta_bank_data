@@ -65,14 +65,15 @@ def remove_duplicates(text) :
 @api_login_required
 def doctor_list(request) :
     id_user = request.session.get('detail').get('id_user')
+    request.session['back_url'] = request.get_full_path()
 
     if request.user.is_staff :
         page = request.GET.get('page', '1')
-        search = request.GET.get('search', '')
+        search = request.GET.get('search')
 
         api_url = api_doctor_admin()
 
-        response = requests.post(api_url, data={'keyword' : search})
+        response = requests.post(api_url, data={'keyword' : search, 'page': page})
 
         if response.status_code == 200 :
             dt = response.json()
@@ -134,7 +135,7 @@ def doctor_list(request) :
         response = requests.get(api_url)
 
         if response.status_code == 200 :
-            search_query = request.GET.get('search', '')
+            search_query = request.GET.get('search')
 
             api_data = response.json()
 
@@ -619,6 +620,7 @@ def doctor_detail(request, user_id, doc_id) :
                     rayon = {
                         'id' : int(request.session['detail'].get('id_user')),
                         'rayon' : request.session['detail'].get('kode_rayon')
+                        # 'rayon': request.session['detail'].get('kode_rayon')
                     }
 
                     while DoctorDetail.objects.using('sales').filter(code=code).exists() :
@@ -635,8 +637,10 @@ def doctor_detail(request, user_id, doc_id) :
                         dd.branch_information = json.dumps(branches)
 
                         dd.save()
-
-                        return redirect('sales:doctor_list')
+                        print(request.get_full_path())  
+                        
+                        back_url = request.session.get('back_url', '/doctor-list/')
+                        return redirect(back_url)
                     
                     else :
                         dr = DoctorDetail.objects.using('sales').create(
@@ -651,8 +655,10 @@ def doctor_detail(request, user_id, doc_id) :
                         )
 
                         dr.save()
-
-                        return redirect('sales:doctor_list')
+                        print(request.get_full_path())
+                        
+                        back_url = request.session.get('back_url', '/doctor-list/')
+                        return redirect(back_url)
 
             return render(request, 'sales_detail/doctor_detail.html', {
                 'title' : 'Detail Doctor',
@@ -667,7 +673,8 @@ def doctor_detail(request, user_id, doc_id) :
 @group_required('sales')
 @login_required(login_url='login/')
 def dctr_adm(request) :
-    search_query = request.GET.get('search', '')
+    search_query = request.GET.get('search')
+    request.session['back_url'] = request.get_full_path()
 
     doctors = DoctorDetail.objects.using('sales').filter(is_active=True).all().order_by('-created_at')
     rayon_api = requests.get(api_rayon())
@@ -735,7 +742,8 @@ def dctr_adm(request) :
             DoctorDetail.objects.using('sales').filter(id__in=iddctr).update(
                 rayon=json.dumps({
                     'id' : rayon.get('id_user'),
-                    'rayon' : rayon.get('kode_rayon')
+                    'rayon' : rayon.get('kode_rayon'),
+                    'rayon_cvr': rayon.get('rayon_asal')
                 })
             )
             messages.success(request, "Rayon updated successfully.")
@@ -805,7 +813,8 @@ def adm_doctor_detail(request, dr_id) :
         })
         dctr.save()
         messages.success(request, "Rayon has been changed.")
-        return redirect('sales:doctor_admin')
+        back_url = request.session.get('back_url')
+        return redirect(back_url, 'sales:doctor_admin')
 
     return render(request, 'sales_detail/doctor_detail_admin.html', {
         'title' : "Doctor Detail",

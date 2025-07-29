@@ -22,15 +22,15 @@
         <div class="p-4 mx-5 rounded-md border-2 border-current backdrop-blur-sm bg-opacity-10 bg-base-300 thin-scrollbar">
             <p class="text-lg text-center font-semibold">The Doctors Groupped by Rayons</p>
             <p class="text-sm text-center font-normal">The groupping include "Priority" and "Not Priority"</p>
-            <div class="w-full mx-5 mt-5 flex items-center justify-start gap-5">
+            <div class="w-full flex lg:flex-row my-5 flex-col items-center lg:justify-start justify-center gap-5">
                 <input type="text" name="search" id="search" class="input input-sm rounded-none rounded-l-sm rounded-r-sm" placeholder="Search...">
                 <div class="rounded-sm border-2 border-base-100 shadow-md py-1 px-2">
                     <p class="text-sm font-semibold font-sans text-current bg-base">Priority : {{ total.doctor_priority }} Doctor | Not Priority : {{ total.doctor_not_priority }} Doctor | Total : {{ total.total_doctor }} Doctor</p>
                 </div>
             </div>
-            <div id="page-list" class="card shadow-md m-5 p-5 rounded-md backdrop-blur-sm bg-opacity-80 bg-base-200 grid lg:grid-cols-4 grid-cols-1 gap-10">
+            <div id="page-list" class="card shadow-md py-2 px-2 lg:px-5 rounded-md backdrop-blur-sm bg-opacity-80 bg-base-200 grid lg:grid-cols-4 grid-cols-1 gap-5 lg:gap-10">
                 {% for d in data %}
-                <div class="card card-border bg-base-100 shadow-lg p-3 rounded-sm cursor-pointer" id="lost-page" some="{{ d.rayon }}" onclick="modal_1.showModal()">
+                <div class="card card-border bg-base-100 shadow-lg py-2 px-1 rounded-sm cursor-pointer" id="lost-page" some="{{ d.rayon }}" onclick="modal_1.showModal()">
                     <p class="text-md font-bold text-pretty">{{ d.rayon }}</p>
                     <div class="flex items-center justify-start gap-5 text-sm">
                         <ul class="space-y-2">
