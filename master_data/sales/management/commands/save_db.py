@@ -76,7 +76,7 @@ class Command(BaseCommand) :
 
     def backup_db(self) :
         try:
-            logging.info(f"Begin generating database to excel at {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}")
+            logging.info(f"Begin generating database to excel at {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}")
             api = "https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/7"
             logging.info(f"Success hit Api on code: {requests.get(api).status_code}")
             page = requests.get(api)
@@ -88,7 +88,7 @@ class Command(BaseCommand) :
                 try: 
                     om = requests.get(f"https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/7?page={i}")
                     datadata = om.json().get('data').get('data')
-                    logging.info(f"Processing data on page {i} at {datetime.now().strftime("%d/%m/%Y %H:%M:%S")}")
+                    logging.info(f"Processing data on page {i} at {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}")
                     for g in datadata :
                         try :
                             doctor = DoctorDetail.objects.using('sales').get(jamet_id=int(g.get('id_dokter')))
