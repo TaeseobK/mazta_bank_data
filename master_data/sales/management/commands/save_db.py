@@ -89,10 +89,10 @@ class Command(BaseCommand) :
                 retries = 3
                 # while retries >= 0 :
                 try: 
-                    # headers = {
-                    #     'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-                    # }
-                    om = requests.get(f"https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/7?page={i}")
+                    headers = {
+                        'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                    }
+                    om = requests.get(f"https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/7?page={i}", headers=headers)
                     if om.status_code == 200 and 'application/json' in om.headers.get('Content-Type', '') :
                         try:  
                             datadata = om.json().get('data', {}).get('data', [])
