@@ -85,93 +85,111 @@ class Command(BaseCommand) :
 
             datas = []
             for i in range(1, last_page + 1) :
+                time.sleep(1.5)
+                retries = 3
+                # while retries >= 0 :
                 try: 
+                    # headers = {
+                    #     'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                    # }
                     om = requests.get(f"https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/7?page={i}")
-                    datadata = om.json().get('data').get('data')
-                    logging.info(f"Processing data on page {i} at {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}")
-                    for g in datadata :
-                        try :
-                            doctor = DoctorDetail.objects.using('sales').get(jamet_id=int(g.get('id_dokter')))
+                    if om.status_code == 200 and 'application/json' in om.headers.get('Content-Type', '') :
+                        try:  
+                            datadata = om.json().get('data', {}).get('data', [])
+                            logging.info(f"Processing data on page {i} at {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}")
+                            for g in datadata :
+                                try :
+                                    doctor = DoctorDetail.objects.using('sales').get(jamet_id=int(g.get('id_dokter')))
 
-                            code = doctor.code
-                            jamet_id = doctor.jamet_id
-                            rayon = json.loads(doctor.rayon)
-                            info = json.loads(doctor.info)
-                            w_i = json.loads(doctor.work_information)
-                            p_i = json.loads(doctor.private_information)
-                            a_i = json.loads(doctor.additional_information)
-                            b_i = json.loads(doctor.branch_information)
-                            active = doctor.is_active
-                            update = doctor.updated_at.strftime("%d %B %Y %H:%M:%S")
-                            created = doctor.created_at.strftime("%d %B %Y %H:%M:%S")
+                                    code = doctor.code
+                                    jamet_id = doctor.jamet_id
+                                    rayon = json.loads(doctor.rayon)
+                                    info = json.loads(doctor.info)
+                                    w_i = json.loads(doctor.work_information)
+                                    p_i = json.loads(doctor.private_information)
+                                    a_i = json.loads(doctor.additional_information)
+                                    b_i = json.loads(doctor.branch_information)
+                                    active = doctor.is_active
+                                    update = doctor.updated_at.strftime("%d %B %Y %H:%M:%S")
+                                    created = doctor.created_at.strftime("%d %B %Y %H:%M:%S")
 
-                            data = {
-                                'active': "Active" if active else "Not Active",
-                                'code' : code,
-                                'apps_bco_id': jamet_id,
-                                'rayon_pic_id' : rayon.get('id'),
-                                'rayon_pic_name' : rayon.get('rayon'),
-                                'rayon_coverage_name' : rayon.get('rayon_cvr'),
-                                'dr_first_name' : str(info.get('first_name')).strip(),
-                                'dr_middle_name' : str(info.get('middle_name')).strip(),
-                                'dr_last_name' : str(info.get('last_name')).strip(),
-                                'dr_full_name' : str(info.get('full_name')).strip(),
-                                'title' : f"{Title.objects.using('master').get(id=int(info.get('title'))).name.strip()}/{Title.objects.using('master').get(id=int(info.get('title'))).short_name.strip()}" if info.get('title') else None,
-                                'salutation' : f"{Salutation.objects.using('master').get(id=int(info.get('salutation'))).salutation.strip()}/{Salutation.objects.using('master').get(id=int(info.get('salutation'))).short_salutation.strip()}" if info.get('salutation') else None,
-                                'work_address_street_1': w_i.get('address').get('street_1'),
-                                'work_address_street_2': w_i.get('address').get('street_2'),
-                                'work_address_city': w_i.get('address').get('city'),
-                                'work_address_state': w_i.get('address').get('state'),
-                                'work_address_country': w_i.get('address').get('country'),
-                                'work_address_zip': w_i.get('address').get('zip'),
-                                'work_full_address': w_i.get('address').get('fulladdress'),
-                                'workspace_name': w_i.get('job_information').get('workspace_name'),
-                                'job_position': w_i.get('job_information').get('job_position'),
-                                'work_phone': w_i.get('job_information').get('work_phone'),
-                                'work_mobile': w_i.get('job_information').get('work_mobile'),
-                                'work_email': w_i.get('job_information').get('work_email'),
-                                'grade_user': f"{UserGrade.objects.using('master').get(id=int(w_i.get('sales_information').get('grade_user'))).name.strip()}/{UserGrade.objects.using('master').get(id=int(w_i.get('sales_information').get('grade_user'))).alias.strip()}",
-                                'grade_clinic': f"{ClinicGrade.objects.using('master').get(id=int(w_i.get('sales_information').get('grade_clinic'))).name.strip()}/{ClinicGrade.objects.using('master').get(id=int(w_i.get('sales_information').get('grade_clinic'))).alias.strip()}",
-                                'priority': "Prioritas" if w_i.get('sales_information').get('priority') == 1 else "Bukan Prioritas",
-                                'spesialis': f"{Specialist.objects.using('master').get(id=int(w_i.get('sales_information').get('specialist_id'))).short_name.strip()}/{Specialist.objects.using('master').get(id=int(w_i.get('sales_information').get('specialist_id'))).full.strip()}",
-                                'accurate_code': w_i.get('system_information').get('accurate_code'),
-                                'private_address_street_1': p_i.get('private_contact').get('address').get('street_1'),
-                                'private_address_street_2': p_i.get('private_contact').get('address').get('street_2'),
-                                'private_address_city': p_i.get('private_contact').get('address').get('city'),
-                                'private_address_country': p_i.get('private_contact').get('address').get('country'),
-                                'private_address_zip': p_i.get('private_contact').get('address').get('zip'),
-                                'private_email': p_i.get('private_contact').get('email'),
-                                'private_phone': p_i.get('private_contact').get('phone'),
-                                'nationality': p_i.get('citizenship').get('nationality'),
-                                'gender': p_i.get('citizenship').get('gender'),
-                                'birth_date': p_i.get('citizenship').get('birth_date'),
-                                'birth_place': p_i.get('citizenship').get('birth_place'),
-                                'religion': p_i.get('citizenship').get('religion'),
-                                'school_certification': p_i.get('education').get('certification'),
-                                'field_of_study': p_i.get('education').get('field_study'),
-                                'school_name': p_i.get('education').get('school_name'),
-                                'marital_status': p_i.get('family').get('marital_status'),
-                                'spouses': [f"fullname: {i.get('fullname')}/ phone: {i.get('phone')}/ marriage_date: {i.get('mariage_date')}" for i in p_i.get('family').get('spouse', [])],
-                                'childrens': [f"fullname: {i.get('fullname')}/ phone: {i.get('phone')}/ birth_date: {i.get('birthdate')}" for i in p_i.get('family').get('children', [])],
-                                'interest': [f"category: {i.get('category')}/ interest: {i.get('interest')}" for i in a_i.get('interest', [])],
-                                'socmed': [f"socmed: {i.get('name')}/ account: {i.get('account_name')}" for i in a_i.get('social_media')],
-                                'best_time_to_meet': f"{a_i.get('base_time').get('base')} | {a_i.get('base_time').get('time')}",
-                                'branches': [f"name: {i.get('branch_name')}/ est_date: {i.get('branch_established_date')}/ address: {i.get('branch_street_1')}. {i.get('branch_street_1')}. {i.get('branch_city')}. {i.get('branch_state')}. {i.get('branch_country')}" for i in b_i],
-                                'updated_at': update,
-                                'created_at': created
-                            }
-                            datas.append(data)
+                                    data = {
+                                        'active': "Active" if active else "Not Active",
+                                        'code' : code,
+                                        'apps_bco_id': jamet_id,
+                                        'rayon_pic_id' : rayon.get('id'),
+                                        'rayon_pic_name' : rayon.get('rayon'),
+                                        'rayon_coverage_name' : rayon.get('rayon_cvr'),
+                                        'dr_first_name' : str(info.get('first_name')).strip(),
+                                        'dr_middle_name' : str(info.get('middle_name')).strip(),
+                                        'dr_last_name' : str(info.get('last_name')).strip(),
+                                        'dr_full_name' : str(info.get('full_name')).strip(),
+                                        'title' : f"{Title.objects.using('master').get(id=int(info.get('title'))).name.strip()}/{Title.objects.using('master').get(id=int(info.get('title'))).short_name.strip()}" if info.get('title') else None,
+                                        'salutation' : f"{Salutation.objects.using('master').get(id=int(info.get('salutation'))).salutation.strip()}/{Salutation.objects.using('master').get(id=int(info.get('salutation'))).short_salutation.strip()}" if info.get('salutation') else None,
+                                        'work_address_street_1': w_i.get('address').get('street_1'),
+                                        'work_address_street_2': w_i.get('address').get('street_2'),
+                                        'work_address_city': w_i.get('address').get('city'),
+                                        'work_address_state': w_i.get('address').get('state'),
+                                        'work_address_country': w_i.get('address').get('country'),
+                                        'work_address_zip': w_i.get('address').get('zip'),
+                                        'work_full_address': w_i.get('address').get('fulladdress'),
+                                        'workspace_name': w_i.get('job_information').get('workspace_name'),
+                                        'job_position': w_i.get('job_information').get('job_position'),
+                                        'work_phone': w_i.get('job_information').get('work_phone'),
+                                        'work_mobile': w_i.get('job_information').get('work_mobile'),
+                                        'work_email': w_i.get('job_information').get('work_email'),
+                                        'grade_user': f"{UserGrade.objects.using('master').get(id=int(w_i.get('sales_information').get('grade_user'))).name.strip()}/{UserGrade.objects.using('master').get(id=int(w_i.get('sales_information').get('grade_user'))).alias.strip()}",
+                                        'grade_clinic': f"{ClinicGrade.objects.using('master').get(id=int(w_i.get('sales_information').get('grade_clinic'))).name.strip()}/{ClinicGrade.objects.using('master').get(id=int(w_i.get('sales_information').get('grade_clinic'))).alias.strip()}",
+                                        'priority': "Prioritas" if w_i.get('sales_information').get('priority') == 1 else "Bukan Prioritas",
+                                        'spesialis': f"{Specialist.objects.using('master').get(id=int(w_i.get('sales_information').get('specialist_id'))).short_name.strip()}/{Specialist.objects.using('master').get(id=int(w_i.get('sales_information').get('specialist_id'))).full.strip()}",
+                                        'accurate_code': w_i.get('system_information').get('accurate_code'),
+                                        'private_address_street_1': p_i.get('private_contact').get('address').get('street_1'),
+                                        'private_address_street_2': p_i.get('private_contact').get('address').get('street_2'),
+                                        'private_address_city': p_i.get('private_contact').get('address').get('city'),
+                                        'private_address_country': p_i.get('private_contact').get('address').get('country'),
+                                        'private_address_zip': p_i.get('private_contact').get('address').get('zip'),
+                                        'private_email': p_i.get('private_contact').get('email'),
+                                        'private_phone': p_i.get('private_contact').get('phone'),
+                                        'nationality': p_i.get('citizenship').get('nationality'),
+                                        'gender': p_i.get('citizenship').get('gender'),
+                                        'birth_date': p_i.get('citizenship').get('birth_date'),
+                                        'birth_place': p_i.get('citizenship').get('birth_place'),
+                                        'religion': p_i.get('citizenship').get('religion'),
+                                        'school_certification': p_i.get('education').get('certification'),
+                                        'field_of_study': p_i.get('education').get('field_study'),
+                                        'school_name': p_i.get('education').get('school_name'),
+                                        'marital_status': p_i.get('family').get('marital_status'),
+                                        'spouses': [f"fullname: {i.get('fullname')}/ phone: {i.get('phone')}/ marriage_date: {i.get('mariage_date')}" for i in p_i.get('family').get('spouse', [])],
+                                        'childrens': [f"fullname: {i.get('fullname')}/ phone: {i.get('phone')}/ birth_date: {i.get('birthdate')}" for i in p_i.get('family').get('children', [])],
+                                        'interest': [f"category: {i.get('category')}/ interest: {i.get('interest')}" for i in a_i.get('interest', [])],
+                                        'socmed': [f"socmed: {i.get('name')}/ account: {i.get('account_name')}" for i in a_i.get('social_media')],
+                                        'best_time_to_meet': f"{a_i.get('base_time').get('base')} | {a_i.get('base_time').get('time')}",
+                                        'branches': [f"name: {i.get('branch_name')}/ est_date: {i.get('branch_established_date')}/ address: {i.get('branch_street_1')}. {i.get('branch_street_1')}. {i.get('branch_city')}. {i.get('branch_state')}. {i.get('branch_country')}" for i in b_i],
+                                        'updated_at': update,
+                                        'created_at': created
+                                    }
+                                    datas.append(data)
 
-                        except DoctorDetail.DoesNotExist :
-                            data = {
-                                'active': "Not Set",
-                                'accurate_code': g.get('kode_pelanggan_old'),
-                                'rayon_coverage_name': g.get('rayon_asal'),
-                                'dr_full_name': g.get('nama_dokter'),
-                                'apps_bco_id': g.get('id_dokter')
-                            }
+                                except DoctorDetail.DoesNotExist :
+                                    data = {
+                                        'active': "Not Set",
+                                        'accurate_code': g.get('kode_pelanggan_old'),
+                                        'rayon_coverage_name': g.get('rayon_asal'),
+                                        'dr_full_name': g.get('nama_dokter'),
+                                        'apps_bco_id': g.get('id_dokter')
+                                    }
 
-                            datas.append(data)
+                                    datas.append(data)
+                        except ValueError as e:
+                            print(f"[ERROR] Gagal decode JSON di page {i}: {e}")
+                            print(f"[DEBUG] Isi response: {om.text[:200]}...")
+                            logging.error(f"[ERROR] Gagal decode JSON di page {i}: {e}\n[DEBUG] Isi response: {om.text[:200]}...")
+                            continue
+                    else :
+                        print(f"[ERROR] Response tidak valid untuk page {i} - Status: {om.status_code}, Content-Type: {om.headers.get('Content-Type')}")
+                        print(f"[DEBUG] Response: {om.text[:200]}...")
+                        logging.error(f"[ERROR] Gagal decode JSON di page {i}: {e}\n[DEBUG] Isi response: {om.text[:200]}...")
+                        continue
                 
                 except ValueError as e :
                     print(f"JSON decode error: {e}.")
