@@ -36,6 +36,113 @@ logging.basicConfig(
 
 logging.getLogger().addHandler(logging.StreamHandler())
 
+
+API_URL = "https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/7"
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'Host': 'dev-bco.businesscorporateofficer.com'
+}
+
+def get_last_page(api_url):
+    resp = requests.get(api_url)
+    if resp.status_code == 200:
+        return int(resp.json().get('data', {}).get('last_page', 1))
+    raise ValueError("Gagal mendapatkan last_page dari API.")
+
+def get_data_page(i):
+    try:
+        resp = requests.get(f"{API_URL}?page={i}", headers=HEADERS)
+        if resp.status_code == 200 and 'application/json' in resp.headers.get('Content-Type', ''):
+            return resp.json().get('data', {}).get('data', [])
+        logging.warning(f"[WARN] Invalid response on page {i}: {resp.status_code}")
+    except requests.exceptions.RequestException as e:
+        logging.error(f"[NETWORK ERROR] Page {i} gagal: {e}")
+    return []
+
+def process_doctor_not_found(g):
+    return {
+        'active': "Not Set",
+        'accurate_code': g.get('kode_pelanggan_old'),
+        'rayon_coverage_name': g.get('rayon_asal'),
+        'dr_full_name': g.get('nama_dokter'),
+        'apps_bco_id': g.get('id_dokter')
+    }
+
+def process_doctor_from_db(g):
+    try:
+        doctor = DoctorDetail.objects.using('sales').get(jamet_id=int(g.get('id_dokter')))
+        rayon = json.loads(doctor.rayon)
+        info = json.loads(doctor.info)
+        w_i = json.loads(doctor.work_information)
+        p_i = json.loads(doctor.private_information)
+        a_i = json.loads(doctor.additional_information)
+        b_i = json.loads(doctor.branch_information)
+
+        def get_obj(model, obj_id):
+            try:
+                return model.objects.using('master').get(id=int(obj_id))
+            except:
+                return None
+
+        title = get_obj(Title, info.get('title'))
+        salutation = get_obj(Salutation, info.get('salutation'))
+        grade_user = get_obj(UserGrade, w_i.get('sales_information', {}).get('grade_user'))
+        grade_clinic = get_obj(ClinicGrade, w_i.get('sales_information', {}).get('grade_clinic'))
+        specialist = get_obj(Specialist, w_i.get('sales_information', {}).get('specialist_id'))
+
+        return {
+            'active': "Active" if doctor.is_active else "Not Active",
+            'code': doctor.code,
+            'apps_bco_id': doctor.jamet_id,
+            'rayon_pic_id': rayon.get('id'),
+            'rayon_pic_name': rayon.get('rayon'),
+            'rayon_coverage_name': rayon.get('rayon_cvr'),
+            'dr_full_name': str(info.get('full_name')).strip(),
+            'title': f"{title.name}/{title.short_name}" if title else None,
+            'salutation': f"{salutation.salutation}/{salutation.short_salutation}" if salutation else None,
+            'grade_user': f"{grade_user.name}/{grade_user.alias}" if grade_user else None,
+            'grade_clinic': f"{grade_clinic.name}/{grade_clinic.alias}" if grade_clinic else None,
+            'spesialis': f"{specialist.short_name}/{specialist.full}" if specialist else None,
+            'work_email': w_i.get('job_information', {}).get('work_email'),
+            'work_full_address': w_i.get('address', {}).get('fulladdress'),
+            'birth_date': p_i.get('citizenship', {}).get('birth_date'),
+            'private_email': p_i.get('private_contact', {}).get('email'),
+            'interest': [i.get('interest') for i in a_i.get('interest', [])],
+            'updated_at': doctor.updated_at.strftime("%d %B %Y %H:%M:%S"),
+            'created_at': doctor.created_at.strftime("%d %B %Y %H:%M:%S")
+        }
+    except DoctorDetail.DoesNotExist:
+        return process_doctor_not_found(g)
+
+def process_all_pages(last_page):
+    all_data = []
+    for i in range(1, last_page + 1):
+        logging.info(f"Fetching page {i}")
+        data_page = get_data_page(i)
+        for g in data_page:
+            try:
+                data = process_doctor_from_db(g)
+                all_data.append(data)
+            except Exception as e:
+                logging.error(f"[ERROR] Gagal proses dokter ID {g.get('id_dokter')}: {e}")
+        time.sleep(1.5)
+    return all_data
+
+def save_to_excel(data, folder_path):
+    df = pd.DataFrame(data)
+    file_path = os.path.join(folder_path, "doctor_database.xlsx")
+    with pd.ExcelWriter(file_path, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False)
+    return file_path
+
+def create_zip_file(output_dir, files):
+    zip_filename = os.path.join(output_dir, 'data_doctor.zip')
+    with zipfile.ZipFile(zip_filename, 'w') as zipf:
+        for file in files:
+            if os.path.exists(file):
+                zipf.write(file, arcname=os.path.basename(file))
+    return zip_filename
+
 class Command(BaseCommand) :
     help = "Save Database to Excel File (.xslx)"
 
@@ -74,164 +181,33 @@ class Command(BaseCommand) :
             print(f"Pass, now is {w.hour} o'clock.")
             pass
 
-    def backup_db(self) :
+    def backup_db(self):
         try:
-            logging.info(f"Begin generating database to excel at {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}")
-            api = "https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/7"
-            logging.info(f"Success hit Api on code: {requests.get(api).status_code}")
-            page = requests.get(api)
-            last_page = int(page.json().get('data').get('last_page'))
-            logging.info(f"Begin looping the data for {last_page} page.")
+            folder_path = os.path.join(settings.MEDIA_ROOT, 'output')
+            os.makedirs(folder_path, exist_ok=True)
+            logging.info("Start backup_db process.")
 
-            datas = []
-            for i in range(1, last_page + 1) :
-                time.sleep(1.5)
-                retries = 3
-                # while retries >= 0 :
-                try: 
-                    headers = {
-                        'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-                    }
-                    om = requests.get(f"https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/7?page={i}", headers=headers)
-                    if om.status_code == 200 and 'application/json' in om.headers.get('Content-Type', '') :
-                        try:  
-                            datadata = om.json().get('data', {}).get('data', [])
-                            logging.info(f"Processing data on page {i} at {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}")
-                            for g in datadata :
-                                try :
-                                    doctor = DoctorDetail.objects.using('sales').get(jamet_id=int(g.get('id_dokter')))
+            last_page = get_last_page(API_URL)
+            all_data = process_all_pages(last_page)
+            xlsx_file = save_to_excel(all_data, folder_path)
 
-                                    code = doctor.code
-                                    jamet_id = doctor.jamet_id
-                                    rayon = json.loads(doctor.rayon)
-                                    info = json.loads(doctor.info)
-                                    w_i = json.loads(doctor.work_information)
-                                    p_i = json.loads(doctor.private_information)
-                                    a_i = json.loads(doctor.additional_information)
-                                    b_i = json.loads(doctor.branch_information)
-                                    active = doctor.is_active
-                                    update = doctor.updated_at.strftime("%d %B %Y %H:%M:%S")
-                                    created = doctor.created_at.strftime("%d %B %Y %H:%M:%S")
+            log_file = os.path.join(folder_path, 'db_to_excel.log')
+            zip_file = create_zip_file(folder_path, [xlsx_file, log_file])
 
-                                    data = {
-                                        'active': "Active" if active else "Not Active",
-                                        'code' : code,
-                                        'apps_bco_id': jamet_id,
-                                        'rayon_pic_id' : rayon.get('id'),
-                                        'rayon_pic_name' : rayon.get('rayon'),
-                                        'rayon_coverage_name' : rayon.get('rayon_cvr'),
-                                        'dr_first_name' : str(info.get('first_name')).strip(),
-                                        'dr_middle_name' : str(info.get('middle_name')).strip(),
-                                        'dr_last_name' : str(info.get('last_name')).strip(),
-                                        'dr_full_name' : str(info.get('full_name')).strip(),
-                                        'title' : f"{Title.objects.using('master').get(id=int(info.get('title'))).name.strip()}/{Title.objects.using('master').get(id=int(info.get('title'))).short_name.strip()}" if info.get('title') else None,
-                                        'salutation' : f"{Salutation.objects.using('master').get(id=int(info.get('salutation'))).salutation.strip()}/{Salutation.objects.using('master').get(id=int(info.get('salutation'))).short_salutation.strip()}" if info.get('salutation') else None,
-                                        'work_address_street_1': w_i.get('address').get('street_1'),
-                                        'work_address_street_2': w_i.get('address').get('street_2'),
-                                        'work_address_city': w_i.get('address').get('city'),
-                                        'work_address_state': w_i.get('address').get('state'),
-                                        'work_address_country': w_i.get('address').get('country'),
-                                        'work_address_zip': w_i.get('address').get('zip'),
-                                        'work_full_address': w_i.get('address').get('fulladdress'),
-                                        'workspace_name': w_i.get('job_information').get('workspace_name'),
-                                        'job_position': w_i.get('job_information').get('job_position'),
-                                        'work_phone': w_i.get('job_information').get('work_phone'),
-                                        'work_mobile': w_i.get('job_information').get('work_mobile'),
-                                        'work_email': w_i.get('job_information').get('work_email'),
-                                        'grade_user': f"{UserGrade.objects.using('master').get(id=int(w_i.get('sales_information').get('grade_user'))).name.strip()}/{UserGrade.objects.using('master').get(id=int(w_i.get('sales_information').get('grade_user'))).alias.strip()}",
-                                        'grade_clinic': f"{ClinicGrade.objects.using('master').get(id=int(w_i.get('sales_information').get('grade_clinic'))).name.strip()}/{ClinicGrade.objects.using('master').get(id=int(w_i.get('sales_information').get('grade_clinic'))).alias.strip()}",
-                                        'priority': "Prioritas" if w_i.get('sales_information').get('priority') == 1 else "Bukan Prioritas",
-                                        'spesialis': f"{Specialist.objects.using('master').get(id=int(w_i.get('sales_information').get('specialist_id'))).short_name.strip()}/{Specialist.objects.using('master').get(id=int(w_i.get('sales_information').get('specialist_id'))).full.strip()}",
-                                        'accurate_code': w_i.get('system_information').get('accurate_code'),
-                                        'private_address_street_1': p_i.get('private_contact').get('address').get('street_1'),
-                                        'private_address_street_2': p_i.get('private_contact').get('address').get('street_2'),
-                                        'private_address_city': p_i.get('private_contact').get('address').get('city'),
-                                        'private_address_country': p_i.get('private_contact').get('address').get('country'),
-                                        'private_address_zip': p_i.get('private_contact').get('address').get('zip'),
-                                        'private_email': p_i.get('private_contact').get('email'),
-                                        'private_phone': p_i.get('private_contact').get('phone'),
-                                        'nationality': p_i.get('citizenship').get('nationality'),
-                                        'gender': p_i.get('citizenship').get('gender'),
-                                        'birth_date': p_i.get('citizenship').get('birth_date'),
-                                        'birth_place': p_i.get('citizenship').get('birth_place'),
-                                        'religion': p_i.get('citizenship').get('religion'),
-                                        'school_certification': p_i.get('education').get('certification'),
-                                        'field_of_study': p_i.get('education').get('field_study'),
-                                        'school_name': p_i.get('education').get('school_name'),
-                                        'marital_status': p_i.get('family').get('marital_status'),
-                                        'spouses': [f"fullname: {i.get('fullname')}/ phone: {i.get('phone')}/ marriage_date: {i.get('mariage_date')}" for i in p_i.get('family').get('spouse', [])],
-                                        'childrens': [f"fullname: {i.get('fullname')}/ phone: {i.get('phone')}/ birth_date: {i.get('birthdate')}" for i in p_i.get('family').get('children', [])],
-                                        'interest': [f"category: {i.get('category')}/ interest: {i.get('interest')}" for i in a_i.get('interest', [])],
-                                        'socmed': [f"socmed: {i.get('name')}/ account: {i.get('account_name')}" for i in a_i.get('social_media')],
-                                        'best_time_to_meet': f"{a_i.get('base_time').get('base')} | {a_i.get('base_time').get('time')}",
-                                        'branches': [f"name: {i.get('branch_name')}/ est_date: {i.get('branch_established_date')}/ address: {i.get('branch_street_1')}. {i.get('branch_street_1')}. {i.get('branch_city')}. {i.get('branch_state')}. {i.get('branch_country')}" for i in b_i],
-                                        'updated_at': update,
-                                        'created_at': created
-                                    }
-                                    datas.append(data)
+            self.stdout.write(self.style.SUCCESS(f"ZIP file created: {zip_file}"))
 
-                                except DoctorDetail.DoesNotExist :
-                                    data = {
-                                        'active': "Not Set",
-                                        'accurate_code': g.get('kode_pelanggan_old'),
-                                        'rayon_coverage_name': g.get('rayon_asal'),
-                                        'dr_full_name': g.get('nama_dokter'),
-                                        'apps_bco_id': g.get('id_dokter')
-                                    }
-
-                                    datas.append(data)
-                        except ValueError as e:
-                            print(f"[ERROR] Gagal decode JSON di page {i}: {e}")
-                            print(f"[DEBUG] Isi response: {om.text[:200]}...")
-                            logging.error(f"[ERROR] Gagal decode JSON di page {i}: {e}\n[DEBUG] Isi response: {om.text[:200]}...")
-                            continue
-                    else :
-                        print(f"[ERROR] Response tidak valid untuk page {i} - Status: {om.status_code}, Content-Type: {om.headers.get('Content-Type')}")
-                        print(f"[DEBUG] Response: {om.text[:200]}...")
-                        logging.error(f"[ERROR] Gagal decode JSON di page {i}: {e}\n[DEBUG] Isi response: {om.text[:200]}...")
-                        continue
-                
-                except ValueError as e :
-                    print(f"JSON decode error: {e}.")
-
-            qwe_data = pd.DataFrame(datas)
-            logging.info("Processing to excel.")
-            with pd.ExcelWriter(os.path.join(folder_path, "doctor_database.xlsx"), engine="openpyxl") as writer :
-                qwe_data.to_excel(writer, index=False)
-
-            output_dir = os.path.join(settings.MEDIA_ROOT, 'output')
-            zip_filename = os.path.join(output_dir, 'data_doctor.zip')
-            logging.info("Processing to zip all files")
-
-            files_to_zip = [
-                os.path.join(output_dir, 'doctor_database.xlsx'),
-                os.path.join(output_dir, 'db_to_excel.log')
-            ]
-
-            try:
-                with zipfile.ZipFile(zip_filename, 'w') as zipf:
-                    for file in files_to_zip:
-                        if os.path.exists(file):
-                            arcname = os.path.basename(file)
-                            zipf.write(file, arcname=arcname)
-                        else:
-                            logging.warning(f"File not found and skipped: {file}")
-
-                self.stdout.write(self.style.SUCCESS(f"ZIP file created successfully: {zip_filename}"))
-            except Exception as e:
-                logging.error(f"Failed to create ZIP file: {e}")
-                self.stdout.write(self.style.ERROR(f"Failed to create ZIP file: {e}"))
-
-        except Exception as e :
+        except Exception as e:
+            logging.error(f"[FATAL] backup_db failed: {e}")
             email = EmailMessage(
                 subject=f"Extraction Database Error: {str(e)} at {datetime.now()}",
-                body=f"EEEEEEEEEEEEEEERRRRRRRRRRRRRRRROOOOOOOOOOOOOORRRRRRRRRRRRRRR",
+                body="Backup DB failed, see log file.",
                 from_email="satriodasmdi@gmail.com",
-                to=["satrio.it@maztafarma.co.id", "taufan.it@maztafarma.co.id", "satriodasmdi@gmail.com"]
+                to=["satrio.it@maztafarma.co.id", "taufan.it@maztafarma.co.id"]
             )
-            email.attach_file(os.path.join(folder_path ,"db_to_excel.log"))
+            log_file_path = os.path.join(settings.MEDIA_ROOT, 'output', "db_to_excel.log")
+            if os.path.exists(log_file_path):
+                email.attach_file(log_file_path)
             email.send()
-            logging.error("Error Occured: %s", str(e))
             raise e
     
     def backup_database(self, apps_and_dbs):
