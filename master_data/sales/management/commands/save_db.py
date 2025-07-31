@@ -366,7 +366,7 @@ class Command(BaseCommand) :
                         DoctorDetail.objects.using('sales').bulk_update(doctors_to_update, ['rayon'])
                     logging.info(f"Bulk updated {len(doctors_to_update)} doctors from page {i}")
 
-                time.sleep(0.2)
+                time.sleep(1.5)
 
         except Exception as e:
             logging.error(f"Error occurred: {e}")
