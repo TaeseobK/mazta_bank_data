@@ -84,32 +84,72 @@ def process_doctor_from_db(g):
             except:
                 return None
 
-        title = get_obj(Title, info.get('title'))
-        salutation = get_obj(Salutation, info.get('salutation'))
-        grade_user = get_obj(UserGrade, w_i.get('sales_information', {}).get('grade_user'))
-        grade_clinic = get_obj(ClinicGrade, w_i.get('sales_information', {}).get('grade_clinic'))
-        specialist = get_obj(Specialist, w_i.get('sales_information', {}).get('specialist_id'))
+        code = doctor.code
+        jamet_id = doctor.jamet_id
+        rayon = json.loads(doctor.rayon)
+        info = json.loads(doctor.info)
+        w_i = json.loads(doctor.work_information)
+        p_i = json.loads(doctor.private_information)
+        a_i = json.loads(doctor.additional_information)
+        b_i = json.loads(doctor.branch_information)
+        active = doctor.is_active
+        update = doctor.updated_at.strftime("%d %B %Y %H:%M:%S")
+        created = doctor.created_at.strftime("%d %B %Y %H:%M:%S")
 
         return {
-            'active': "Active" if doctor.is_active else "Not Active",
-            'code': doctor.code,
-            'apps_bco_id': doctor.jamet_id,
-            'rayon_pic_id': rayon.get('id'),
-            'rayon_pic_name': rayon.get('rayon'),
-            'rayon_coverage_name': rayon.get('rayon_cvr'),
-            'dr_full_name': str(info.get('full_name')).strip(),
-            'title': f"{title.name}/{title.short_name}" if title else None,
-            'salutation': f"{salutation.salutation}/{salutation.short_salutation}" if salutation else None,
-            'grade_user': f"{grade_user.name}/{grade_user.alias}" if grade_user else None,
-            'grade_clinic': f"{grade_clinic.name}/{grade_clinic.alias}" if grade_clinic else None,
-            'spesialis': f"{specialist.short_name}/{specialist.full}" if specialist else None,
-            'work_email': w_i.get('job_information', {}).get('work_email'),
-            'work_full_address': w_i.get('address', {}).get('fulladdress'),
-            'birth_date': p_i.get('citizenship', {}).get('birth_date'),
-            'private_email': p_i.get('private_contact', {}).get('email'),
-            'interest': [i.get('interest') for i in a_i.get('interest', [])],
-            'updated_at': doctor.updated_at.strftime("%d %B %Y %H:%M:%S"),
-            'created_at': doctor.created_at.strftime("%d %B %Y %H:%M:%S")
+                'active': "Active" if active else "Not Active",
+                'code' : code,
+                'apps_bco_id': jamet_id,
+                'rayon_pic_id' : rayon.get('id'),
+                'rayon_pic_name' : rayon.get('rayon'),
+                'rayon_coverage_name' : rayon.get('rayon_cvr'),
+                'dr_first_name' : str(info.get('first_name')).strip(),
+                'dr_middle_name' : str(info.get('middle_name')).strip(),
+                'dr_last_name' : str(info.get('last_name')).strip(),
+                'dr_full_name' : str(info.get('full_name')).strip(),
+                'title' : f"{Title.objects.using('master').get(id=int(info.get('title'))).name.strip()}/{Title.objects.using('master').get(id=int(info.get('title'))).short_name.strip()}" if info.get('title') else None,
+                'salutation' : f"{Salutation.objects.using('master').get(id=int(info.get('salutation'))).salutation.strip()}/{Salutation.objects.using('master').get(id=int(info.get('salutation'))).short_salutation.strip()}" if info.get('salutation') else None,
+                'work_address_street_1': w_i.get('address').get('street_1'),
+                'work_address_street_2': w_i.get('address').get('street_2'),
+                'work_address_city': w_i.get('address').get('city'),
+                'work_address_state': w_i.get('address').get('state'),
+                'work_address_country': w_i.get('address').get('country'),
+                'work_address_zip': w_i.get('address').get('zip'),
+                'work_full_address': w_i.get('address').get('fulladdress'),
+                'workspace_name': w_i.get('job_information').get('workspace_name'),
+                'job_position': w_i.get('job_information').get('job_position'),
+                'work_phone': w_i.get('job_information').get('work_phone'),
+                'work_mobile': w_i.get('job_information').get('work_mobile'),
+                'work_email': w_i.get('job_information').get('work_email'),
+                'grade_user': f"{UserGrade.objects.using('master').get(id=int(w_i.get('sales_information').get('grade_user'))).name.strip()}/{UserGrade.objects.using('master').get(id=int(w_i.get('sales_information').get('grade_user'))).alias.strip()}",
+                'grade_clinic': f"{ClinicGrade.objects.using('master').get(id=int(w_i.get('sales_information').get('grade_clinic'))).name.strip()}/{ClinicGrade.objects.using('master').get(id=int(w_i.get('sales_information').get('grade_clinic'))).alias.strip()}",
+                'priority': "Prioritas" if w_i.get('sales_information').get('priority') == 1 else "Bukan Prioritas",
+                'spesialis': f"{Specialist.objects.using('master').get(id=int(w_i.get('sales_information').get('specialist_id'))).short_name.strip()}/{Specialist.objects.using('master').get(id=int(w_i.get('sales_information').get('specialist_id'))).full.strip()}",
+                'accurate_code': w_i.get('system_information').get('accurate_code'),
+                'private_address_street_1': p_i.get('private_contact').get('address').get('street_1'),
+                'private_address_street_2': p_i.get('private_contact').get('address').get('street_2'),
+                'private_address_city': p_i.get('private_contact').get('address').get('city'),
+                'private_address_country': p_i.get('private_contact').get('address').get('country'),
+                'private_address_zip': p_i.get('private_contact').get('address').get('zip'),
+                'private_email': p_i.get('private_contact').get('email'),
+                'private_phone': p_i.get('private_contact').get('phone'),
+                'nationality': p_i.get('citizenship').get('nationality'),
+                'gender': p_i.get('citizenship').get('gender'),
+                'birth_date': p_i.get('citizenship').get('birth_date'),
+                'birth_place': p_i.get('citizenship').get('birth_place'),
+                'religion': p_i.get('citizenship').get('religion'),
+                'school_certification': p_i.get('education').get('certification'),
+                'field_of_study': p_i.get('education').get('field_study'),
+                'school_name': p_i.get('education').get('school_name'),
+                'marital_status': p_i.get('family').get('marital_status'),
+                'spouses': [f"fullname: {i.get('fullname')}/ phone: {i.get('phone')}/ marriage_date: {i.get('mariage_date')}" for i in p_i.get('family').get('spouse', [])],
+                'childrens': [f"fullname: {i.get('fullname')}/ phone: {i.get('phone')}/ birth_date: {i.get('birthdate')}" for i in p_i.get('family').get('children', [])],
+                'interest': [f"category: {i.get('category')}/ interest: {i.get('interest')}" for i in a_i.get('interest', [])],
+                'socmed': [f"socmed: {i.get('name')}/ account: {i.get('account_name')}" for i in a_i.get('social_media')],
+                'best_time_to_meet': f"{a_i.get('base_time').get('base')} | {a_i.get('base_time').get('time')}",
+                'branches': [f"name: {i.get('branch_name')}/ est_date: {i.get('branch_established_date')}/ address: {i.get('branch_street_1')}. {i.get('branch_street_1')}. {i.get('branch_city')}. {i.get('branch_state')}. {i.get('branch_country')}" for i in b_i],
+                'updated_at': update,
+                'created_at': created
         }
     except DoctorDetail.DoesNotExist:
         return process_doctor_not_found(g)
