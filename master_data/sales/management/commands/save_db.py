@@ -5,7 +5,6 @@ from sales.models import *
 from master.models import *
 from django.core.mail import EmailMessage
 from datetime import datetime, time
-from master_data.local_settings import settings_for_backup as sfb
 import json
 import sys
 import zipfile
@@ -36,6 +35,9 @@ logging.basicConfig(
 
 logging.getLogger().addHandler(logging.StreamHandler())
 
+# ----------------------------------------
+
+# Configuration for backups
 
 API_URL = "https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/7"
 HEADERS = {
@@ -183,6 +185,24 @@ def create_zip_file(output_dir, files):
                 zipf.write(file, arcname=os.path.basename(file))
     return zip_filename
 
+def sfb() :
+    w = datetime.now().time()
+
+    if 12 <= w.hour <= 13 :
+        return "generate"
+    
+    elif 1 <= w.hour <= 2 :
+        return "backup"
+    
+    elif 2 <= w.hour <= 3 :
+        return "fullname"
+    
+    elif 11 <= w.hour <= 12 :
+        return "rayon"
+
+# ----------------------------------------
+
+# Class for backups
 class Command(BaseCommand) :
     help = "Save Database to Excel File (.xslx)"
 
