@@ -66,6 +66,7 @@ def process_doctor_not_found(g):
         'active': "Not Set",
         'accurate_code': g.get('kode_pelanggan_old'),
         'rayon_coverage_name': g.get('rayon_asal'),
+        'rayon_app_bco_code': g.get('kode_pelanggan'),
         'dr_full_name': g.get('nama_dokter'),
         'apps_bco_id': g.get('id_dokter')
     }
@@ -75,7 +76,7 @@ def internal_db() :
     internal_data = []
 
     try :
-        internal_qs = DoctorDetail.objects.using('sales').filter(is_active=True).all()
+        internal_qs = DoctorDetail.objects.using('sales').all()
         logging.info(f"Total active doctors found: {internal_qs.count()}")
     except Exception as e :
         logging.error(f"[FATAL] Failed to query internal DB: {e}")
@@ -116,6 +117,7 @@ def internal_db() :
                 'rayon_pic_id': rayon.get('id'),
                 'rayon_pic_name': rayon.get('rayon'),
                 'rayon_coverage_name': rayon.get('rayon_cvr'),
+                'rayon_app_bco_code': rayon.get('kode_doctor_bco'),
                 'dr_first_name': str(info.get('first_name')).strip(),
                 'dr_middle_name': str(info.get('middle_name')).strip(),
                 'dr_last_name': str(info.get('last_name')).strip(),
@@ -209,6 +211,7 @@ def process_doctor_from_db(g):
                 'rayon_pic_id' : rayon.get('id'),
                 'rayon_pic_name' : rayon.get('rayon'),
                 'rayon_coverage_name' : rayon.get('rayon_cvr'),
+                'rayon_app_bco_code': rayon.get('kode_doctor_bco'),
                 'dr_first_name' : str(info.get('first_name')).strip(),
                 'dr_middle_name' : str(info.get('middle_name')).strip(),
                 'dr_last_name' : str(info.get('last_name')).strip(),
@@ -295,7 +298,7 @@ def create_zip_file(output_dir, files):
 def sfb() :
     w = datetime.now().time()
 
-    if 14 <= w.hour <= 15 :
+    if 21 <= w.hour <= 22 :
         return "generate"
     
     elif 1 <= w.hour <= 2 :
@@ -304,7 +307,7 @@ def sfb() :
     elif 2 <= w.hour <= 3 :
         return "fullname"
     
-    elif 4 <= w.hour <= 6 :
+    elif 19 <= w.hour <= 20 :
         return "rayon"
 
 # ----------------------------------------
@@ -448,52 +451,52 @@ class Command(BaseCommand) :
             logging.error("Error Occured: %s", str(e))
     
     def nam_rayon(self):
-        logging.info("Starting rayon update...")
+        logging.info("Start updating rayon without batching...")
+        session = requests.Session()
+        sleep_time = 1  # delay antar request (adjust sesuai kemampuan API)
 
         try:
-            conn = requests.get('https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/7')
-            last_page = int(conn.json().get('data').get('last_page'))
-            logging.info(f"Total page to process: {last_page}")
+            queryset = DoctorDetail.objects.using('sales').all().order_by('id')
 
-            for i in range(1, last_page + 1):
-                logging.info(f"Fetching page {i}")
-                res = requests.get(f'https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/7?page={i}')
-                the_data = res.json().get('data').get('data')
+            for index, doctor in enumerate(queryset, 1):
+                try:
+                    response = session.get(
+                        f'https://dev-bco.businesscorporateofficer.com/api/master-data-dokter/detail/{doctor.jamet_id}',
+                        timeout=10
+                    )
 
-                doctors_to_update = []
+                    if response.status_code != 200:
+                        logging.warning(f"[{index}] Failed to fetch API for {doctor.code}, status {response.status_code}")
+                        time.sleep(sleep_time)
+                        continue
 
-                for r in the_data:
-                    id_dokter = r.get('id_dokter')
-                    try:
-                        doctor = DoctorDetail.objects.using('sales').get(jamet_id=int(id_dokter))
+                    data = response.json().get('data')
+                    if not data:
+                        logging.warning(f"[{index}] No data for {doctor.code}")
+                        time.sleep(sleep_time)
+                        continue
 
-                        try:
-                            rayon_data = json.loads(doctor.rayon or '{}')
-                            id_rayon = rayon_data.get('id')
-                            rayon = rayon_data.get('rayon')
-                        except json.JSONDecodeError:
-                            id_rayon = None
-                            rayon = None
+                    rayon = json.loads(doctor.rayon or "{}")
+                    doctor.rayon = json.dumps({
+                        'id': rayon.get('id'),
+                        'rayon': rayon.get('rayon'),
+                        'rayon_cvr': data.get('rayon_asal'),
+                        'kode_doctor_bco': data.get('kode_pelanggan')
+                    })
+                    doctor.is_active = data.get('status_dokter') == 'active'
 
-                        doctor.rayon = json.dumps({
-                            'id': id_rayon,
-                            'rayon': rayon,
-                            'rayon_cvr': r.get('rayon_asal')
-                        })
-
-                        doctors_to_update.append(doctor)
-                        logging.info(f"Queued update for: {json.loads(doctor.info).get('first_name')}")
-
-                    except DoctorDetail.DoesNotExist:
-                        logging.warning(f"Doctor with id_dokter={id_dokter} does not exist.")
-
-                # Save in bulk
-                if doctors_to_update:
                     with transaction.atomic(using='sales'):
-                        DoctorDetail.objects.using('sales').bulk_update(doctors_to_update, ['rayon'])
-                    logging.info(f"Bulk updated {len(doctors_to_update)} doctors from page {i}")
+                        doctor.save(using='sales')
+                        logging.info(f"[{index}] Updated: {doctor.code}")
 
-                time.sleep(1.5)
+                except Exception as e:
+                    logging.error(f"[{index}] Error on doctor {doctor.code}: {e}")
+
+                time.sleep(sleep_time)  # delay regardless of success or error
 
         except Exception as e:
-            logging.error(f"Error occurred: {e}")
+            logging.error(f"Unexpected error in nam_rayon: {e}")
+
+        finally:
+            session.close()
+            logging.info("Finished updating rayon.")
