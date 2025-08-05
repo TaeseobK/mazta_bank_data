@@ -295,7 +295,7 @@ def create_zip_file(output_dir, files):
 def sfb() :
     w = datetime.now().time()
 
-    if 11 <= w.hour <= 12 :
+    if 14 <= w.hour <= 15 :
         return "generate"
     
     elif 1 <= w.hour <= 2 :
