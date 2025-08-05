@@ -70,6 +70,110 @@ def process_doctor_not_found(g):
         'apps_bco_id': g.get('id_dokter')
     }
 
+def internal_db() :
+    logging.info("Start fetching data from internal DB...")
+    internal_data = []
+
+    try :
+        internal_qs = DoctorDetail.objects.using('sales').filter(is_active=True).all()
+        logging.info(f"Total active doctors found: {internal_qs.count()}")
+    except Exception as e :
+        logging.error(f"[FATAL] Failed to query internal DB: {e}")
+        return []
+
+    for doctor in internal_qs :
+        try:
+            code = doctor.code
+            jamet_id = doctor.jamet_id
+            active = doctor.is_active
+            update = doctor.updated_at.strftime("%d %B %Y %H:%M:%S")
+            created = doctor.created_at.strftime("%d %B %Y %H:%M:%S")
+            
+            try:
+                rayon = json.loads(doctor.rayon)
+                info = json.loads(doctor.info)
+                w_i = json.loads(doctor.work_information)
+                p_i = json.loads(doctor.private_information)
+                a_i = json.loads(doctor.additional_information)
+                b_i = json.loads(doctor.branch_information)
+            
+            except Exception as e_json :
+                logging.error(f"[JSON ERROR] doctor_id={jamet_id}: {e_json}")
+                continue
+
+            def get_rel(model, rel_id, fields):
+                try:
+                    obj = model.objects.using('master').get(id=int(rel_id))
+                    return '/'.join(str(getattr(obj, f, '')).strip() for f in fields)
+                except Exception as e:
+                    logging.warning(f"[RELATION WARNING] doctor_id={jamet_id}, model={model.__name__}, id={rel_id}: {e}")
+                    return None
+
+            internal_data.append({
+                'active': "Active" if active else "Not Active",
+                'code': code,
+                'apps_bco_id': jamet_id,
+                'rayon_pic_id': rayon.get('id'),
+                'rayon_pic_name': rayon.get('rayon'),
+                'rayon_coverage_name': rayon.get('rayon_cvr'),
+                'dr_first_name': str(info.get('first_name')).strip(),
+                'dr_middle_name': str(info.get('middle_name')).strip(),
+                'dr_last_name': str(info.get('last_name')).strip(),
+                'dr_full_name': str(info.get('full_name')).strip(),
+                'title': get_rel(Title, info.get('title'), ['name', 'short_name']) if info.get('title') else None,
+                'salutation': get_rel(Salutation, info.get('salutation'), ['salutation', 'short_salutation']) if info.get('salutation') else None,
+                'work_address_street_1': w_i.get('address', {}).get('street_1'),
+                'work_address_street_2': w_i.get('address', {}).get('street_2'),
+                'work_address_city': w_i.get('address', {}).get('city'),
+                'work_address_state': w_i.get('address', {}).get('state'),
+                'work_address_country': w_i.get('address', {}).get('country'),
+                'work_address_zip': w_i.get('address', {}).get('zip'),
+                'work_full_address': w_i.get('address', {}).get('fulladdress'),
+                'workspace_name': w_i.get('job_information', {}).get('workspace_name'),
+                'job_position': w_i.get('job_information', {}).get('job_position'),
+                'work_phone': w_i.get('job_information', {}).get('work_phone'),
+                'work_mobile': w_i.get('job_information', {}).get('work_mobile'),
+                'work_email': w_i.get('job_information', {}).get('work_email'),
+                'grade_user': get_rel(UserGrade, w_i.get('sales_information', {}).get('grade_user'), ['name', 'alias']),
+                'grade_clinic': get_rel(ClinicGrade, w_i.get('sales_information', {}).get('grade_clinic'), ['name', 'alias']),
+                'priority': "Prioritas" if w_i.get('sales_information', {}).get('priority') == 1 else "Bukan Prioritas",
+                'spesialis': get_rel(Specialist, w_i.get('sales_information', {}).get('specialist_id'), ['short_name', 'full']),
+                'accurate_code': w_i.get('system_information', {}).get('accurate_code'),
+                'private_address_street_1': p_i.get('private_contact', {}).get('address', {}).get('street_1'),
+                'private_address_street_2': p_i.get('private_contact', {}).get('address', {}).get('street_2'),
+                'private_address_city': p_i.get('private_contact', {}).get('address', {}).get('city'),
+                'private_address_country': p_i.get('private_contact', {}).get('address', {}).get('country'),
+                'private_address_zip': p_i.get('private_contact', {}).get('address', {}).get('zip'),
+                'private_email': p_i.get('private_contact', {}).get('email'),
+                'private_phone': p_i.get('private_contact', {}).get('phone'),
+                'nationality': p_i.get('citizenship', {}).get('nationality'),
+                'gender': p_i.get('citizenship', {}).get('gender'),
+                'birth_date': p_i.get('citizenship', {}).get('birth_date'),
+                'birth_place': p_i.get('citizenship', {}).get('birth_place'),
+                'religion': p_i.get('citizenship', {}).get('religion'),
+                'school_certification': p_i.get('education', {}).get('certification'),
+                'field_of_study': p_i.get('education', {}).get('field_study'),
+                'school_name': p_i.get('education', {}).get('school_name'),
+                'marital_status': p_i.get('family', {}).get('marital_status'),
+                'spouses': [f"fullname: {i.get('fullname')}/ phone: {i.get('phone')}/ marriage_date: {i.get('mariage_date')}" for i in p_i.get('family', {}).get('spouse', [])],
+                'childrens': [f"fullname: {i.get('fullname')}/ phone: {i.get('phone')}/ birth_date: {i.get('birthdate')}" for i in p_i.get('family', {}).get('children', [])],
+                'interest': [f"category: {i.get('category')}/ interest: {i.get('interest')}" for i in a_i.get('interest', [])],
+                'socmed': [f"socmed: {i.get('name')}/ account: {i.get('account_name')}" for i in a_i.get('social_media', [])],
+                'best_time_to_meet': f"{a_i.get('base_time', {}).get('base')} | {a_i.get('base_time', {}).get('time')}",
+                'branches': [f"name: {i.get('branch_name')}/ est_date: {i.get('branch_established_date')}/ address: {i.get('branch_street_1')}. {i.get('branch_street_1')}. {i.get('branch_city')}. {i.get('branch_state')}. {i.get('branch_country')}" for i in b_i],
+                'updated_at': update,
+                'created_at': created
+            })
+            logging.info(f"Success uploaded doctor with code: {code}")
+
+        except Exception as e :
+            logging.error(f"[ERROR] doctor_id={doctor.id}: {e}")
+        
+        time.sleep(0.5)
+    
+    logging.info(f"Finished fetching internal DB: {len(internal_data)} records processed.")
+    return internal_data
+
 def process_doctor_from_db(g):
     try:
         doctor = DoctorDetail.objects.using('sales').get(jamet_id=int(g.get('id_dokter')))
@@ -170,11 +274,14 @@ def process_all_pages(last_page):
         time.sleep(1.5)
     return all_data
 
-def save_to_excel(data, folder_path):
-    df = pd.DataFrame(data)
+def save_to_excel(data_api, folder_path):
+    internal_data = internal_db()
     file_path = os.path.join(folder_path, "doctor_database.xlsx")
-    with pd.ExcelWriter(file_path, engine='openpyxl') as writer:
-        df.to_excel(writer, index=False)
+
+    with pd.ExcelWriter(file_path, engine='openpyxl') as writer :
+        pd.DataFrame(data_api).to_excel(writer, index=False, sheet_name='Doctor_Active_Via_API')
+        pd.DataFrame(internal_data).to_excel(writer, index=False, sheet_name='Doctor_From_DB')
+    
     return file_path
 
 def create_zip_file(output_dir, files):
@@ -188,7 +295,7 @@ def create_zip_file(output_dir, files):
 def sfb() :
     w = datetime.now().time()
 
-    if 12 <= w.hour <= 13 :
+    if 11 <= w.hour <= 12 :
         return "generate"
     
     elif 1 <= w.hour <= 2 :
@@ -197,7 +304,7 @@ def sfb() :
     elif 2 <= w.hour <= 3 :
         return "fullname"
     
-    elif 11 <= w.hour <= 12 :
+    elif 4 <= w.hour <= 6 :
         return "rayon"
 
 # ----------------------------------------
