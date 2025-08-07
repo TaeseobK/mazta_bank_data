@@ -1,0 +1,45 @@
+{% extends 'base/base_app.html' %}
+{% load static %}
+
+{% block header %}
+    {% include 'head/nav_1.html' %}
+{% endblock header %}
+
+{% block main %}
+<section class="m-5 flex gap-5 z-0">
+    <div class="p-10 m-5 bg-base-300 shadow-lg rounded-sm border-2 border-gray-800 w-full">
+        <form action="." method="post">
+            {% csrf_token %}
+            <div class="flex justify-center items-center gap-10">
+                <div class="flex justify-center items-center gap-5">
+                    <label for="rayon_asal" class="label label-md label-accent">Pilih Rayon Asal</label>
+                    <select name="rayon_asal" id="rayon_asal" class="select select-primary select-sm cursor-pointer">
+                        <option value="" selected>Pilih Rayon Asal</option>
+                        {% for i in rayon %}
+                            <option class="option cursor-pointer" value="{{ i.id }}">{{ i.rayon }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="flex justify-center items-center gap-5">
+                    <label for="rayon_tujuan" class="label label-md label-accent">Pilih Rayon Tujuan</label>
+                    <select name="rayon_tujuan" id="rayon_tujuan" class="select select-primary select-sm cursor-pointer">
+                        <option value="" selected>Pilih Rayon Tujuan</option>
+                        {% for i in rayon %}
+                            <option class="option cursor-pointer" value="{{ i.id }}">{{ i.rayon }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="flex justify-center items-center gap-5">
+                    <button class="btn btn-sm rounded-sm bg-secondary" type="submit">Submit</button>
+                </div>
+            </div>
+            <div class="mt-2 w-full flex items-center justify-start gap-5">
+                <label for="check-all" class="label text-sm font-semibold">Check All</label>
+                <input id="check-all" name="check-all" type="checkbox" class="rounded-md cursor-pointer">
+            </div>
+            <div id="data-grid" class="grid grid-cols-6 gap-5 mt-10">
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock main %}

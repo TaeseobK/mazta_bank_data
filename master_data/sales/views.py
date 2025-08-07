@@ -10,6 +10,7 @@ from functools import wraps
 from master_data.local_settings import *
 from master_data.rules import *
 import json
+from django.http import JsonResponse
 import random
 import calendar
 import string
@@ -46,10 +47,13 @@ def update_data(request) :
 def index_sales(request) :
     return redirect('master:login')
 
-def api_login_required(view_func) :
+def api_login_required(view_func):
     @wraps(view_func)
-    def wrapper(request, *args, **kwargs) :
-        if not request.session.get('token') or request.user.is_superuser :
+    def wrapper(request, *args, **kwargs):
+        is_token_valid = request.session.get('token') is not None
+        is_admin = request.user.is_staff or request.user.is_superuser
+
+        if not is_token_valid and not is_admin:
             return redirect('master:home')
         
         return view_func(request, *args, **kwargs)
@@ -63,148 +67,115 @@ def remove_duplicates(text) :
     return ', '.join(unique_values)
 
 @api_login_required
-def doctor_list(request) :
+def doctor_list(request):
     id_user = request.session.get('detail').get('id_user')
     request.session['back_url'] = request.get_full_path()
+    search = request.GET.get('search', '')
+    page = request.GET.get('page', '1')
+    show_section = not request.user.is_staff and not "bco" in request.user.email
 
-    if request.user.is_staff :
-        page = request.GET.get('page', '1')
-        search = request.GET.get('search')
+    def get_local_data(d):
+        try:
+            dd = DoctorDetail.objects.using('sales').get(jamet_id=d.get('id_dokter'))
+            last_update = dd.updated_at
+            created_at = dd.created_at
+            rayon = json.loads(dd.rayon)
+            info = json.loads(dd.info).get('rayon', None)
+            priority = json.loads(dd.work_information).get('sales_information').get('priority', 0)
+            priority_label = "Priority" if int(priority) == 1 else "Not Priority"
+            return last_update, created_at, priority_label, info, rayon, dd
+        except DoctorDetail.DoesNotExist:
+            return "Not Found", "Not Found", "Not Set", None, None, None
 
+    def handle_admin():
         api_url = api_doctor_admin()
+        response = requests.post(api_url, data={'keyword': search, 'page': page})
+        if response.status_code != 200:
+            return render(request, 'error.html', {'message': 'Gagal mengambil data dokter dari server'})
 
-        response = requests.post(api_url, data={'keyword' : search, 'page': page})
+        dt = response.json()
+        page_obj = []
 
-        if response.status_code == 200 :
-            dt = response.json()
+        for t in dt.get('data').get('data', []):
+            old_code = t.get('kode_pelanggan_old')
+            if old_code:
+                t['kode_pelanggan_old'] = remove_duplicates(old_code)
 
-            page_obj = []
+            last_update, created_at, priority, _, rayon, doctor = get_local_data(t)
 
-            for t in dt.get('data').get('data') :
-
-                old_code = t.get('kode_pelanggan_old')
-
-                if old_code :
-                    distinct_old_code = remove_duplicates(old_code)
-                    t['kode_pelanggan_old'] = distinct_old_code
-
-                if DoctorDetail.objects.using('sales').filter(jamet_id=int(t.get('id_dokter'))).exists() :
-                    dr = DoctorDetail.objects.using('sales').get(jamet_id=int(t.get('id_dokter')))
-                    last_update = dr.updated_at
-                    created_at = dr.created_at
-                    rayon = json.loads(dr.rayon)
-                    i = json.loads(dr.work_information).get('sales_information').get('priority')
-
-                    if int(i) == 1 :
-                        priority = "Priority"
-
-                    else :
-                        priority = "Bukan Prioritas"
-                    
-                else :
-                    last_update = "Not Found"
-                    created_at = "Not Found"
-                    priority = "Not Set"
-                    rayon = None
-                
-                page_obj.append({
-                    'data' : t,
-                    'last_update' : last_update,
-                    'created_at': created_at,
-                    'priority' : priority,
-                    'cover' : rayon
-                })
-            show_section = not request.user.is_staff and not "bco" in request.user.email
+            page_obj.append({
+                'data': t,
+                'last_update': last_update,
+                'created_at': created_at,
+                'priority': priority,
+                'cover': rayon,
+                'dr': doctor
+            })
 
         return render(request, 'sales_pages/doctor_list.html', {
-            'title' : 'Doctor List',
-            'page_name' : 'Doctor List',
-            'page_obj' : page_obj,
-            'current_page' : dt.get('data').get('current_page'),
-            'last_page' : dt.get('data').get('last_page'),
-            'next_page' : dt.get('data').get('next_page_url'),
-            'prev_page' : dt.get('data').get('prev_page_url'),
-            'show_section' : show_section,
-            'api' : "True",
+            'title': 'Doctor List',
+            'page_name': 'Doctor List',
+            'page_obj': page_obj,
+            'current_page': dt.get('data').get('current_page'),
+            'last_page': dt.get('data').get('last_page'),
+            'next_page': dt.get('data').get('next_page_url'),
+            'prev_page': dt.get('data').get('prev_page_url'),
+            'show_section': show_section,
+            'api': "True",
             'search_query': search
         })
 
-    else :
+    def handle_sales():
         api_url = api_doctor_sales(id_user)
-
         response = requests.get(api_url)
+        if response.status_code != 200:
+            return render(request, 'error.html', {'message': 'Gagal mengambil data dokter dari server'})
 
-        if response.status_code == 200 :
-            search_query = request.GET.get('search')
+        api_data = response.json()
+        data = []
 
-            api_data = response.json()
+        for d in api_data.get('data', []):
+            last_update, created_at, priority, full_name, rayon, doctor = get_local_data(d)
+            data.append({
+                'data': d,
+                'last_update': last_update,
+                'created_at': created_at,
+                'priority': priority,
+                'full_name': full_name,
+                'cover': rayon,
+                'dr' : doctor
+            })
 
-            data = []
+        if search:
+            data = [
+                d for d in data if any([
+                    search.lower() in str(d['data'].get('nama_dokter', '')).lower(),
+                    search.lower() in str(d['data'].get('kode_pelanggan_old', '')).lower(),
+                    search.lower() in str(d['priority']).lower(),
+                    search.lower() in str(d.get('full_name') or '').lower(),
+                    search.lower() in str(d.get('cover') or '').lower(),
+                ])
+            ]
 
-            for d in api_data.get('data') :
-                if DoctorDetail.objects.using('sales').filter(jamet_id=d.get('id_dokter')).exists() :
-                    dd = DoctorDetail.objects.using('sales').get(jamet_id=d.get('id_dokter'))
-                    last_update = dd.updated_at
-                    created_at = dd.created_at
-                    info = json.loads(dd.info).get('rayon')
-                    rayon = json.loads(dd.rayon)
-                    i = json.loads(dd.work_information).get('sales_information').get('priority')
+        paginator = Paginator(data, 12)
+        page_obj = paginator.get_page(page)
 
-                    if i == 1 :
-                        priority = "Priority"
-                    
-                    else :
-                        priority = "Not Priority"
-
-                else :
-                    last_update = "Not Found"
-                    priority = "Not Set"
-                    created_at = "Nof Found"
-                    info = None
-                    rayon = None
-                
-                data.append({
-                    'data' : d,
-                    'last_update' : last_update,
-                    'created_at': created_at,
-                    'priority' : priority,
-                    'full_name': info.get('full_name') if info else None,
-                    'cover' : rayon
-                })
-            
-            show_section = not request.user.is_staff and not "bco" in request.user.email
-
-            if search_query :
-                data = [                
-                    d for d in data
-                    if (
-                        search_query.lower() in str(d['data'].get('nama_dokter')).lower() or
-                        search_query.lower() in str(d['data'].get('kode_pelanggan_old')).lower() or
-                        search_query.lower() in str(d['priority']).lower() or
-                        search_query.lower() in str(d['full_name']).lower() or
-                        search_query.lower() in str(d['cover']).lower()
-                    )
-                ]
-
-            paginator = Paginator(data, 12)
-
-            page_number = request.GET.get('page', 1)
-            page_obj = paginator.get_page(page_number)
-
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
-                return render(request, 'sales_pages/doctor_list.html', {
-                    'page_obj' : page_obj,
-                    'search_query': search_query
-                })
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return render(request, 'sales_pages/doctor_list.html', {
+                'page_obj': page_obj,
+                'search_query': search
+            })
 
         return render(request, 'sales_pages/doctor_list.html', {
-            'title' : 'Doctor List',
-            'page_name' : 'Doctor List',
-            'page_obj' : page_obj,
-            'api' : "False",
-            'show_section' : show_section,
-            'search_query': search_query
+            'title': 'Doctor List',
+            'page_name': 'Doctor List',
+            'page_obj': page_obj,
+            'api': "False",
+            'show_section': show_section,
+            'search_query': search
         })
+
+    return handle_admin() if request.user.is_staff else handle_sales()
 
 @api_login_required
 def doctor_detail(request, user_id, doc_id) :
@@ -672,96 +643,6 @@ def doctor_detail(request, user_id, doc_id) :
 @admin_required
 @group_required('sales')
 @login_required(login_url='login/')
-def dctr_adm(request) :
-    search_query = request.GET.get('search')
-    request.session['back_url'] = request.get_full_path()
-
-    doctors = DoctorDetail.objects.using('sales').filter(is_active=True).all().order_by('-created_at')
-    rayon_api = requests.get(api_rayon())
-
-    if rayon_api.status_code == 200 :
-        rayo = rayon_api.json().get('data')
-        rayons = []
-        for r in rayo :
-            if not ("TIDAK AKTIF" in r.get('kode_rayon')) and not ("TESTING" in r.get('kode_rayon')) and not ("DUMMY" in r.get('kode_rayon')) :
-                rayons.append(r)
-    
-    else :
-        rayons = None
-    
-    show_section = not request.user.is_staff and not "bco" in request.user.email
-
-    data_ = []
-    data = []
-    for doctor in doctors :
-        doctor.rayon = json.loads(doctor.rayon)
-        doctor.info = json.loads(doctor.info)
-        doctor.work_information = json.loads(doctor.work_information)
-        doctor.private_information = json.loads(doctor.private_information)
-        doctor.additional_information = json.loads(doctor.additional_information)
-        doctor.branch_information = json.loads(doctor.branch_information)
-
-        data.append(doctor)
-        data_.append(doctor)
-
-    if search_query :
-        data = [
-            d for d in data
-            if (
-                search_query.lower() in str(d.rayon.get('rayon')).lower() or
-                search_query.lower() in str(d.info.get('first_name')).lower() or
-                search_query.lower() in str(d.info.get('middle_name')).lower() or
-                search_query.lower() in str(d.info.get('last_name')).lower() or
-                search_query.lower() in str(d.info.get('full_name')).lower() or
-                search_query.lower() in str(d.code).lower()
-            )
-        ]   
-
-    paginator = Paginator(data, 12)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
-        return render(request, 'sales_pages/doctor_list_admin.html', {
-            'page_obj' : page_obj
-        })
-    
-    if request.method == 'POST' :
-        metode = request.POST.get('metode', '')
-
-        if metode == 'post' :
-            idrayon = request.POST.get('id-ryn', '')
-            iddctr = request.POST.getlist('id-dctrs')
-
-            rayon = None
-
-            for r in rayons :
-                if r.get('id_user') == int(idrayon) :
-                    rayon = r
-
-            DoctorDetail.objects.using('sales').filter(id__in=iddctr).update(
-                rayon=json.dumps({
-                    'id' : rayon.get('id_user'),
-                    'rayon' : rayon.get('kode_rayon'),
-                    'rayon_cvr': rayon.get('rayon_asal')
-                })
-            )
-            messages.success(request, "Rayon updated successfully.")
-            return redirect('sales:doctor_admin')
-    
-    return render(request, 'sales_pages/doctor_list_admin.html', {
-        'title' : "Doctor List",
-        'page_name' : "Doctor List",
-        'page_obj' : page_obj,
-        'rayons' : rayons,
-        'show_section' : show_section,
-        'data' : data_,
-        'api' : "False"
-    })
-
-@admin_required
-@group_required('sales')
-@login_required(login_url='login/')
 def adm_doctor_detail(request, dr_id) :
     doctor = DoctorDetail.objects.using('sales').get(id=int(dr_id))
 
@@ -823,6 +704,151 @@ def adm_doctor_detail(request, dr_id) :
         'datadata' : data,
         'api' : "False"
     })
+
+def switch_rayon(request) :
+    id_user = request.session['detail'].get('id_user')
+    drs = []
+
+    if not 'bco' in request.user.username and not 'gmail' in request.user.username :
+        return redirect('sales:doctor_list')
+    
+    else :
+        if 'bco' in request.user.username :
+            api = requests.get(rayon_api(int(id_user)))
+            data = api.json().get('data')[0]
+            if data.get('atasan') :
+                for i in DoctorDetail.objects.using('sales').all().order_by('-id') :
+                    rayons = json.loads(i.rayon)
+                    info = json.loads(i.info)
+                    id = i.pk
+
+                    if rayons.get('id') == int(data.get('atasan')) :
+                        drs.append({
+                            'rayon' : rayons,
+                            'info' : info,
+                            'id' : id
+                        })
+                    else :
+                        pass
+            
+            if data.get('bawahan') :
+                for i in data.get('bawahan') :
+                    for r in DoctorDetail.objects.using('sales').all().order_by('-id') :
+                        rayons = json.loads(r.rayon)
+                        info = json.loads(r.info)
+                        id = r.pk
+                        
+                        if rayons.get('id') == int(i) :
+                            drs.append({
+                                'rayon' : rayons,
+                                'info' : info,
+                                'id' : id
+                            })
+        else :
+            for h in DoctorDetail.objects.using('sales').all().order_by('-id') :
+                rayons = json.loads(h.rayon)
+                info = json.loads(h.info)
+                id = h.pk
+
+                drs.append({
+                    'rayon' : rayons,
+                    'info' : info,
+                    'id' : id
+                })
+
+        unique_rayon = {}
+        for it in drs :
+            rayon_name = it.get('rayon', {}).get('rayon')
+            if rayon_name not in unique_rayon :
+                unique_rayon[rayon_name] = it.get('rayon')
+
+        distinct = list(unique_rayon.values())
+
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+            rayon_id = request.GET.get('rayon_id')
+
+            ddd = DoctorDetail.objects.using('sales').all().order_by('-id')
+
+            data_f = []
+
+            for i in ddd :
+                rr = json.loads(i.rayon)
+                cd = i.code
+                nn = json.loads(i.info)
+                ii = i.pk
+                act = i.is_active
+
+                if rr.get('id') == int(rayon_id) :
+                    data_f.append({
+                        'rayon' : rr,
+                        'code' : cd,
+                        'info' : nn,
+                        'id' : ii,
+                        'active' : 'Active' if act else 'Not Active'
+                    })
+
+            return JsonResponse(data_f, safe=False)
+        
+        if request.method == 'POST' :
+            ids = request.POST.getlist('id_dr[]', [])
+            tujuan = request.POST.get('rayon_tujuan', '')
+            tujuan_nama = next((r.get('rayon') for r in distinct if str(r.get('id')) == str(tujuan)), None)
+
+            first_name = []
+
+            for i in ids :
+                dr = DoctorDetail.objects.using('sales').get(id=int(i))
+                rayon_lama = json.loads(dr.rayon)
+                dr.rayon = json.dumps({
+                    'id': tujuan,
+                    'rayon': tujuan_nama,
+                    'rayon_cvr': rayon_lama.get('rayon_cvr'),
+                    'kode_doctor_bco': rayon_lama.get('kode_doctor_bco')
+                })
+
+                dr.save()
+                first_name.append(json.loads(dr.info).get('first_name'))
+            
+            names_string = ', '.join(first_name)
+            messages.success(request, f"Doctor with first name: {str(names_string).title()} success transfered.")
+            return redirect('sales:doctor_list')
+
+        return render(request, 'sales_new/switch_rayon.html', {
+            'title': 'Switch Rayon',
+            'page_name' : 'Switch Rayon',
+            'rayon' : distinct
+        })
+
+    # if not 'bco' in request.user.username and not 'gmail' in request.user.username :
+    #     return redirect('sales:doctor_list')
+    # else :
+    #     if 'gmail' in request.user.username :
+    #         pass
+    #     else :
+    #         req = requests.get(rayon_api(int(id_user)))
+    #         data = req.json().get('data')[0]
+
+    #         drs = []
+
+    #         if data.get('atasan') :
+    #             for i in DoctorDetail.objects.using('sales').all().order_by('-id') :
+    #                 id_rayon = json.loads(i.rayon).get('id')
+    #                 nama_rayon = json.loads(i.rayon).get('rayon')
+
+    #                 if id_rayon == int(data.get('atasan')) :
+    #                     drs.append(f"Doctor Name: {json.loads(i.info).get('full_name')} Doctor Code: {i.code} Name Rayon: {nama_rayon}")
+            
+    #         if data.get('bawahan') :
+    #             for i in data.get('bawahan') :
+    #                 for r in DoctorDetail.objects.using('sales').all().order_by('-id') :
+    #                     id_rayon = json.loads(r.rayon).get('id')
+
+    #                     if id_rayon == int(i) :
+    #                         rayon = json.loads(r.rayon)
+    #                         nama = json.loads(r.info)
+    #                         drs.append(f"Doctor Name: {nama.get('full_name')} Doctor Code: {r.code} Name Rayon: {rayon.get('rayon')}")
+            
+    #         return JsonResponse(drs, safe=False)
 
 @admin_required
 @group_required('sales')

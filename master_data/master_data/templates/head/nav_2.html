@@ -46,48 +46,9 @@
         </div>
     </div>
     {% endif %}
-    <div class="w-1/12 items-center justify-center {% if api == "True" %} hidden {% endif %}">
-        {% if request.user.is_staff and title == "Doctor List" %}
-        <button role="button" id="opn-mdl" type="button" onclick="modal_rayon.showModal()" class="btn btn-sm items-center justify-center py-4 rounded-none lg:flex hidden rounded-l-sm rounded-r-sm"><p class="font-semibold text-medium">Switch Rayon</p></button>
-        {% endif %}
+    <div class="w-1/12 items-center justify-center{% if not 'bco' in request.user.username and not 'gmail' in request.user.username %} hidden {% endif %}">
+        <a role="button" id="opn-mdl" href="{% url 'sales:switch_rayon' %}" class="btn btn-sm items-center justify-center py-4 rounded-none lg:flex hidden rounded-l-sm rounded-r-sm"><p class="font-semibold text-medium">Switch Rayon</p></a>
     </div>
-    <dialog id="modal_rayon" class="modal">
-        <div class="modal-box w-1/2 max-w-5xl">
-            <h3 class="text-lg font-bold">Switch Rayon</h3>
-            <div class="modal-action">
-                <form method="post" action="." class="w-full">
-                    {% csrf_token %}
-                    <input type="hidden" name="metode" value="post">
-                    <div class="flex items-center justify-center gap-5 my-5">
-                        <div class="flex items-center justify-center w-full">
-                            <div class="items-center w-full space-y-5">
-                                <div class="flex items-center justify-between gap-5 w-full">
-                                    <label for="id-ryn" class="label text-md font-semibold hidden lg:block w-2/10">Pilih Rayon Asal</label>
-                                    <select name="id-ryn" id="id-ryn" class="select select-sm cursor-pointer w-8/10">
-                                        {% for t in rayons %}
-                                        <option value="{{ t.id_user }}">{{ t.kode_rayon }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="flex items-center justify-between gap-5 w-full">
-                                    <label for="id-dctrs" class="label text-md font-semibold hidden lg:block w-2/10">Select Doctors</label>
-                                    <select name="id-dctrs" id="id-dctrs" class="select select-sm cursor-pointer w-8/10" multiple="multiple">
-                                        {% for t in data %}
-                                        <option value="{{ t.pk }}">{{ t.code }} || {{ t.info.full_name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-end w-full gap-5">
-                        <button id="cls-mdl" role="button" type="button" onclick="modal_rayon.close()" class="btn btn-sm rounded-none rounded-l-sm rounded-r-sm">Close</button>
-                        <button type="submit" class="btn btn-sm rounded-none rounded-l-sm rounded-r-sm">Submit</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </dialog>
     <div class="lg:w-1/12 lg:hidden flex items-center justify-end">
         <div class="dropdown dropdown-left flex items-center justify-center">
             <div tabindex="0" role="button" class="btn btn-xs py-4 rounded-none rounded-l-sm rounded-r-sm">

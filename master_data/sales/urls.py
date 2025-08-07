@@ -10,11 +10,12 @@ urlpatterns = [
 
     #Pages Sales
     path('transaction/doctor-list/', views.doctor_list, name='doctor_list'),
-    path('transaction/dctr-list/', views.dctr_adm, name="doctor_admin"),
+    # path('transaction/dctr-list/', views.dctr_adm, name="doctor_admin"),
     
     #Detail
-    path('transaction/doctor-list/detail/<int:user_id>/<int:doc_id>/', views.doctor_detail, name='doctor_detail'),
+    path('transaction/doctor-list/detail/<int:user_id>/<int:doc_id>/', views.doctor_detail, name='doctor_detail_sales'),
     path('transaction/doctor-list/detail/<int:dr_id>/', views.adm_doctor_detail, name='doctor_detail_admin'),
+    path('transaction/doctor-list/switch/', views.switch_rayon, name='switch_rayon'),
 
     path('download/fhajkghj/fdsahjk/gdsajjghtei/3242afa/', views.download_doctor_data, name="download_doctor_data"),
 ]

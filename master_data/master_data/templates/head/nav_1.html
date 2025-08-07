@@ -52,7 +52,7 @@
                                     <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-md w-52 p-2 shadow-md">
                                         {% for group in request.user.groups.all %}
                                             {% if group.name == "sales" %}
-                                                <li><a {% if request.user.is_staff %} href="{% url 'sales:doctor_admin' %}" {% else %} href="{% url 'sales:doctor_list' %}" {% endif %} class="text-md font-semibold link link-hover font-sans text-pretty">Doctor List</a></li>
+                                                <li><a href="{% url 'sales:doctor_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Doctor List</a></li>
                                             {% endif %}
                                             {% if group.name == "supplier" %}
                                                 <li><a href="{% url 'supplier:vendor_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Vendor List</a></li>

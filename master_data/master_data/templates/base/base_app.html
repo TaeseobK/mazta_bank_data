@@ -119,6 +119,85 @@
           });
         });
 
+        $(document).ready(function () {
+          $('#rayon_asal').on('change', function () {
+              let rayonId = $(this).val();
+
+              if (rayonId) {
+                  $.ajax({
+                      url: window.location.href,  // ← Ganti dengan URL sesuai routing Django kamu
+                      method: 'GET',
+                      data: {
+                          rayon_id: rayonId
+                      },
+                      headers: {
+                          'X-Requested-With': 'XMLHttpRequest'
+                      },
+                      success: function (data) {
+                          $('#data-grid').empty(); // Kosongkan sebelumnya
+
+                          // Asumsikan `data` adalah list of dokter
+                          data.forEach(function (item) {
+                              let card = `
+                                  <div class="card card-border border-accent border-2 shadow-md bg-base-100 w-full">
+                                      <div class="card-body" onclick="toggleCheckbox(this)">
+                                          <p class="text-md font-semibold font-xs">${item.info.full_name}</p>
+                                          <p class="text-xs font-semibold">Code: ${item.code || '-'}</p>
+                                          <div class="flex items-center justify-start gap-2">
+                                            <div class="inline-grid *:[grid-area:1/1]">
+                                              <div class="status ${item.active === 'Active' ? 'status-success' : 'status-error'} animate-ping"></div>
+                                              <div class="status ${item.active === 'Active' ? 'status-success' : 'status-error'}"></div>
+                                            </div>
+                                            <p class="label font-semibold text-sm">${item.active}</p>
+                                          </div>
+                                          <div class="card-actions justify-end">
+                                              <input name="id_dr[]" value="${item.id}" type="checkbox" class="rounded-sm cursor-pointer">
+                                          </div>
+                                      </div>
+                                  </div>
+                              `;
+                              $('#data-grid').append(card);
+                          });
+                      },
+                      error: function (err) {
+                          console.error(err);
+                      }
+                  });
+              }
+          });
+      });
+
+        $(document).ready(function() {
+            $('.card').on('click', '.card-body', function(e) {
+                if ($(e.target).is('input[type="checkbox"]')) return;
+
+                const checkbox = $(this).find('input[type="checkbox"]');
+                checkbox.prop('checked', !checkbox.prop('checked'));
+            });
+        });
+
+        $(document).ready(function () {
+          // Toggle checkbox individual by clicking the card
+          $('#data-grid').on('click', '.card-body', function (e) {
+              if ($(e.target).is('input[type="checkbox"]')) return;
+              const checkbox = $(this).find('input[type="checkbox"]');
+              checkbox.prop('checked', !checkbox.prop('checked'));
+          });
+
+          // Handle "Check All"
+          $('#check-all').on('change', function () {
+              const checked = $(this).is(':checked');
+              $('#data-grid input[type="checkbox"]').prop('checked', checked);
+          });
+
+          // (Optional) Sync "Check All" if all individual checkboxes are manually clicked
+          $('#data-grid').on('change', 'input[type="checkbox"]', function () {
+              const all = $('#data-grid input[type="checkbox"]');
+              const checked = all.filter(':checked');
+              $('#check-all').prop('checked', all.length === checked.length);
+          });
+        });
+
         $(document).ready(function() {
           $('#id-ryn').select2({
             dropdownParent: $('#modal_rayon')
