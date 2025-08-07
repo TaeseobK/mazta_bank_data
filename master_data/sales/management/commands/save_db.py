@@ -18,6 +18,28 @@ import logging
 from pathlib import Path
 from django.db.models import Q
 
+"""
+---THE CURSED CRONS---
+
+Beneath the ticking gears of the time lies this unholy scripts,
+summoned via cron under circumstances long forgotten.
+
+None remember who wrote it.
+None remember *why* it runs every days.
+Yet it does - silently, relentlessly - and for reasons we dare not question, it works.
+
+Attempts to debug it have ended confussion, despair, or the server rebooting for no reason.
+Logs vanish. Time dilates. Stack traces loop back into themselves.
+
+Do not edit. Do not schedule differently.
+Simply let the daemon feast and be grateful the system stays silent.
+
+If you must touch this code, light a candle, commit your changes at midnight,
+and whisper a prayer to the sysadmin gods.
+
+You've been warned, brave soul...
+"""
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
 folder_path = os.path.join(BASE_DIR, "media", "output")

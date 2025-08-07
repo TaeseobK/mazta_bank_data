@@ -177,6 +177,26 @@ def doctor_list(request):
 
     return handle_admin() if request.user.is_staff else handle_sales()
 
+"""
+WARNING: CHAOS CODE BELLOW...
+
+This 2 functions was born from frustration, forged with duct tape and some black magic.
+It took approximately 3 days, 23 half-broken tutorials, fkin GPT, a rubber duck conselling session,
+some episodes from bernard bear series, and a firm denial of Pythonic principle make it work.
+
+I don't remember how or why it works. it just does.
+DO NOT REFACTOR unless you have:
+- a backup of the project,
+- snacks,
+- emotional support,
+- a girlfriend (I don't have any),
+- and a full weekend free.
+
+You've been warned.
+
+If you break it, git blame will find you.
+"""
+
 @api_login_required
 def doctor_detail(request, user_id, doc_id) :
     id_user = request.session.get('detail').get('id_user')
@@ -818,37 +838,6 @@ def switch_rayon(request) :
             'page_name' : 'Switch Rayon',
             'rayon' : distinct
         })
-
-    # if not 'bco' in request.user.username and not 'gmail' in request.user.username :
-    #     return redirect('sales:doctor_list')
-    # else :
-    #     if 'gmail' in request.user.username :
-    #         pass
-    #     else :
-    #         req = requests.get(rayon_api(int(id_user)))
-    #         data = req.json().get('data')[0]
-
-    #         drs = []
-
-    #         if data.get('atasan') :
-    #             for i in DoctorDetail.objects.using('sales').all().order_by('-id') :
-    #                 id_rayon = json.loads(i.rayon).get('id')
-    #                 nama_rayon = json.loads(i.rayon).get('rayon')
-
-    #                 if id_rayon == int(data.get('atasan')) :
-    #                     drs.append(f"Doctor Name: {json.loads(i.info).get('full_name')} Doctor Code: {i.code} Name Rayon: {nama_rayon}")
-            
-    #         if data.get('bawahan') :
-    #             for i in data.get('bawahan') :
-    #                 for r in DoctorDetail.objects.using('sales').all().order_by('-id') :
-    #                     id_rayon = json.loads(r.rayon).get('id')
-
-    #                     if id_rayon == int(i) :
-    #                         rayon = json.loads(r.rayon)
-    #                         nama = json.loads(r.info)
-    #                         drs.append(f"Doctor Name: {nama.get('full_name')} Doctor Code: {r.code} Name Rayon: {rayon.get('rayon')}")
-            
-    #         return JsonResponse(drs, safe=False)
 
 @admin_required
 @group_required('sales')
