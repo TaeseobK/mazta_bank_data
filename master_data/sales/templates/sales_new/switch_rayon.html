@@ -33,11 +33,17 @@
                     <button class="btn btn-sm rounded-sm bg-secondary" type="submit">Submit</button>
                 </div>
             </div>
-            <div class="mt-2 w-full flex items-center justify-start gap-5">
-                <label for="check-all" class="label text-sm font-semibold">Check All</label>
-                <input id="check-all" name="check-all" type="checkbox" class="rounded-md cursor-pointer">
+            <div class="mt-2 w-full flex items-center justify-start gap-10">
+                <div class="flex items-center justify-start gap-5">
+                    <label for="check-all" class="label text-sm font-semibold">Check All</label>
+                    <input id="check-all" name="check-all" type="checkbox" class="rounded-md cursor-pointer">
+                </div>
+                <div class="flex items-center justify-start gap-5">
+                    <label for="search-1" class="label text-sm font-semibold">Search</label>
+                    <input type="text" name="" id="search-1" class="input input-xs">
+                </div>
             </div>
-            <div id="data-grid" class="grid grid-cols-6 gap-5 mt-10">
+            <div id="data-grid" class="grid grid-cols-6 gap-5 mt-10 overflow-y-scroll max-h-120">
             </div>
         </form>
     </div>

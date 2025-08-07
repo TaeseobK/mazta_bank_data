@@ -177,6 +177,24 @@
         });
 
         $(document).ready(function () {
+          // Event saat mengetik di search box
+          $('#search-1').on('keyup', function () {
+              let keyword = $(this).val().toLowerCase();
+
+              $('#data-grid > div').each(function () {
+                  let content = $(this).text().toLowerCase();
+
+                  // Tampilkan atau sembunyikan elemen berdasarkan kecocokan keyword
+                  if (content.includes(keyword)) {
+                      $(this).show();
+                  } else {
+                      $(this).hide();
+                  }
+              });
+          });
+        });
+
+        $(document).ready(function () {
           // Toggle checkbox individual by clicking the card
           $('#data-grid').on('click', '.card-body', function (e) {
               if ($(e.target).is('input[type="checkbox"]')) return;
