@@ -733,10 +733,10 @@
 
             $('#pics-id').append(`
               <li class="flex items-center justify-between">
-                  <label for="tlp-id" class="font-semibold label hidden lg:block">PIC ${count}*</label>
+                  <label for="tlp-id" class="font-semibold label hidden lg:block">PIC ${count}</label>
                   <select name="pic[]" id="pic-id" class="select select-sm px-2 cursor-pointer" required>
                   <option value="" selected disabled>Select PIC ${count}</option>
-                  {% for d in data.0.class %}
+                  {% for d in data.0.pics %}
                   <option value="{{ d.pk }}">{{ d.name }}</option>
                   {% endfor %}
                   </select>

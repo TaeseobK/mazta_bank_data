@@ -28,7 +28,7 @@
                                 <div class="dropdown dropdown-right">
                                     <div tabindex="0" role="button" class="link link-hover font-semibold font-sans text-md text-pretty text-center {% if request.user.is_staff or request.user.is_superuser %} block {% else %} hidden {% endif %}">Master</div>
                                     <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-md w-52 p-2 shadow-md">
-                                        {% if request.user.is_superuser and request.user.is_staff %}
+                                        {% if request.user.is_superuser or request.user.is_staff %}
                                             {% for group in request.user.groups.all %}
                                                 {% if group.name == "sales" %}
                                                     <li><a href="{% url 'master:gc_list' %}" class="text-md font-semibold link link-hover font-sans text-pretty">Grade Clinic</a></li>

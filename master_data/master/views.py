@@ -49,177 +49,184 @@ def datadoctor(request) :
 @login_required
 def home(request) :
     request.session['back_url'] = request.get_full_path()
-
-    if request.user.is_staff :
-        search_query = request.GET.get('search', '')
-
-        group_count = defaultdict(lambda: {'priority': 0, 'not_priority': 0, 'total_doctor' : 0, 'id' : None})
-
-        doctors = DoctorDetail.objects.using('sales').filter(is_active=True).all()
-
-        prty_doctor = 0
-        nt_prty_doctor = 0
-        ttl_doctor = 0
-
-        for data in doctors :
-            data.rayon = json.loads(data.rayon)
-            data.info = json.loads(data.info)
-            data.work_information = json.loads(data.work_information)
-            data.private_information = json.loads(data.private_information)
-            data.additional_information = json.loads(data.additional_information)
-            data.branch_information = json.loads(data.branch_information)
-
-            rayon_name = data.rayon.get('rayon')
-
-            sales_info = data.work_information.get('sales_information', {})
-            is_priority = sales_info.get('priority', False)
-
-            if is_priority :
-                group_count[rayon_name]['priority'] += 1
-                prty_doctor += 1
-            else :
-                group_count[rayon_name]['not_priority'] += 1
-                nt_prty_doctor += 1
-            
-            group_count[rayon_name]['total_doctor'] += 1
-            group_count[rayon_name]['id'] = data.pk
-            ttl_doctor += 1
-        
-        group_list = [
-            {   
-                'id' : data['id'],
-                'rayon' : rayon,
-                'priority' : data['priority'],
-                'not_priority' : data['not_priority'],
-                'total_doctor' : data['total_doctor']
-            }
-            for rayon, data in group_count.items()
-        ]
-
-        all_list = {
-            'doctor_priority' : prty_doctor,
-            'doctor_not_priority' : nt_prty_doctor,
-            'total_doctor' : ttl_doctor
-        }
-
-        if search_query :
-            group_list = [
-                r for r in group_list
-                if (
-                    search_query.lower() in str(r.get('rayon')).lower()
-                )
-            ]
-
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
-            return render(request, 'core/home.html', {
-                'data' : group_list
-            })
-
-        return render(request, 'core/home.html', {
-            'title' : 'Dashboard',
-            'page_name' : 'Home',
-            'data' : group_list,
-            'total' : all_list
-        })
     
-    else :
-        src_query = request.GET.get('search', '')
+    if request.user.groups.filter(name="sales").exists() :
 
-        id_rayon = request.session.get('detail').get('id_user')
+        if request.user.is_staff :
+            search_query = request.GET.get('search', '')
 
-        response = requests.get(rayon_api(int(id_rayon)))
+            group_count = defaultdict(lambda: {'priority': 0, 'not_priority': 0, 'total_doctor' : 0, 'id' : None})
 
-        try :
-            datadata = response.json().get('data')[0] if response.status_code == 200 else None
-            atasan = datadata.get('atasan')
-            bawahan = datadata.get('bawahan')
-            # print(f"{atasan}, {bawahan}")
+            doctors = DoctorDetail.objects.using('sales').filter(is_active=True).all()
 
-            dd = []
+            prty_doctor = 0
+            nt_prty_doctor = 0
+            ttl_doctor = 0
 
-            if atasan :
-                for i in DoctorDetail.objects.using('sales').filter(is_active=True).all() :
-                    if int(json.loads(i.rayon).get('id')) == int(atasan) :
-                        dd.append(i)
+            for data in doctors :
+                data.rayon = json.loads(data.rayon)
+                data.info = json.loads(data.info)
+                data.work_information = json.loads(data.work_information)
+                data.private_information = json.loads(data.private_information)
+                data.additional_information = json.loads(data.additional_information)
+                data.branch_information = json.loads(data.branch_information)
+
+                rayon_name = data.rayon.get('rayon')
+
+                sales_info = data.work_information.get('sales_information', {})
+                is_priority = sales_info.get('priority', False)
+
+                if is_priority :
+                    group_count[rayon_name]['priority'] += 1
+                    prty_doctor += 1
+                else :
+                    group_count[rayon_name]['not_priority'] += 1
+                    nt_prty_doctor += 1
+                
+                group_count[rayon_name]['total_doctor'] += 1
+                group_count[rayon_name]['id'] = data.pk
+                ttl_doctor += 1
             
-            for i_d_b in bawahan :
-                for i in DoctorDetail.objects.using('sales').filter(is_active=True).all() :
-                    if int(json.loads(i.rayon).get('id')) == int(i_d_b) :
-                        dd.append(i)
-        
-        except IndexError :
-            id_user = request.session.get('detail').get('id_user')
-            dd = []
-            for i in DoctorDetail.objects.using('sales').filter(is_active=True).all() :
-                if int(json.loads(i.rayon).get('id')) == int(id_user) :
-                    dd.append(i)
-
-        gp_count = defaultdict(lambda: {'priority': 0, 'not_priority': 0, 'total_doctor': 0, 'id': None})
-
-        prty_dctr = 0
-        nt_prty_dctr = 0
-        ttl_dctr = 0
-
-        for tt in dd :
-            tt.rayon = json.loads(tt.rayon)
-            tt.info = json.loads(tt.info)
-            tt.work_information = json.loads(tt.work_information)
-            tt.private_information = json.loads(tt.private_information)
-            tt.additional_information = json.loads(tt.additional_information)
-            tt.branch_information = json.loads(tt.branch_information)
-
-            rayon_nm = tt.rayon.get('rayon')
-
-            sales_inf = tt.work_information.get('sales_information', [])
-            is_prty = sales_inf.get('priority', False)
-
-            if is_prty :
-                gp_count[rayon_nm]['priority'] += 1
-                prty_dctr += 1
-            else :
-                gp_count[rayon_nm]['not_priority'] += 1
-                nt_prty_dctr += 1
-            
-            gp_count[rayon_nm]['total_doctor'] += 1
-            gp_count[rayon_nm]['id'] = tt.pk
-            ttl_dctr += 1
-
-        grp_list = [
-            {
-                'id' : data['id'],
-                'rayon' : rayon,
-                'priority' : data['priority'],
-                'not_priority' : data['not_priority'],
-                'total_doctor' : data['total_doctor']
-            }
-            for rayon, data in gp_count.items()
-        ]
-
-        all_list = {
-            'doctor_priority' : prty_dctr,
-            'doctor_not_priority' : nt_prty_dctr,
-            'total_doctor' : ttl_dctr
-        }
-
-        if src_query :
-            grp_list = [
-                p for p in grp_list
-                if (
-                    search_query.lower() in str(p.get('rayon')).lower()
-                )
+            group_list = [
+                {   
+                    'id' : data['id'],
+                    'rayon' : rayon,
+                    'priority' : data['priority'],
+                    'not_priority' : data['not_priority'],
+                    'total_doctor' : data['total_doctor']
+                }
+                for rayon, data in group_count.items()
             ]
-        
-        if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
-            return render(request, 'core/home.html', {
-                'data' : grp_list
-            })
 
+            all_list = {
+                'doctor_priority' : prty_doctor,
+                'doctor_not_priority' : nt_prty_doctor,
+                'total_doctor' : ttl_doctor
+            }
+
+            if search_query :
+                group_list = [
+                    r for r in group_list
+                    if (
+                        search_query.lower() in str(r.get('rayon')).lower()
+                    )
+                ]
+
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+                return render(request, 'core/home.html', {
+                    'data' : group_list
+                })
+
+            return render(request, 'core/home.html', {
+                'title' : 'Dashboard',
+                'page_name' : 'Home',
+                'data' : group_list,
+                'total' : all_list
+            })
+        
+        else :
+            src_query = request.GET.get('search', '')
+
+            id_rayon = request.session.get('detail').get('id_user')
+
+            response = requests.get(rayon_api(int(id_rayon)))
+
+            try :
+                datadata = response.json().get('data')[0] if response.status_code == 200 else None
+                atasan = datadata.get('atasan')
+                bawahan = datadata.get('bawahan')
+                # print(f"{atasan}, {bawahan}")
+
+                dd = []
+
+                if atasan :
+                    for i in DoctorDetail.objects.using('sales').filter(is_active=True).all() :
+                        if int(json.loads(i.rayon).get('id')) == int(atasan) :
+                            dd.append(i)
+                
+                for i_d_b in bawahan :
+                    for i in DoctorDetail.objects.using('sales').filter(is_active=True).all() :
+                        if int(json.loads(i.rayon).get('id')) == int(i_d_b) :
+                            dd.append(i)
+            
+            except IndexError :
+                id_user = request.session.get('detail').get('id_user')
+                dd = []
+                for i in DoctorDetail.objects.using('sales').filter(is_active=True).all() :
+                    if int(json.loads(i.rayon).get('id')) == int(id_user) :
+                        dd.append(i)
+
+            gp_count = defaultdict(lambda: {'priority': 0, 'not_priority': 0, 'total_doctor': 0, 'id': None})
+
+            prty_dctr = 0
+            nt_prty_dctr = 0
+            ttl_dctr = 0
+
+            for tt in dd :
+                tt.rayon = json.loads(tt.rayon)
+                tt.info = json.loads(tt.info)
+                tt.work_information = json.loads(tt.work_information)
+                tt.private_information = json.loads(tt.private_information)
+                tt.additional_information = json.loads(tt.additional_information)
+                tt.branch_information = json.loads(tt.branch_information)
+
+                rayon_nm = tt.rayon.get('rayon')
+
+                sales_inf = tt.work_information.get('sales_information', [])
+                is_prty = sales_inf.get('priority', False)
+
+                if is_prty :
+                    gp_count[rayon_nm]['priority'] += 1
+                    prty_dctr += 1
+                else :
+                    gp_count[rayon_nm]['not_priority'] += 1
+                    nt_prty_dctr += 1
+                
+                gp_count[rayon_nm]['total_doctor'] += 1
+                gp_count[rayon_nm]['id'] = tt.pk
+                ttl_dctr += 1
+
+            grp_list = [
+                {
+                    'id' : data['id'],
+                    'rayon' : rayon,
+                    'priority' : data['priority'],
+                    'not_priority' : data['not_priority'],
+                    'total_doctor' : data['total_doctor']
+                }
+                for rayon, data in gp_count.items()
+            ]
+
+            all_list = {
+                'doctor_priority' : prty_dctr,
+                'doctor_not_priority' : nt_prty_dctr,
+                'total_doctor' : ttl_dctr
+            }
+
+            if src_query :
+                grp_list = [
+                    p for p in grp_list
+                    if (
+                        search_query.lower() in str(p.get('rayon')).lower()
+                    )
+                ]
+            
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest' :
+                return render(request, 'core/home.html', {
+                    'data' : grp_list
+                })
+
+            return render(request, 'core/home.html', {
+                'title' : 'Dashboard',
+                'page_name' : 'Home',
+                'data' : grp_list,
+                'total' : all_list
+            })
+    else :
         return render(request, 'core/home.html', {
-            'title' : 'Dashboard',
-            'page_name' : 'Home',
-            'data' : grp_list,
-            'total' : all_list
-        })
+                'title' : 'Dashboard',
+                'page_name' : 'Home'
+            })
 
 def gu_data(request, gu_id) :
 
@@ -273,68 +280,68 @@ def login_view(request) :
         password = request.POST.get('password', '')
         username = request.POST.get('username', '')
         next_url = request.POST.get('next') or request.GET.get('next') or '/'
+        try :
+            response = requests.post(login_url(), data={
+                'email' : email,
+                'password' : password
+            })
 
-        response = requests.post(login_url(), data={
-            'email' : email,
-            'password' : password
-        })
+            if response.status_code == 200 :
+                token = response.json().get('token')
+                detail = response.json().get('data')
+                request.session['token'] = token
+                request.session['detail'] = detail
 
-        if response.status_code == 200 :
-            token = response.json().get('token')
-            detail = response.json().get('data')
-            request.session['token'] = token
-            request.session['detail'] = detail
-
-            try :
-                user = User.objects.get(email=email)
-                
-                if user.check_password(password) :
-                    group, _ = Group.objects.get_or_create(name="sales")
-
-                    if not user.groups.filter(name="sales").exists() :
-                        user.groups.add(group)
-
-                    login(request, user)
-                    messages.success(request, f"Login Success, Welcome Back {user.username}.")
-                    return redirect(next_url)
-                
-                else :
-                    user.set_password(password)
-                    user.save()
-                    group, _ = Group.objects.get_or_create(name="sales")
-
-                    if not user.groups.filter(name="sales").exists():
-                        user.groups.add(group)
+                try :
+                    user = User.objects.get(email=email)
                     
-                    login(request, user)
-                    messages.success(request, f"Login Success, You Changed you password on the another apps {user.username}.")
+                    if user.check_password(password) :
+                        group, _ = Group.objects.get_or_create(name="sales")
+
+                        if not user.groups.filter(name="sales").exists() :
+                            user.groups.add(group)
+
+                        login(request, user)
+                        messages.success(request, f"Login Success, Welcome Back {user.username}.")
+                        return redirect(next_url)
+                    
+                    else :
+                        user.set_password(password)
+                        user.save()
+                        group, _ = Group.objects.get_or_create(name="sales")
+
+                        if not user.groups.filter(name="sales").exists():
+                            user.groups.add(group)
+                        
+                        login(request, user)
+                        messages.success(request, f"Login Success, You Changed you password on the another apps {user.username}.")
+                        return redirect(next_url)
+                    
+                except User.DoesNotExist :
+                    if "admin" in str(detail.get('name')).lower() :
+                        staff = True
+
+                    else :
+                        staff = False
+
+                    user_ = User.objects.create_user(
+                        username=email,
+                        email=email,
+                        password=password,
+                        is_staff=staff
+                    )
+
+                    group_, _1 = Group.objects.get_or_create(name="sales")
+
+                    if not user_.groups.filter(name="sales").exists() :
+                        user_.groups.add(group_)
+
+                    user_.save()
+
+                    login(request, user_)
                     return redirect(next_url)
-                
-            except User.DoesNotExist :
-                if "admin" in str(detail.get('name')).lower() :
-                    staff = True
-
-                else :
-                    staff = False
-
-                user_ = User.objects.create_user(
-                    username=email,
-                    email=email,
-                    password=password,
-                    is_staff=staff
-                )
-
-                group_, _1 = Group.objects.get_or_create(name="sales")
-
-                if not user_.groups.filter(name="sales").exists() :
-                    user_.groups.add(group_)
-
-                user_.save()
-
-                login(request, user_)
-                return redirect(next_url)
             
-        else :
+        except :
             try :
                 user = User.objects.get(username=username, email=email)
 

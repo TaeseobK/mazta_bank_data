@@ -320,7 +320,7 @@ def create_zip_file(output_dir, files):
 def sfb() :
     w = datetime.now().time()
 
-    if 21 <= w.hour <= 22 :
+    if 16 <= w.hour <= 17 :
         return "generate"
     
     elif 1 <= w.hour <= 2 :
@@ -329,7 +329,7 @@ def sfb() :
     elif 2 <= w.hour <= 3 :
         return "fullname"
     
-    elif 19 <= w.hour <= 20 :
+    elif 14 <= w.hour <= 15 :
         return "rayon"
 
 # ----------------------------------------

@@ -20,7 +20,7 @@
         <tbody id="page-list">
             {% for data in page_obj %}
             <tr class="border-b border-current">
-                <th><a href="{% url 'master:detail_pic' data.pk %}">{{ data.name }}</a></th>
+                <th><a href="{% url 'supplier:vendor_detail' data.pk %}">{{ data.name }}</a></th>
                 <td>{{ data.entity }}</td>
                 <td class="flex items-center justify-start gap-1">
                     {% for d in data.pic %}
@@ -37,7 +37,7 @@
     <div id="page-list-2" class="space-y-2 lg:hidden block">
         {% for data in page_obj %}
         <div class="rounded-sm bg-base-100 p-2">
-            <a href="{% url 'master:detail_pic' data.pk %}" class="text-left text-md font-semibold">{{ data.name }}</a>
+            <a href="{% url 'supplier:vendor_detail' data.pk %}" class="text-left text-md font-semibold">{{ data.name }}</a>
             <div class="flex items-center justify-start gap-5">
                 <ul class="w-1/4 text-xs font-semibold">
                     <li>Company</li>

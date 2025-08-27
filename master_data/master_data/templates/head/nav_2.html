@@ -6,15 +6,15 @@
             <input type="text" name="search" id="search" class="lg:block grow" value="{{ search_query }}" placeholder="Search..."/>
         </label>
         {% if request.user.is_staff and title == "Doctor List" %}
-        <a href="{% url 'sales:download_doctor_data' %}" class="btn btn-sm rounded-none py-auto rounded-l-sm rounded-r-sm hidden lg:block">Download Data</a>
+            <a href="{% url 'sales:download_doctor_data' %}" class="btn btn-sm rounded-none py-auto rounded-l-sm rounded-r-sm hidden lg:block">Download Data</a>
         {% endif %}
     </div>
     {% if api == "False" %}
     <div class="w-2/12 lg:flex hidden justify-center items-center">
-        <div class="w-1/2 flex items-center justify-center">
+        <div class="w-1/3 flex items-center justify-center">
             <p class="text-md text-pretty font-sans font-semibold text-center text-current px-3 py-1 bg-base-300 rounded-sm" data-aos="fade-up">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</p>
         </div>
-        <div class="w-1/2 flex items-center justify-center gap-1">
+        <div class="w-1/3 flex items-center justify-center gap-1">
             <a {% if page_obj.has_previous %} href="?search={{search_query|urlencode}}&page={{page_obj.previous_page_number}}" {% endif %} class="rounded-none rounded-l-sm rounded-r-sm btn-xs py-4 btn w-auto" data-aos="fade-up-right">
                 <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="m15 19-7-7 7-7"/>
@@ -24,6 +24,11 @@
                 <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="m9 5 7 7-7 7"/>
                 </svg>              
+            </a>
+        </div>
+        <div class="w-1/3 flex items-center justify-center gap-1">
+            <a href="{{ new_url }}" class="btn btn-md">
+                <p class="font-semibold text-medium">New</p>
             </a>
         </div>
     </div>

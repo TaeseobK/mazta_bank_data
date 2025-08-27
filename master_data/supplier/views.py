@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 from master_data.rules import *
 from django.contrib import messages
 from master.models import Pic, Classification
+from itertools import zip_longest as zip_lo
 
 @login_required
 @group_required('supplier')
@@ -98,10 +99,10 @@ def new_vendor(request) :
             accs_num = request.POST.getlist('acc-num[]') or []
             tlps_num = request.POST.getlist('tlp-num[]') or []
             swts_code = request.POST.getlist('swt-code[]') or []
-            banks_addrs = request.POST.getlist('bank-addrs[]') or []
+            banks_addrs = request.POST.getlist('bank-add[]') or []
 
             bank_info = []
-            for bank_name, acc_number, tlp_number, swft_code, bank_address in zip(banks_name, accs_num, tlps_num, swts_code, banks_addrs) :
+            for bank_name, acc_number, tlp_number, swft_code, bank_address in zip_lo(banks_name, accs_num, tlps_num, swts_code, banks_addrs, fillvalue=None) :
                 bank_info.append({
                     'bank_name' : bank_name,
                     'account_number' : acc_number,
@@ -164,6 +165,118 @@ def new_vendor(request) :
     return render(request, 'supplier_new/new_vendor.html', {
         'title' : "New Vendor",
         'page_name' : "New Vendor",
+        'api' : "False",
+        'data' : data
+    })
+
+@login_required
+@group_required('supplier')
+def detail_vendor(request, vendor_id) :
+    pics = Pic.objects.using('master').filter(is_active=True).all()
+    classifications = Classification.objects.using('master').filter(is_active=True).all()
+    
+    vendor = Vendor.objects.using('supplier').get(id=int(vendor_id))
+    vendor.address = json.loads(vendor.address)
+    vendor.pic = json.loads(vendor.pic)
+    vendor.bank_info = json.loads(vendor.bank_info)
+    vendor.status = json.loads(vendor.status)
+
+    data = [{
+        'pics' : pics,
+        'class' : classifications,
+        'vendor' : vendor
+    }]
+    
+    if request.method == 'POST':
+        metode = request.POST.get('metode', '')
+
+        if metode == 'post' :
+            name = request.POST.get('name', '')
+            entity = request.POST.get('entity', '')
+            classification = request.POST.get('clss', '')
+            npwp = request.POST.get('npwp', '')
+
+            try :
+                clss = Classification.objects.using('master').get(id=int(classification))
+            except (ValueError, Classification.DoesNotExist) :
+                clss = None
+
+            street_1 = request.POST.get('street-1', '')
+            street_2 = request.POST.get('street-2', '')
+            city = request.POST.get('city', '')
+            state = request.POST.get('state', '')
+            country = request.POST.get('country', '')
+            zip_num = request.POST.get('zip', '')
+            fll_addrs = request.POST.get('fll-address', '')
+
+            #listing
+            banks_name = request.POST.getlist('bank-name[]') or []
+            accs_num = request.POST.getlist('acc-num[]') or []
+            tlps_num = request.POST.getlist('tlp-num[]') or []
+            swts_code = request.POST.getlist('swt-code[]') or []
+            banks_addrs = request.POST.getlist('bank-add[]') or []
+
+            bank_info = []
+            for bank_name, acc_number, tlp_number, swft_code, bank_address in zip_lo(banks_name, accs_num, tlps_num, swts_code, banks_addrs, fillvalue=None) :
+                bank_info.append({
+                    'bank_name' : bank_name,
+                    'account_number' : acc_number,
+                    'bank_tlp_number' : tlp_number,
+                    'swift_code' : swft_code,
+                    'bank_address' : bank_address
+                })
+                
+            print(f"{banks_name}, {accs_num}, {tlps_num}, {swts_code}, {banks_addrs}")
+
+            pics = request.POST.getlist('pic[]', [])
+
+            person = []
+            for pic in pics :
+
+                try :
+                    pi = Pic.objects.using('master').get(id=int(pic))
+                except ValueError or Pic.DoesNotExist :
+                    pi = None
+                
+                person.append(pi.pk if pi else None)
+
+            verif = request.POST.getlist('verif[]', '[]')
+            verif_status = request.POST.getlist('verif-sts[]', '[]')
+
+            verification = []
+            for ver, ver_sts in zip(verif, verif_status) :
+
+                verification.append({
+                    'verification' : ver,
+                    'verification_status' : ver_sts
+                })
+
+        vendor.pic = list(set(person))
+        vendor.name = name
+        vendor.npwp = npwp
+        vendor.entity = entity
+        vendor.bank_info = json.dumps(bank_info)
+        vendor.address=json.dumps({
+                    'street_1' : street_1,
+                    'street_2' : street_2,
+                    'city' : city,
+                    'state' : state,
+                    'country' : country,
+                    'zip' : zip_num,
+                    'full_address' : fll_addrs
+                })
+        vendor.classification = clss.pk if clss else None
+        vendor.status = json.dumps(verification)
+        vendor.created_by = request.user.id
+        vendor.updated_by = request.user.id
+        vendor.save()
+
+        messages.success(request, f"Object with {name}, successfully created.")
+        return redirect('supplier:vendor_list')
+
+    return render(request, 'supplier_details/detail_vendor.html', {
+        'title' : "Detail Vendor",
+        'page_name' : "Detail Vendor",
         'api' : "False",
         'data' : data
     })

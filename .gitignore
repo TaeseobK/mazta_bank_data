@@ -24,6 +24,7 @@ save_db_production.sh
 save_db.sh
 
 theme
+databases
 
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
