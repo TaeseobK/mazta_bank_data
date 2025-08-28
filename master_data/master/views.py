@@ -263,111 +263,65 @@ def title_data(request, tit_id) :
 
     return JsonResponse(model_to_dict(title), safe=False)
 
-def login_view(request) :
+def login_view(request):
     if request.method == 'GET':
+        if request.user.is_authenticated:
+            return redirect('master:home')
+        return render(request, 'core/login.html', {"title": "Login", "login": True})
 
-        try :
-            user = request.user
-
-            if user.is_authenticated :
-                return redirect('master:home')
-        
-        except :
-            pass
-
-    if request.method == 'POST' :
-        email = request.POST.get('email', '')
+    if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
         password = request.POST.get('password', '')
-        username = request.POST.get('username', '')
         next_url = request.POST.get('next') or request.GET.get('next') or '/'
-        try :
-            response = requests.post(login_url(), data={
-                'email' : email,
-                'password' : password
-            })
 
-            if response.status_code == 200 :
+        # 1. coba login ke Auth service
+        try:
+            response = requests.post(login_url(), data={'email': email, 'password': password}, timeout=5)
+            if response.status_code == 200:
                 token = response.json().get('token')
                 detail = response.json().get('data')
+
                 request.session['token'] = token
                 request.session['detail'] = detail
 
-                try :
-                    user = User.objects.get(email=email)
-                    
-                    if user.check_password(password) :
-                        group, _ = Group.objects.get_or_create(name="sales")
+                user, created = User.objects.get_or_create(email=email, defaults={
+                    "username": email,
+                })
 
-                        if not user.groups.filter(name="sales").exists() :
-                            user.groups.add(group)
+                # update password kalau baru dibuat
+                if created:
+                    user.set_password(password)
 
-                        login(request, user)
-                        messages.success(request, f"Login Success, Welcome Back {user.username}.")
-                        return redirect(next_url)
-                    
-                    else :
-                        user.set_password(password)
-                        user.save()
-                        group, _ = Group.objects.get_or_create(name="sales")
+                # set staff kalau perlu
+                if "admin" in str(detail.get('name', '')).lower():
+                    user.is_staff = True
 
-                        if not user.groups.filter(name="sales").exists():
-                            user.groups.add(group)
-                        
-                        login(request, user)
-                        messages.success(request, f"Login Success, You Changed you password on the another apps {user.username}.")
-                        return redirect(next_url)
-                    
-                except User.DoesNotExist :
-                    if "admin" in str(detail.get('name')).lower() :
-                        staff = True
+                user.save()
 
-                    else :
-                        staff = False
+                # tambahin ke group sales
+                group, _ = Group.objects.get_or_create(name="sales")
+                user.groups.add(group)
 
-                    user_ = User.objects.create_user(
-                        username=email,
-                        email=email,
-                        password=password,
-                        is_staff=staff
-                    )
+                login(request, user)
+                messages.success(request, f"Welcome back {user.username}!")
+                return redirect(next_url)
 
-                    group_, _1 = Group.objects.get_or_create(name="sales")
+        except Exception as e:
+            messages.error(request, f"Auth service error: {str(e)}")
 
-                    if not user_.groups.filter(name="sales").exists() :
-                        user_.groups.add(group_)
+        # 2. fallback ke user lokal
+        try:
+            user = User.objects.get(email=email)
+            if user.check_password(password):
+                login(request, user)
+                messages.success(request, f"Welcome back {user.username}!")
+                return redirect(next_url)
+            else:
+                messages.error(request, "Invalid password.")
+        except User.DoesNotExist:
+            messages.error(request, "User not found.")
 
-                    user_.save()
-
-                    login(request, user_)
-                    return redirect(next_url)
-            
-        except :
-            try :
-                user = User.objects.get(username=username, email=email)
-
-                if user.check_password(password) :
-                    login(request, user)
-
-                    if user.groups.filter(name="supplier").exists() and not user.first_name :
-                        messages.success(request, f"Welcome back {user.username}, Don't forget to update your data <a href='{reverse('master:profile')}' class='link link-hover'>Here</a>")
-
-                    else :
-                        messages.success(request, f"Welcome back {request.user.username}.")
-                    
-                    return redirect(next_url)
-                
-                else :
-                    messages.error(request, "Login failed, please check your username, email, or password.")
-                    return redirect('master:login')
-                
-            except User.DoesNotExist :
-                messages.error(request, f"Username and Password doesn't match any user. If you have entered the right Username and Password, Please contact our support team.")
-                return redirect('master:login')
-            
-    return render(request, 'core/login.html', {
-        'title' : 'Login',
-        'login' : True
-    })
+        return redirect('master:login')
 
 @login_required
 @group_required('supplier')
