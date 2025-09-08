@@ -31,9 +31,24 @@ class SpecialistAdmin(admin.ModelAdmin) :
     list_display_links = [field.name for field in Specialist._meta.get_fields() if field.name not in ['id', 'created_at']]
     search_fields = [field.name for field in Specialist._meta.get_fields() if field.get_internal_type() == 'CharField']
 
+class PicAdmin(admin.ModelAdmin) :
+    list_display = [field.name for field in Pic._meta.get_fields() if field.name not in ['id', 'created_at']]
+    list_filter = ('name',)
+    list_display_links = [field.name for field in Pic._meta.get_fields() if field.name not in ['id', 'created_at']]
+    search_fields = [field.name for field in Pic._meta.get_fields() if field.get_internal_type() == 'CharField']
+
+class ClassificationAdmin(admin.ModelAdmin) :
+    list_display = [field.name for field in Classification._meta.get_fields() if field.name not in ['id', 'created_at']]
+    list_filter = ('name',)
+    list_display_links = [field.name for field in Classification._meta.get_fields() if field.name not in ['id', 'created_at']]
+    search_fields = [field.name for field in Classification._meta.get_fields() if field.get_internal_type() == 'CharField']
+
 
 admin.site.register(Specialist, SpecialistAdmin)
 admin.site.register(Title, TitleAdmin)
 admin.site.register(ClinicGrade, ClinicAdmin)
 admin.site.register(UserGrade, UserAdmin)
 admin.site.register(Salutation, SalutationAdmin)
+
+admin.site.register(Pic, PicAdmin)
+admin.site.register(Classification, ClassificationAdmin)

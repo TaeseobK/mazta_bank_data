@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from .models import *
+import ast
 from django.core.paginator import Paginator
 from master_data.rules import *
 from django.contrib import messages
@@ -21,6 +22,7 @@ def vendor_list(request) :
         vendor.bank_info = json.loads(vendor.bank_info)
         vendor.status = json.loads(vendor.status)
         vendor.pic = json.loads(vendor.pic)
+        vendor.classification = Classification.objects.using('master').get(id=int(vendor.classification)) if vendor.classification else None
         pi = []
         for pic in vendor.pic :
             pics = Pic.objects.using('master').get(id=int(pic))
@@ -64,11 +66,9 @@ def vendor_list(request) :
 @login_required
 @group_required('supplier')
 def new_vendor(request) :
-    pics = Pic.objects.using('master').filter(is_active=True).all()
     classifications = Classification.objects.using('master').filter(is_active=True).all()
 
     data = [{
-        'pics' : pics,
         'class' : classifications
     }]
 
@@ -80,6 +80,30 @@ def new_vendor(request) :
             entity = request.POST.get('entity', '')
             classification = request.POST.get('clss', '')
             npwp = request.POST.get('npwp', '')
+            pics = request.POST.getlist('pics[]', "")
+
+            if not pics :
+                messages.error(request, "PIC is required.")
+                return redirect('supplier:vendor_new')
+            
+            objs = []
+            for item in pics :
+                data = json.loads(item)
+
+                obj = Pic(
+                    name = data.get('name', ''),
+                    position = data.get('position', ''),
+                    company = data.get('company', ''),
+                    contact = json.dumps(data.get('contact', {})),
+                    address = json.dumps(data.get('address', {})),
+                    added = request.user.id,
+                    updated = request.user.id
+                )
+                objs.append(obj)
+
+            created_obj = Pic.objects.using('master').bulk_create(objs)
+
+            pic_ids = [obj.pk for obj in created_obj]
 
             try :
                 clss = Classification.objects.using('master').get(id=int(classification))
@@ -111,20 +135,8 @@ def new_vendor(request) :
                     'bank_address' : bank_address
                 })
 
-            pics = request.POST.getlist('pic[]', [])
-
-            person = []
-            for pic in pics :
-
-                try :
-                    pi = Pic.objects.using('master').get(id=int(pic))
-                except ValueError or Pic.DoesNotExist :
-                    pi = None
-                
-                person.append(pi.pk if pi else None)
-
-            verif = request.POST.getlist('verif[]', '[]')
-            verif_status = request.POST.getlist('verif-sts[]', '[]')
+            verif = request.POST.getlist('verif[]', '')
+            verif_status = request.POST.getlist('verif-sts[]', '')
 
             verification = []
             for ver, ver_sts in zip(verif, verif_status) :
@@ -142,7 +154,7 @@ def new_vendor(request) :
                 name=name,
                 entity=entity,
                 npwp=npwp,
-                pic=json.dumps(pics),
+                pic=json.dumps(pic_ids),
                 address=json.dumps({
                     'street_1' : street_1,
                     'street_2' : street_2,
@@ -172,7 +184,6 @@ def new_vendor(request) :
 @login_required
 @group_required('supplier')
 def detail_vendor(request, vendor_id) :
-    pics = Pic.objects.using('master').filter(is_active=True).all()
     classifications = Classification.objects.using('master').filter(is_active=True).all()
     
     vendor = Vendor.objects.using('supplier').get(id=int(vendor_id))
@@ -180,9 +191,26 @@ def detail_vendor(request, vendor_id) :
     vendor.pic = json.loads(vendor.pic)
     vendor.bank_info = json.loads(vendor.bank_info)
     vendor.status = json.loads(vendor.status)
+    pics_qs = Pic.objects.using('master').filter(id__in=vendor.pic, is_active=True)
+
+    pics_data = []
+    for p in pics_qs:
+        pics_data.append({
+            "id": p.id,
+            "name": p.name,
+            "position": p.position,
+            "company": p.company,
+            "contact": json.loads(p.contact) if p.contact else {},
+            "address": json.loads(p.address) if p.address else {},
+            "added": p.added,
+            "updated": p.updated,
+            "is_active": p.is_active,
+            "created_at": p.created_at.isoformat() if p.created_at else None,
+            "updated_at": p.updated_at.isoformat() if p.updated_at else None,
+        })
 
     data = [{
-        'pics' : pics,
+        'pics' : pics_data,
         'class' : classifications,
         'vendor' : vendor
     }]
@@ -225,23 +253,50 @@ def detail_vendor(request, vendor_id) :
                     'swift_code' : swft_code,
                     'bank_address' : bank_address
                 })
-                
-            print(f"{banks_name}, {accs_num}, {tlps_num}, {swts_code}, {banks_addrs}")
 
-            pics = request.POST.getlist('pic[]', [])
+            pics = request.POST.getlist('pics[]', "")
 
-            person = []
-            for pic in pics :
+            if not pics :
+                messages.error(request, "PIC is required.")
+                return redirect('supplier:vendor_new')
+            
+            objs = []
+            for g in pics:
+                try:
+                    id = g.get('id', None)
+                except AttributeError:
+                    id = None
 
-                try :
-                    pi = Pic.objects.using('master').get(id=int(pic))
-                except ValueError or Pic.DoesNotExist :
-                    pi = None
-                
-                person.append(pi.pk if pi else None)
+                if id:
+                    old_pic = Pic.object.using('master').get(id=int(id))
+                    old.pic_name = g.get('name', old_pic.name)
+                    old_pic.position = g.get('position', old_pic.position)
+                    old_pic.company = g.get('company', old_pic.company)
+                    old_pic.contact = json.dumps(g.get('contact', json.loads(old_pic.contact) if old_pic.contact else {}))
+                    old_pic.address = json.dumps(g.get('address', json.loads(old_pic.address) if old_pic.address else {}))
+                    old_pic.updated = request.user.id
+                    old_pic.save()
+                    objs.append(old_pic.pk)
+                else:
+                    try:
+                        h = json.loads(g)
+                    except (TypeError, json.JSONDecodeError):
+                        h = ast.literal_eval(g)
 
-            verif = request.POST.getlist('verif[]', '[]')
-            verif_status = request.POST.getlist('verif-sts[]', '[]')
+                    obj = Pic(
+                        name = h.get('name', ''),
+                        position = h.get('position', ''),
+                        company = h.get('company', ''),
+                        contact = json.dumps(h.get('contact', {})),
+                        address = json.dumps(h.get('address', {})),
+                        added = request.user.id,
+                        updated = request.user.id
+                    )
+                    obj.save()
+                    objs.append(obj.pk)
+
+            verif = request.POST.getlist('verif[]', '')
+            verif_status = request.POST.getlist('verif-sts[]', '')
 
             verification = []
             for ver, ver_sts in zip(verif, verif_status) :
@@ -251,7 +306,7 @@ def detail_vendor(request, vendor_id) :
                     'verification_status' : ver_sts
                 })
 
-        vendor.pic = list(set(person))
+        vendor.pic = objs
         vendor.name = name
         vendor.npwp = npwp
         vendor.entity = entity

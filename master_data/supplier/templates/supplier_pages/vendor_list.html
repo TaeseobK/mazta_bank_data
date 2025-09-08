@@ -24,12 +24,12 @@
                 <td>{{ data.entity }}</td>
                 <td class="flex items-center justify-start gap-1">
                     {% for d in data.pic %}
-                        <a href="{% url 'master:detail_pic' d.pk %}" class="rounded-sm border-3 border-current bg-success p-1 text-sm font-semibold text-current">
+                        <a href="{% url 'master:detail_pic' d.pk %}" class="rounded-sm border-2 shadow-md border-current bg-success p-1 text-sm font-semibold text-primary">
                             {{ d.name }} - {{ d.contact.email }}
                         </a>
                     {% endfor %}
                 </td>
-                <td>{{ data.classification }}</td>
+                <td>{{ data.classification.name }}</td>
             </tr>
             {% endfor %}
         </tbody>
