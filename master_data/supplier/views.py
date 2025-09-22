@@ -101,13 +101,15 @@ def new_vendor(request) :
                 )
                 objs.append(obj)
 
-            created_obj = Pic.objects.using('master').bulk_create(objs)
+            Pic.objects.using('master').bulk_create(objs)
 
-            pic_ids = [obj.pk for obj in created_obj]
+            pic_ids = list(Pic.objects.using('master').filter(
+                name__in=[o.name for o in objs]
+            ).values_list('id', flat=True))
 
             try :
                 clss = Classification.objects.using('master').get(id=int(classification))
-            except ValueError or Classification.DoesNotExist :
+            except (ValueError, Classification.DoesNotExist) :
                 clss = None
 
             street_1 = request.POST.get('street-1', '')
@@ -146,7 +148,7 @@ def new_vendor(request) :
                     'verification_status' : ver_sts
                 })
 
-            if Vendor.objects.using('supplier').filter(name__in=name).exists() :
+            if Vendor.objects.using('supplier').filter(name=name).exists() :
                 messages.error(request, f"Object with {name}, already exists.")
                 return redirect('supplier:vendor_list')
             
