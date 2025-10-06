@@ -394,7 +394,7 @@ class Command(BaseCommand) :
                 subject=f"Extraction Database Error: {str(e)} at {datetime.now()}",
                 body="Backup DB failed, see log file.",
                 from_email="satriodasmdi@gmail.com",
-                to=["satrio.it@maztafarma.co.id", "taufan.it@maztafarma.co.id"]
+                to=["satrio.it@maztafarma.co.id"]
             )
             log_file_path = os.path.join(settings.MEDIA_ROOT, 'output', "db_to_excel.log")
             if os.path.exists(log_file_path):
@@ -428,7 +428,7 @@ class Command(BaseCommand) :
                     subject=f"BACKUP DATABASE ERROR: {str(e)} at {datetime.now()}",
                     body=f"ERROR COOKKKK",
                     from_email="satriodasmdi@gmail.com",
-                    to=["satrio.it@maztafarma.co.id", "taufan.it@maztafarma.co.id", "satriodasmdi@gmail.com"]
+                    to=["satrio.it@maztafarma.co.id", "satriodasmdi@gmail.com"]
                 )
                 email.send()
                 logging.error("Error Occured: %s", str(e))
@@ -467,7 +467,7 @@ class Command(BaseCommand) :
                 subject=f"Generate Full_Name ERROR: {str(e)} at {datetime.now()}",
                 body=f"ERROR COOKKKK",
                 from_email="satriodasmdi@gmail.com",
-                to=["satrio.it@maztafarma.co.id", "taufan.it@maztafarma.co.id", "satriodasmdi@gmail.com"]
+                to=["satrio.it@maztafarma.co.id", "satriodasmdi@gmail.com"]
             )
             email.send()
             logging.error("Error Occured: %s", str(e))
