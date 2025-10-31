@@ -21,6 +21,7 @@ On the master_data/master_data/settings.py there's some block code that i commen
 - CSRF_COOKIE_SECURE
 - SESSION_COOKIE_SECURE
 - SECURE_SSL_REDIRECT
+- BLABLABLABALA
 
 #### This Will Force All Action to HTTPS
 - SECURE_HSTS_SECONDS
