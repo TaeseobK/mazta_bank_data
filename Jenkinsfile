@@ -2,7 +2,7 @@ stages {
     stage('Pull Latest Code') {
         steps {
             sh '''
-            cd /home/mazta/product_pusatdata/
+            ssh mazta@localhost "cd /home/mazta/product_pusatdata && git pull origin main"
             git pull origin main
             '''
         }
