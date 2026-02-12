@@ -447,9 +447,7 @@ def logout_view(request) :
         headers = {
             'Authorization' : f"Bearer {token}"
         }
-        response = requests.post(settings.LOGOUT_URL, headers=headers)
-
-        print(response)
+        response = requests.post(f"{settings.API_JAMET}/logout", headers=headers)
 
         if response.status_code == 200 :
             request.session.pop('token', None)
