@@ -7,12 +7,12 @@ from django.http import JsonResponse, Http404
 from django.forms.models import model_to_dict
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator
-from master_data.local_settings import *
 from sales.models import DoctorDetail
 from collections import defaultdict
 from django.contrib import messages
 from django.urls import reverse
 from .models import *
+from django.conf import settings
 from django.db.models import Q
 import requests
 import json
@@ -129,7 +129,7 @@ def home(request) :
 
             id_rayon = request.session.get('detail').get('id_user')
 
-            response = requests.get(rayon_api(int(id_rayon)))
+            response = requests.get(f"{settings.API_JAMET}/mapping-user/{int(id_rayon)}")
 
             try :
                 datadata = response.json().get('data')[0] if response.status_code == 200 else None
@@ -276,7 +276,7 @@ def login_view(request):
 
         # 1. coba login ke Auth service
         try:
-            response = requests.post(login_url(), data={'email': email, 'password': password}, timeout=5)
+            response = requests.post(f"{settings.API_JAMET}/login/", data={'email': email, 'password': password}, timeout=5)
             if response.status_code == 200:
                 token = response.json().get('token')
                 detail = response.json().get('data')
@@ -447,7 +447,7 @@ def logout_view(request) :
         headers = {
             'Authorization' : f"Bearer {token}"
         }
-        response = requests.post(logout_url(), headers=headers)
+        response = requests.post(settings.LOGOUT_URL, headers=headers)
 
         print(response)
 

@@ -7,7 +7,6 @@ from django.conf import settings
 from django.http import FileResponse, Http404
 from django.views import View
 from functools import wraps
-from master_data.local_settings import *
 from master_data.rules import *
 import json
 from django.http import JsonResponse
@@ -20,7 +19,7 @@ from datetime import datetime
 from .models import *
 from master.models import *
 from human_resource.models import *
-from master_data.local_settings import *
+from django.conf import settings
 
 def update_data(request) :
     if request.method == 'POST' :
@@ -88,7 +87,7 @@ def doctor_list(request):
             return "Not Found", "Not Found", "Not Set", None, None, None
 
     def handle_admin():
-        api_url = api_doctor_admin()
+        api_url = f"{settings.API_JAMET}/master-data-dokter/filter"
         response = requests.post(api_url, data={'keyword': search, 'page': page})
         if response.status_code != 200:
             return render(request, 'error.html', {'message': 'Gagal mengambil data dokter dari server'})
@@ -126,7 +125,7 @@ def doctor_list(request):
         })
 
     def handle_sales():
-        api_url = api_doctor_sales(id_user)
+        api_url = f"{settings.API_JAMET}/master-data-dokter/{id_user}"
         response = requests.get(api_url)
         if response.status_code != 200:
             return render(request, 'error.html', {'message': 'Gagal mengambil data dokter dari server'})
@@ -200,7 +199,7 @@ If you break it, git blame will find you.
 @api_login_required
 def doctor_detail(request, user_id, doc_id) :
     id_user = request.session.get('detail').get('id_user')
-    api_url = api_doctor_sales(id_user)
+    api_url = f"{settings.API_JAMET}/master-data-dokter/detail/{id_user}"
     
     response = requests.get(api_url)
 
@@ -208,7 +207,6 @@ def doctor_detail(request, user_id, doc_id) :
         api_data = response.json()
 
         drs = api_data.get('data')
-
         dr_detail = next((drr for drr in drs if drr['id_dokter'] == doc_id), None)
 
         if dr_detail :

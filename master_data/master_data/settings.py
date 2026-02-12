@@ -28,7 +28,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 import json
-from master_data import local_settings
+from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,9 +41,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-%ui#t=6)11fpu802x8&^974%tr)k8ojg_v!%au-*qyr79@+!_m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = local_settings.debug_is_true()
+DEBUG = config("DEBUG", cast=bool, default=False)
 
-ALLOWED_HOSTS = local_settings.allowed_hosts()
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv())
+CSRF_TRUSTED_ORIGINS = [config("CSRF_SERVICE", default="http://localhost:8000")]
 
 # Application definition
 
@@ -97,7 +98,53 @@ WSGI_APPLICATION = 'master_data.wsgi.application'
 # Databases
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = local_settings.db_settings()
+DATABASES = {
+    "default": {
+        "ENGINE": config("DB_DEFAULT_ENGINE", default="django.db.backends.sqlite3"),
+        "NAME": config("DB_DEFAULT_NAME", default=f"{BASE_DIR} / databases/auth.sqlite3"),
+        "USER": config("DB_DEFAULT_USER", default=""),
+        "PASSWORD": config("DB_DEFAULT_PASSWORD", default=""),
+        "HOST": config("DB_DEFAULT_HOST", default=""),
+        "PORT": config("DB_DEFAULT_PORT", default=""),
+        "CONN_MAX_AGE": 0,
+    },
+    "master": {
+        "ENGINE": config("DB_MASTER_ENGINE", default="django.db.backends.sqlite3"),
+        "NAME": config("DB_MASTER_NAME", default=f"{BASE_DIR} / databases/master.sqlite3"),
+        "USER": config("DB_MASTER_USER", default=""),
+        "PASSWORD": config("DB_MASTER_PASSWORD", default=""),
+        "HOST": config("DB_MASTER_HOST", default=""),
+        "PORT": config("DB_MASTER_PORT", default=""),
+        "CONN_MAX_AGE": 0,
+    },
+    "sales": {
+        "ENGINE": config("DB_SALES_ENGINE", default="django.db.backends.sqlite3"),
+        "NAME": config("DB_SALES_NAME", default=f"{BASE_DIR} / databases/sales.sqlite3"),
+        "USER": config("DB_SALES_USER", default=""),
+        "PASSWORD": config("DB_SALES_PASSWORD", default=""),
+        "HOST": config("DB_SALES_HOST", default=""),
+        "PORT": config("DB_SALES_PORT", default=""),
+        "CONN_MAX_AGE": 0,
+    },
+    "supplier": {
+        "ENGINE": config("DB_SUPPLIER_ENGINE", default="django.db.backends.sqlite3"),
+        "NAME": config("DB_SUPPLIER_NAME", default=f"{BASE_DIR} / databases/supplier.sqlite3"),
+        "USER": config("DB_SUPPLIER_USER", default=""),
+        "PASSWORD": config("DB_SUPPLIER_PASSWORD", default=""),
+        "HOST": config("DB_SUPPLIER_HOST", default=""),
+        "PORT": config("DB_SUPPLIER_PORT", default=""),
+        "CONN_MAX_AGE": 0,
+    },
+    "human_resource": {
+        "ENGINE": config("DB_HR_ENGINE", default="django.db.backends.sqlite3"),
+        "NAME": config("DB_HR_NAME", default=f"{BASE_DIR} / databases/hr.sqlite3"),
+        "USER": config("DB_HR_USER", default=""),
+        "PASSWORD": config("DB_HR_PASSWORD", default=""),
+        "HOST": config("DB_HR_HOST", default=""),
+        "PORT": config("DB_HR_PORT", default=""),
+        "CONN_MAX_AGE": 0,
+    },
+}
 
 DATABASE_ROUTERS = [
     'human_resource.routers.HumanResourceRouter',
@@ -107,8 +154,6 @@ DATABASE_ROUTERS = [
 ]
 
 AUTO_LOGOUT_TIME = int(60 * 60)
-
-CSRF_TRUSTED_ORIGINS = local_settings.csrf_settings()
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -144,17 +189,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = '/static/'
-
+STATIC_URL = config("STATIC_URL", default="/static/")
+STATIC_ROOT = config("STATIC_ROOT", default="staticfiles")
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-MEDIA_URL = '/media/'
-
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = config("MEDIA_URL", default="media/")
+MEDIA_ROOT = config("MEDIA_ROOT", default="media")
 
 LOGIN_URL = '/login/'
 
@@ -179,15 +221,15 @@ EMAIL_HOST_PASSWORD = 'kmdu qboa nezv cpcj'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-SECURE_PROXY_SSL_HEADER = local_settings.proxy_ssl_headers()
+SECURE_PROXY_SSL_HEADER = tuple(
+    config("SECURE_PROXY_SSL_HEADERS").split(",")
+)
 
-fff = local_settings.https_settings()
+CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', cast=bool)
+SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', cast=bool)
+SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', cast=bool)
+SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', cast=bool)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = config('SECURE_HSTS_INCLUDE_SUBDOMAINS', cast=bool)
+SECURE_HSTS_PRELOAD = config('SECURE_HSTS_PRELOAD', cast=bool)
 
-CSRF_COOKIE_SECURE = fff['CSRF_COOKIE_SECURE']
-SESSION_COOKIE_SECURE = fff['SESSION_COOKIE_SECURE']
-SECURE_SSL_REDIRECT = fff['SECURE_SSL_REDIRECT']
-SECURE_HSTS_SECONDS = fff['SECURE_HSTS_SECONDS']
-SECURE_HSTS_INCLUDE_SUBDOMAINS = fff['SECURE_HSTS_INCLUDE_SUBDOMAINS']
-SECURE_HSTS_PRELOAD = fff['SECURE_HSTS_PRELOAD']
-SECURE_BROWSER_XSS_FILTER = fff['SECURE_BROWSER_XSS_FILTER']
-SECURE_CONTENT_TYPE_NOSNIFF = fff['SECURE_CONTENT_TYPE_NOSNIFF']
+API_JAMET=config("API_JAMET")
