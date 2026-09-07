@@ -127,7 +127,7 @@ def home(request) :
         else :
             src_query = request.GET.get('search', '')
 
-            id_rayon = request.session.get('detail').get('id_user')
+            id_rayon = (request.session.get('detail') or {}).get('id_user')
 
             response = requests.get(f"{settings.API_JAMET}/mapping-user/{int(id_rayon)}")
 
@@ -150,7 +150,7 @@ def home(request) :
                             dd.append(i)
             
             except IndexError :
-                id_user = request.session.get('detail').get('id_user')
+                id_user = (request.session.get('detail') or {}).get('id_user')
                 dd = []
                 for i in DoctorDetail.objects.using('sales').filter(is_active=True).all() :
                     if int(json.loads(i.rayon).get('id')) == int(id_user) :
