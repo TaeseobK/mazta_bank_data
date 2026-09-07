@@ -5,22 +5,22 @@
     {% include 'head/nav_1.html' %}
 {% endblock header %}
 {% block main %}
-<section class="m-5 flex gap-5 z-0">
-    <div class="lg:w-9/12 w-full">
+<div class="page-wrap max-w-5xl">
+    <div class="w-full">
         <form action="." method="post" class="space-y-5">
             {% csrf_token %}
             {% if data.0.doctor %}
                 {% if data.0.doctor.rayon.id == request.session.detail.id_user %}
-                    <button type="submit" class="btn btn-md btn-accent">Submit</button>
+                    <button type="submit" class="btn btn-sm btn-accent">Submit</button>
                 {% endif %}
             {% else %}
-                <button type="submit" class="btn btn-md btn-accent">Submit</button>
+                <button type="submit" class="btn btn-sm btn-accent">Submit</button>
             {% endif %}
             <input type="text" name="metode" value="post" class="hidden">
-            <div class="w-full rounded-md border border-current p-5 space-y-5 glass mb-5">
+            <div class="w-full rounded-box border border-neutral bg-base-200 p-5 space-y-5 mb-5">
                 <div class="flex items-center justify-between mx-5">
-                    <p class="text-md font-bold uppercase text-pretty font-sans">{{ data.0.dr_api.nama_dokter }} {% if data.0.doctor %}|| {{ data.0.doctor.code }}{% endif %}</p>
-                    <p class="text-md font-bold uppercase text-pretty font-sans">
+                    <p class="text-sm font-bold uppercase text-pretty font-sans">{{ data.0.dr_api.nama_dokter }} {% if data.0.doctor %}|| {{ data.0.doctor.code }}{% endif %}</p>
+                    <p class="text-sm font-bold uppercase text-pretty font-sans">
                         {% if data.0.doctor %}
                             {{ data.0.doctor.rayon.rayon }}
                         {% else %}
@@ -30,23 +30,23 @@
                 </div>
                 <div class="border-base-100 bg-base-300 rounded-md m-5 p-5 grid lg:grid-cols-2 grid-cols-1 gap-5">
                     <div class="flex items-center justify-start gap-5">
-                        <label for="fn-id" class="label text-md font-semibold lg:block hidden w-1/4">First Name</label>
+                        <label for="fn-id" class="label text-sm font-semibold lg:block hidden w-1/4">First Name</label>
                         <input type="text" id="fn-id" name="first-name" class="input input-sm px-2 w-full lg:w-3/4" autocomplete="off" value="{{ data.0.doctor.info.first_name }}" placeholder="First Name" required>
                     </div>
                     <div class="flex items-center justify-start gap-5">
-                        <label for="mn-id" class="label text-md font-semibold lg:block hidden w-1/4">Middle Name</label>
+                        <label for="mn-id" class="label text-sm font-semibold lg:block hidden w-1/4">Middle Name</label>
                         <input type="text" id="mn-id" name="middle-name" class="input input-sm px-2 w-full lg:w-3/4" value="{{ data.0.doctor.info.middle_name }}" placeholder="Middle Name">
                     </div>
                     <div class="flex items-center justify-start gap-5">
-                        <label for="ln-id" class="label text-md font-semibold lg:block hidden w-1/4">Last Name</label>
+                        <label for="ln-id" class="label text-sm font-semibold lg:block hidden w-1/4">Last Name</label>
                         <input type="text" id="ln-id" name="last-name" class="input input-sm px-2 w-full lg:w-3/4" value="{{ data.0.doctor.info.last_name }}" placeholder="Last Name">
                     </div>
                     <div class="flex items-center justify-start gap-5">
-                        <label for="fl-id" class="label text-md font-semibold lg:block hidden w-1/4">Full Name</label>
+                        <label for="fl-id" class="label text-sm font-semibold lg:block hidden w-1/4">Full Name</label>
                         <input type="text" id="fl-id" name="full-name" class="input input-sm px-2 w-full lg:w-3/4" readonly placeholder="Full Name" {% if not data.0.doctor %} value="{{ data.0.dr_api.nama_dokter }}" {% else %} value="{{ data.0.doctor.info.full_name }}" {% endif %} required>
                     </div>
                     <div class="flex items-center justify-start gap-5 w-full">
-                        <label for="sal-num" class="label text-md font-semibold lg:block hidden w-1/4">Salutation</label>
+                        <label for="sal-num" class="label text-sm font-semibold lg:block hidden w-1/4">Salutation</label>
                         <div class="flex items-center justify-start gap-5 w-full lg:w-3/4">
                             <select name="sal-num" id="sal-id" class="select select-sm px-2 cursor-pointer" required>
                                     <option value="" {% if not data.0.doctor.info.salutation %} selected {% endif %} >Select Salutations</option>
@@ -69,7 +69,7 @@
                         </div>
                     </div>
                     <div class="flex items-center justify-start gap-5 w-full">
-                        <label for="tit-num" class="label text-md font-semibold lg:block hidden w-1/4">Title</label>
+                        <label for="tit-num" class="label text-sm font-semibold lg:block hidden w-1/4">Title</label>
                         <div class="flex items-center justify-start gap-5 w-full lg:w-3/4">
                             <select name="tit-num" id="tit-id" class="select select-sm px-2 cursor-pointer" required>
                                 <option value="" {% if not data.0.doctor.info.title %} selected {% endif %}>Select Titles</option>
@@ -94,7 +94,7 @@
                 </div>
                 <div>
                     <div class="dropdown dropdown-start block lg:hidden mx-5">
-                        <div tabindex="0" role="button" class="btn m-1 rounded-none rounded-l-sm rounded-r-sm">
+                        <div tabindex="0" role="button" class="btn m-1 rounded-field">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0-3.75-3.75M17.25 21 21 17.25" />
                             </svg>                              
@@ -148,7 +148,7 @@
                 <div id="wi-tab-id" class="tab-active tab-content">
                     <div class="grid lg:grid-cols-2 grid-cols-1 gap-10 p-5">
                         <div class="space-y-2">
-                            <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">Work Locations</p>
+                            <p class="w-full text-sm border-b border-neutral font-semibold font-sans uppercase">Work Locations</p>
                             <div class="flex justify-center gap-5 items-start">
                                 <p class="w-1/4 font-semibold label lg:block hidden">Address</p>
                                 <ul class="lg:w-3/4 w-full space-y-2">
@@ -168,11 +168,11 @@
                                     </li>
                                 </ul>
                             </div>
-                            <p class="block w-full border-b border-current text-md font-semibold font-sans">Full Work Address</p>
+                            <p class="block w-full border-b border-neutral text-sm font-semibold font-sans">Full Work Address</p>
                             <textarea name="fll-work-address" id="wrk-add-id" type="text" class="textarea rounded-md w-full">{% if not data.0.doctor %} {{ data.0.dr_api.alamat }} {% else %} {{ data.0.doctor.work_information.address.fulladdress }} {% endif %}</textarea>
                         </div>
                         <div class="space-y-2">
-                            <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">Job Information</p>
+                            <p class="w-full text-sm border-b border-neutral font-semibold font-sans uppercase">Job Information</p>
                             <ul class="space-y-2 w-full">
                                 <li class="flex items-center justify-between">
                                     <label for="ws-id" class="font-semibold label hidden lg:block">Workspace Name</label>
@@ -197,7 +197,7 @@
                             </ul>
                         </div>
                         <div class="space-y-2">
-                            <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">Sales Information</p>
+                            <p class="w-full text-sm border-b border-neutral font-semibold font-sans uppercase">Sales Information</p>
                             <ul class="grid grid-cols-1 gap-5 w-full">
                                 <li class="flex items-center justify-start gap-5">
                                     <label for="gu-id" class="font-semibold label w-1/3 hidden lg:block">Grade User</label>
@@ -270,7 +270,7 @@
                             </ul>
                         </div>
                         <div class="space-y-2">
-                            <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">System Information</p>
+                            <p class="w-full text-sm border-b border-neutral font-semibold font-sans uppercase">System Information</p>
                             <div class="flex items-center justify-between">
                                 <label for="acc-id" class="label font-semibold lg:block hidden">Accurate Code</label>
                                 <input id="acc-id" name="accurate-code" placeholder="Accurate Code" type="text" class="input input-sm px-2" value="{{ data.0.doctor.work_information.system_information.accurate_code }}">
@@ -281,7 +281,7 @@
                 <div id="pi-tab-id" class="tab-content hidden">
                     <div class="grid lg:grid-cols-2 grid-cols-1 gap-10 p-5">
                         <div class="space-y-2">
-                            <p class="w-full text-md font-semibold border-b-2 border-current uppercase">Private Contact</p>
+                            <p class="w-full text-sm font-semibold border-b border-neutral uppercase">Private Contact</p>
                             <div class="flex items-start justify-center gap-5">
                                 <p class="w-1/4 font-semibold label lg:block hidden">Address</p>
                                 <ul class="lg:w-3/4 w-full space-y-2">
@@ -311,7 +311,7 @@
                             </div>
                         </div>
                         <div class="space-y-2">
-                            <p class="w-full text-md font-semibold border-b-2 border-current uppercase">Citizenship</p>
+                            <p class="w-full text-sm font-semibold border-b border-neutral uppercase">Citizenship</p>
                             <div class="flex items-start justify-between gap-5">
                                 <label for="ntl" class="label w-1/4 font-semibold lg:block hidden">Nationality</label>
                                 <input type="text" id="ntl" name="nationality" class="input input-sm px-2 w-full lg:w-3/4" placeholder="Nationality" value="{{ data.0.doctor.private_information.citizenship.nationality }}">
@@ -346,7 +346,7 @@
                             </div>
                         </div>
                         <div class="space-y-2">
-                            <p class="w-full text-md font-semibold border-b-2 border-current uppercase">Education</p>
+                            <p class="w-full text-sm font-semibold border-b border-neutral uppercase">Education</p>
                             <div class="flex items-start justify-between gap-5">
                                 <label for="cert-level" class="label w-1/4 font-semibold lg:block hidden">Cert. Level</label>
                                 <input type="text" id="cert-level" name="certification-level" class="input input-sm px-2 w-full lg:w-3/4" placeholder="Certification Level" value="{{ data.0.doctor.private_information.education.certification }}">
@@ -361,7 +361,7 @@
                             </div>
                         </div>
                         <div class="space-y-2">
-                            <p class="w-full text-md font-semibold border-b-2 border-current uppercase">Family Status</p>
+                            <p class="w-full text-sm font-semibold border-b border-neutral uppercase">Family Status</p>
                             <div class="flex items-start justify-between gap-5">
                                 <label for="mrtl-sts" class="label w-1/4 font-semibold lg:block hidden">Marital Status</label>
                                 <select name="marital-status" id="mrtl-sts" class="input input-sm px-2 w-full lg:w-3/4 cursor-pointer">
@@ -375,7 +375,7 @@
                             </div>
                         </div>
                         <div class="space-y-2">
-                            <p class="w-full text-md font-semibold border-b-2 border-current uppercase">Spouse</p>
+                            <p class="w-full text-sm font-semibold border-b border-neutral uppercase">Spouse</p>
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -419,7 +419,7 @@
                             </div>
                         </div>
                         <div class="space-y-2">
-                            <p class="w-full text-md font-semibold border-b-2 border-current uppercase">Children</p>
+                            <p class="w-full text-sm font-semibold border-b border-neutral uppercase">Children</p>
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -462,7 +462,7 @@
                             </div>
                         </div>
                         <dialog id="children_modal" class="modal">
-                            <div class="modal-box w-11/12 max-w-5xl glass">
+                            <div class="modal-box w-11/12 max-w-5xl">
                                 <h3 class="text-lg font-bold">Children</h3>
                                 <div class="modal-action w-full flex items-center justify-center">
                                     <form id="chld-form" class="w-full flex items-center justify-center">
@@ -501,7 +501,7 @@
                             </div>
                         </dialog>
                         <dialog id="spouse_modal" class="modal">
-                            <div class="modal-box w-11/12 max-w-5xl glass ">
+                            <div class="modal-box w-11/12 max-w-5xl ">
                                 <h3 class="text-lg font-bold">Spouse</h3>
                                 <div class="modal-action w-full">
                                     <form id="sps-form-id" class="w-full">
@@ -548,7 +548,7 @@
                 <div id="ai-tab-id" class="tab-content hidden">
                     <div class="grid lg:grid-cols-2 grid-cols-1 gap-10 p-5">
                         <div class="space-y-2">
-                            <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">Interest</p>
+                            <p class="w-full text-sm border-b border-neutral font-semibold font-sans uppercase">Interest</p>
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -585,7 +585,7 @@
                             </button>
                         </div>
                         <div class="space-y-2">
-                            <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">Social Media</p>
+                            <p class="w-full text-sm border-b border-neutral font-semibold font-sans uppercase">Social Media</p>
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -624,10 +624,10 @@
                     </div>
                     <div class="space-y-2 p-5 flex items-center justify-center">
                         <div class="w-full">
-                            <p class="text-md border-b-2 border-current font-semibold font-sans uppercase">Best Time</p>
+                            <p class="text-sm border-b border-neutral font-semibold font-sans uppercase">Best Time</p>
                             <div class="grid lg:grid-cols-2 grid-cols-1 gap-10 mt-5">
                                 <div class="gap-5 flex w-full justify-start items-center by-days">
-                                    <span class="text-md font-semibold text-current lg:block hidden">Time Base Input?</span>
+                                    <span class="text-sm font-semibold text-current lg:block hidden">Time Base Input?</span>
                                     <div class="flex items-center justify-start gap-3">
                                         <input type="radio" class="radio" id="by-date" to="by-date-2" name="date-or-days" {% if "date" in data.0.doctor.additional_information.base_time.base %} checked {% endif %} value="date">
                                         <label for="by-date" class="label cursor-pointer">By Date?</label>
@@ -668,7 +668,7 @@
                     </div>
                 </div>
                 <div id="bi-tab-id" class="tab-content hidden">
-                    <div class="flex items-center gap-10 w-full border-b border-current p-2 mr-10">
+                    <div class="flex items-center gap-10 w-full border-b border-neutral p-2 mr-10">
                         <p class="w-1/2 text-lg font-semibold font-sans text-center">Branches</p>
                         <div class="flex w-1/2 items-center justify-end">
                             <button type="button" id="add-branch" class="btn btn-xs py-4 items-center">
@@ -681,15 +681,15 @@
                     </div>
                     <div id="branch-list" class="grid lg:grid-cols-4 grid-cols-1 gap-5 p-5">
                         {% for d in data.0.doctor.branch_information %}
-                        <div class="rounded-sm border-2 border-current glass p-2 space-y-2">
+                        <div class="rounded-sm border border-neutral p-2 space-y-2">
                             <div class="space-y-2">
                               <div class="flex items-center justify-start gap-2">
-                                <p class="w-1/3 text-md font-semibold text-left">Name</p>
-                                <p class="w-2/3 text-md font-semibold text-left">: {{ d.branch_name }}</p>  
+                                <p class="w-1/3 text-sm font-semibold text-left">Name</p>
+                                <p class="w-2/3 text-sm font-semibold text-left">: {{ d.branch_name }}</p>  
                               </div>
                               <div class="flex items-center justify-start gap-2">
-                                <p class="w-1/3 text-md font-semibold text-left">Est Date</p>
-                                <p class="w-2/3 text-md font-semibold text-left">: {{ d.branch_established_date }}</p>  
+                                <p class="w-1/3 text-sm font-semibold text-left">Est Date</p>
+                                <p class="w-2/3 text-sm font-semibold text-left">: {{ d.branch_established_date }}</p>  
                               </div>
                             </div>
                             <div class="flex items-center justify-end gap-10">
@@ -713,7 +713,7 @@
                         {% endfor %}
                     </div>
                     <dialog id="branch_modal" class="modal">
-                        <div class="modal-box w-11/12 max-w-5xl glass">
+                        <div class="modal-box w-11/12 max-w-5xl">
                             <h3 class="text-lg font-bold">Branch</h3>
                             <div class="modal-action w-full">
                                 <form id="branch-form" class="w-full">
@@ -765,7 +765,5 @@
     <div class="w-3/12 lg:block hidden">
         <!-- Log Activity -->
     </div>
-</section>
-<script>
-</script>
+</div>
 {% endblock main %}

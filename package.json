@@ -1,0 +1,12 @@
+{
+  "name": "pusatdata-ui",
+  "private": true,
+  "scripts": {
+    "build": "tailwindcss -i master_data/static/src/app.css -o master_data/static/src/styles.css --minify",
+    "watch": "tailwindcss -i master_data/static/src/app.css -o master_data/static/src/styles.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.11",
+    "daisyui": "^5.0.43"
+  }
+}

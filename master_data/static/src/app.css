@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+/* Scan Django templates and the extracted jQuery (which builds markup with
+   utility classes in template literals). */
+@source "../../**/templates/**/*.html";
+@source "./app.js";
+
+@plugin "daisyui" {
+  themes: mazta --default;
+  logs: false;
+}
+
+@plugin "daisyui/theme" {
+  name: "mazta";
+  default: true;
+  color-scheme: dark;
+
+  --color-base-100: #0f1115;
+  --color-base-200: #16181d;
+  --color-base-300: #1e2128;
+  --color-base-content: #e6e8eb;
+
+  --color-primary: #3ea6a0;
+  --color-primary-content: #04110f;
+  --color-secondary: #6366f1;
+  --color-secondary-content: #eef0ff;
+  --color-accent: #3ea6a0;
+  --color-accent-content: #04110f;
+  --color-neutral: #262a31;
+  --color-neutral-content: #c9ccd1;
+
+  --color-info: #3b82c4;
+  --color-info-content: #eaf2fb;
+  --color-success: #3f9d78;
+  --color-success-content: #eafaf2;
+  --color-warning: #c99a3f;
+  --color-warning-content: #201a0d;
+  --color-error: #cf5f5f;
+  --color-error-content: #fbeaea;
+
+  --radius-selector: 0.375rem;
+  --radius-field: 0.375rem;
+  --radius-box: 0.5rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-base-100 text-base-content font-sans antialiased;
+  }
+  a {
+    @apply transition-colors;
+  }
+  /* thin, quiet scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-neutral) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--color-neutral);
+    border-radius: 9999px;
+  }
+}
+
+/* Shared component layer: the 31 page templates lean on these so the look
+   stays consistent without copy-pasted utility soup. */
+@layer components {
+  .page-wrap {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 py-6;
+  }
+  .panel {
+    @apply bg-base-200 border border-neutral rounded-box;
+  }
+  .panel-pad {
+    @apply p-5 sm:p-6;
+  }
+  .panel-title {
+    @apply text-sm font-semibold tracking-wide uppercase text-base-content/70;
+  }
+
+  /* tables */
+  .data-table {
+    @apply w-full border-collapse text-sm;
+  }
+  .data-table thead th {
+    @apply text-left font-medium text-xs uppercase tracking-wide
+      text-base-content/55 px-4 py-3 border-b border-neutral;
+  }
+  .data-table tbody th,
+  .data-table tbody td {
+    @apply px-4 py-3 border-b border-neutral/60 font-normal align-top;
+  }
+  .data-table tbody tr {
+    @apply transition-colors;
+  }
+  .data-table tbody tr:hover {
+    @apply bg-base-300/40;
+  }
+  .data-table a {
+    @apply text-primary hover:text-primary/80;
+  }
+
+  /* stacked card list (mobile fallback for tables) */
+  .stack-card {
+    @apply rounded-field bg-base-200 border border-neutral p-4;
+  }
+  .stack-card + .stack-card {
+    @apply mt-2;
+  }
+
+  /* forms */
+  .field-row {
+    @apply flex flex-col gap-1.5;
+  }
+  .field-label {
+    @apply text-xs font-medium uppercase tracking-wide text-base-content/60;
+  }
+  .field-help {
+    @apply text-xs text-base-content/45;
+  }
+  .form-grid {
+    @apply grid gap-x-6 gap-y-5 sm:grid-cols-2;
+  }
+}

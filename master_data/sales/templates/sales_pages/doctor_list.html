@@ -1,61 +1,34 @@
-{% extends 'base/base_app.html' %}
-{% load static %}
+{% extends 'base/list_base.html' %}
 
-{% block header %}
-    {% include 'head/nav_1.html' %}
-    {% include 'head/nav_2.html' %}
-{% endblock header %}
+{% block table_head %}
+<th>Doctor Name</th><th>Old Code</th><th>Priority</th><th>Cover</th><th>Updated</th><th>Created</th>
+{% endblock %}
 
-{% block main %}
-<main class="lg:mx-10 mx-5 my-5 bg-base-200 rounded-md max-w-screen">
-    <table class="lg:table table-zebra my-5 hidden">
-        <thead>
-            <tr>
-                <th>Doctor Name</th>
-                <th>Old Code</th>
-                <th>Priority</th>
-                <th>Cover</th>
-                <th>Update At</th>
-                <th>Created At</th>
-            </tr>
-        </thead>
-        <tbody id="page-list">
-            {% for data in page_obj %}
-            <tr class="border-b border-current hover:bg-base-100">
-                <th>
-                    <a {% if request.user.is_staff %} {% if data.dr %} href="{% url 'sales:doctor_detail_admin' data.dr.pk %}" {% else %} href="#" {% endif %} {% else %} href="{% url 'sales:doctor_detail_sales' request.session.detail.id_user data.data.id_dokter %}" {% endif %} class="link link-hover">
-                        {{ data.data.nama_dokter }}
-                    </a>
-                </th>
-                <td>{{ data.data.kode_pelanggan_old }}</td>
-                <td>{{ data.priority }}</td>
-                <td>{{ data.cover.rayon }}</td>
-                <td>{{ data.last_update }}</td>
-                <td>{{ data.created_at }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div id="page-list-2" class="lg:hidden block p-2">
-        {% for data in page_obj %}
-        <div class="rounded-sm bg-base-100 p-2 m-2">
-            <a {% if request.user.is_staff %} {% if data.dr %} href="{% url 'sales:doctor_detail_admin' data.dr.pk %}" {% else %} href="#" {% endif %} {% else %} href="{% url 'sales:doctor_detail_sales' request.session.detail.id_user data.data.id_dokter %}" {% endif %} class="text-left text-md font-semibold">{{ data.data.nama_dokter }}</a>
-            <div class="flex items-center justify-start gap-5">
-                <ul class="w-1/4 text-xs font-semibold">
-                    <li>Old Code</li>
-                    <li>Priority</li>
-                    <li>Cover</li>
-                    <li>Update At</li>
-                </ul>
-                <ul class="w-3/4 text-xs font-semibold">
-                    <li> : {{ data.data.kode_pelanggan }}</li>
-                    <li> : {{ data.priority }}</li>
-                    <li> : {{ data.cover.rayon }}</li>
-                    <li> : {{ data.last_update }}</li>
-                </ul>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</main>
-{% endblock main %}
+{% block table_body %}
+{% for data in page_obj %}
+<tr>
+    <th>
+        <a {% if request.user.is_staff %}{% if data.dr %}href="{% url 'sales:doctor_detail_admin' data.dr.pk %}"{% else %}href="#"{% endif %}{% else %}href="{% url 'sales:doctor_detail_sales' request.session.detail.id_user data.data.id_dokter %}"{% endif %}>{{ data.data.nama_dokter }}</a>
+    </th>
+    <td>{{ data.data.kode_pelanggan_old }}</td>
+    <td>{{ data.priority }}</td>
+    <td>{{ data.cover.rayon }}</td>
+    <td class="text-base-content/60">{{ data.last_update }}</td>
+    <td class="text-base-content/60">{{ data.created_at }}</td>
+</tr>
+{% endfor %}
+{% endblock %}
+
+{% block cards %}
+{% for data in page_obj %}
+<div class="p-4">
+    <a class="text-sm font-medium text-primary" {% if request.user.is_staff %}{% if data.dr %}href="{% url 'sales:doctor_detail_admin' data.dr.pk %}"{% else %}href="#"{% endif %}{% else %}href="{% url 'sales:doctor_detail_sales' request.session.detail.id_user data.data.id_dokter %}"{% endif %}>{{ data.data.nama_dokter }}</a>
+    <dl class="mt-2 grid grid-cols-[5rem_1fr] gap-y-1 text-xs text-base-content/60">
+        <dt>Old Code</dt><dd>{{ data.data.kode_pelanggan }}</dd>
+        <dt>Priority</dt><dd>{{ data.priority }}</dd>
+        <dt>Cover</dt><dd>{{ data.cover.rayon }}</dd>
+        <dt>Updated</dt><dd>{{ data.last_update }}</dd>
+    </dl>
+</div>
+{% endfor %}
+{% endblock %}

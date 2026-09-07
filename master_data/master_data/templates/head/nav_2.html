@@ -1,121 +1,32 @@
 {% load static %}
-<nav class="mt-3 lg:mx-10 mx-5 flex items-center justify-between glass p-2 lg:p-2 rounded-md">
-    <div class="w-9/12 flex items-center justify-start gap-5">
-        <label class="input z-0" data-aos="fade-right">
-            <svg class="h-8 opacity-50 z-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></g></svg>
-            <input type="text" name="search" id="search" class="lg:block grow" value="{{ search_query }}" placeholder="Search..."/>
-        </label>
-        {% if request.user.is_staff and title == "Doctor List" %}
-            <a href="{% url 'sales:download_doctor_data' %}" class="btn btn-sm rounded-none py-auto rounded-l-sm rounded-r-sm hidden lg:block">Download Data</a>
+<div class="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 pt-6 sm:px-6">
+    <label class="input input-sm flex flex-1 items-center gap-2 border-neutral bg-base-200 sm:max-w-xs">
+        <svg class="h-4 w-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <input type="text" name="search" id="search" value="{{ search_query }}" placeholder="Search..." class="grow" />
+    </label>
+
+    {% if request.user.is_staff and title == "Doctor List" %}
+    <a href="{% url 'sales:download_doctor_data' %}" class="btn btn-sm btn-ghost">Download Data</a>
+    {% endif %}
+
+    <div class="{% if not 'bco' in request.user.username and not 'gmail' in request.user.username %}hidden{% endif %}">
+        <a role="button" id="opn-mdl" href="{% url 'sales:switch_rayon' %}" class="btn btn-sm btn-ghost">Switch Rayon</a>
+    </div>
+
+    <div class="ml-auto flex items-center gap-2">
+        {% if api == "False" %}
+        <span class="text-xs tabular-nums text-base-content/60">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        <div class="join">
+            <a class="btn btn-sm join-item {% if not page_obj.has_previous %}btn-disabled{% endif %}" {% if page_obj.has_previous %}href="?search={{ search_query|urlencode }}&page={{ page_obj.previous_page_number }}"{% endif %}>&lsaquo;</a>
+            <a class="btn btn-sm join-item {% if not page_obj.has_next %}btn-disabled{% endif %}" {% if page_obj.has_next %}href="?search={{ search_query|urlencode }}&page={{ page_obj.next_page_number }}"{% endif %}>&rsaquo;</a>
+        </div>
+        {% if new_url %}<a href="{{ new_url }}" class="btn btn-sm btn-primary">New</a>{% endif %}
+        {% elif api == "True" %}
+        <span class="text-xs tabular-nums text-base-content/60">{{ current_page }} / {{ last_page }}</span>
+        <div class="join">
+            <a class="btn btn-sm join-item {% if not prev_page %}btn-disabled{% endif %}" {% if prev_page %}href="?search={{ search_query|urlencode }}&page={{ current_page|add:-1 }}"{% endif %}>&lsaquo;</a>
+            <a class="btn btn-sm join-item {% if not next_page %}btn-disabled{% endif %}" {% if next_page %}href="?search={{ search_query|urlencode }}&page={{ current_page|add:1 }}"{% endif %}>&rsaquo;</a>
+        </div>
         {% endif %}
     </div>
-    {% if api == "False" %}
-    <div class="w-2/12 lg:flex hidden justify-center items-center">
-        <div class="w-1/3 flex items-center justify-center">
-            <p class="text-md text-pretty font-sans font-semibold text-center text-current px-3 py-1 bg-base-300 rounded-sm" data-aos="fade-up">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</p>
-        </div>
-        <div class="w-1/3 flex items-center justify-center gap-1">
-            <a {% if page_obj.has_previous %} href="?search={{search_query|urlencode}}&page={{page_obj.previous_page_number}}" {% endif %} class="rounded-none rounded-l-sm rounded-r-sm btn-xs py-4 btn w-auto" data-aos="fade-up-right">
-                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="m15 19-7-7 7-7"/>
-                </svg>              
-            </a>
-            <a {% if page_obj.has_next %} href="?search={{search_query|urlencode}}&page={{page_obj.next_page_number}}" {% endif %} class="rounded-none rounded-l-sm rounded-r-sm btn-xs py-4 btn w-auto" data-aos="fade-up-left">
-                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="m9 5 7 7-7 7"/>
-                </svg>              
-            </a>
-        </div>
-        <div class="w-1/3 flex items-center justify-center gap-1">
-            <a href="{{ new_url }}" class="btn btn-md">
-                <p class="font-semibold text-medium">New</p>
-            </a>
-        </div>
-    </div>
-    {% elif api == "True" %}
-    <div class="w-2/12 lg:flex hidden justify-center items-center">
-        <div class="w-1/2 flex items-center justify-center">
-            <p class="text-md text-pretty font-sans font-semibold text-center text-current px-3 py-1 bg-base-300 rounded-sm" data-aos="fade-up">{{ current_page }} / {{ last_page }}</p>
-        </div>
-        <div class="w-1/2 flex items-center justify-center gap-1">
-            <a {% if prev_page %} href="?search={{ search_query|urlencode }}&page={{ current_page|add:-1 }}" {% endif %} class="rounded-none rounded-l-sm rounded-r-sm btn-xs py-4 btn" data-aos="fade-up-right">
-                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="m15 19-7-7 7-7"/>
-                </svg>              
-            </a>
-            <a {% if next_page %} href="?search={{ search_query|urlencode }}&page={{ current_page|add:1 }}" {% endif %} class="rounded-none rounded-l-sm rounded-r-sm btn-xs py-4 btn" data-aos="fade-up-left">
-                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="m9 5 7 7-7 7"/>
-                </svg>
-            </a>
-        </div>
-    </div>
-    {% endif %}
-    <div class="w-1/12 items-center justify-center{% if not 'bco' in request.user.username and not 'gmail' in request.user.username %} hidden {% endif %}">
-        <a role="button" id="opn-mdl" href="{% url 'sales:switch_rayon' %}" class="btn btn-sm items-center justify-center py-4 rounded-none lg:flex hidden rounded-l-sm rounded-r-sm"><p class="font-semibold text-medium">Switch Rayon</p></a>
-    </div>
-    <div class="lg:w-1/12 lg:hidden flex items-center justify-end">
-        <div class="dropdown dropdown-left flex items-center justify-center">
-            <div tabindex="0" role="button" class="btn btn-xs py-4 rounded-none rounded-l-sm rounded-r-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
-            </div>
-            <ul tabindex="0" class="dropdown-content menu bg-base-300 rounded-md w-auto py-2 px-4">
-                <li class="flex items-center">
-                    <div class="w-full flex items-center justify-center">
-                        <p class="text-md text-pretty font-sans font-semibold text-center text-current px-3 py-1 bg-base-300 rounded-sm" data-aos="fade-up">{% if api == "False" %}{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}{% elif api == "True" %}{{ current_page }} / {{ last_page }}{% endif %}</p>
-                    </div>
-                </li>
-                <li class="flex items-center justify-center">
-                    <div class="w-full flex items-center justify-center gap-1">
-                        <a 
-                        {% if api == "True" %}
-                            {% if prev_page %} 
-                                href="?q={{search_query}}&page={{ current_page|add:-1 }}" 
-                            {% endif %}
-                        {% elif api == "False" %}
-                            {% if page_obj.has_previous %} 
-                                href="?q={{search_query}}&page={{ page_obj.previous_page_number }}" 
-                            {% endif %}
-                        {% endif %}
-                        class="btn-xs btn" data-aos="fade-up-right">
-                            <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="m15 19-7-7 7-7"/>
-                            </svg>              
-                        </a>
-                        <a 
-                        {% if api == "True" %}
-                            {% if next_page %} 
-                                href="?q={{search_query}}&page={{ current_page|add:1 }}" 
-                            {% endif %}
-                        {% elif api == "False" %}
-                            {% if page_obj.has_next %} 
-                                href="?q={{search_query}}&page={{ page_obj.next_page_number }}"
-                            {% endif %}
-                        {% endif %}
-                        class="btn-xs btn" data-aos="fade-up-left">
-                            <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="m9 5 7 7-7 7"/>
-                            </svg>
-                        </a>
-                    </div>
-                </li>
-                <li class="items-center justify-center {% if api == "True" %} hidden {% else %} flex {% endif %}">
-                    {% if request.user.is_staff and title == "Doctor List" %}
-                    <button role="button" type="button" onclick="modal_rayon.showModal()" class="btn btn-sm py-4 rounded-none rounded-l-sm rounded-r-sm">Switch Rayon</button>
-                    {% endif %}
-                </li>
-                {% for group in request.user.groups.all %}
-                    {% if request.user.is_staff and group.name == "sales" %}
-                        <li class="items-center justify-center {% if api == "True" %} hidden {% else %} flex {% endif %}">
-                            <a href="{% url 'sales:download_doctor_data' %}" class="btn btn-sm rounded-none rounded-l-sm rounded-r-sm block lg:hidden">
-                                <p>Download Data</p>
-                            </a>
-                        </li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
-</nav>
+</div>

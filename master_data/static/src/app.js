@@ -1,0 +1,722 @@
+// Extracted verbatim from base_app.html (was inline). jQuery UI/select2/tom-select
+// hooks for the master-data app. Behaviour unchanged.
+$(function () {
+        $(document).ready(function() {
+          $(document).on('click', '#lost-page', function() {
+            var thisId = $(this).attr('some');
+            
+            $.ajax({
+              url : '/api/dr-detail/',
+              method : 'POST',
+              data : {
+                'rayon_name' : thisId,
+                'csrfmiddlewaretoken' : window.CSRF_TOKEN,
+              },
+              success : function(data) {
+                $('#rayon_name').text(data.doctors.rayon_name);
+                $('#modal-data').empty();
+                data.doctors.doctors.forEach(function(val, index) {
+                  $('#modal-data').append(`
+                    <div class="card shadow-lg rounded-sm p-3 bg-base-200 border border-primary border-2">
+                      <div class="flex items-center justify-start gap-5">
+                        <ul class="space-y-2 text-sm font-semibold">
+                          <li>First Name</li>
+                          <li>Middle Name</li>
+                          <li>Last Name</li>
+                          <li>Full Name</li>
+                        </ul>
+                        <ul class="space-y-2 text-sm font-semibold">
+                          <li class="capitalize text-sm font-semibold">: ${val.info.first_name}</li>
+                          <li class="capitalize text-sm font-semibold">: ${val.info.middle_name}</li>
+                          <li class="capitalize text-sm font-semibold">: ${val.info.last_name}</li>
+                          <li class="capitalize text-sm font-semibold">: ${val.info.full_name}</li>
+                        </ul>
+                      </div>
+                    </div>
+                  `);
+                });
+              },
+              error : function() {
+                console.log("Error System...");
+              }
+            });
+          });
+        });
+
+        $(document).ready(function() {
+          $('#id-dctrs').select2({
+            dropdownParent: $('#modal_rayon')
+          });
+        });
+
+        $(document).ready(function () {
+          $('#rayon_asal').on('change', function () {
+              let rayonId = $(this).val();
+
+              if (rayonId) {
+                  $.ajax({
+                      url: window.location.href,  // ← Ganti dengan URL sesuai routing Django kamu
+                      method: 'GET',
+                      data: {
+                          rayon_id: rayonId
+                      },
+                      headers: {
+                          'X-Requested-With': 'XMLHttpRequest'
+                      },
+                      success: function (data) {
+                          $('#data-grid').empty(); // Kosongkan sebelumnya
+
+                          // Asumsikan `data` adalah list of dokter
+                          data.forEach(function (item) {
+                              let card = `
+                                  <div class="card card-border border-accent border-2 shadow-md bg-base-100 w-full">
+                                      <div class="card-body" onclick="toggleCheckbox(this)">
+                                          <p class="text-md font-semibold font-xs">${item.info.full_name}</p>
+                                          <p class="text-xs font-semibold">Code: ${item.code || '-'}</p>
+                                          <div class="flex items-center justify-start gap-2">
+                                            <div class="inline-grid *:[grid-area:1/1]">
+                                              <div class="status ${item.active === 'Active' ? 'status-success' : 'status-error'} animate-ping"></div>
+                                              <div class="status ${item.active === 'Active' ? 'status-success' : 'status-error'}"></div>
+                                            </div>
+                                            <p class="label font-semibold text-sm">${item.active}</p>
+                                          </div>
+                                          <div class="card-actions justify-end">
+                                              <input name="id_dr[]" value="${item.id}" type="checkbox" class="rounded-sm cursor-pointer">
+                                          </div>
+                                      </div>
+                                  </div>
+                              `;
+                              $('#data-grid').append(card);
+                          });
+                      },
+                      error: function (err) {
+                          console.error(err);
+                      }
+                  });
+              }
+          });
+      });
+
+        $(document).ready(function() {
+            $('.card').on('click', '.card-body', function(e) {
+                if ($(e.target).is('input[type="checkbox"]')) return;
+
+                const checkbox = $(this).find('input[type="checkbox"]');
+                checkbox.prop('checked', !checkbox.prop('checked'));
+            });
+        });
+
+        $(document).ready(function () {
+          // Event saat mengetik di search box
+          $('#search-1').on('keyup', function () {
+              let keyword = $(this).val().toLowerCase();
+
+              $('#data-grid > div').each(function () {
+                  let content = $(this).text().toLowerCase();
+
+                  // Tampilkan atau sembunyikan elemen berdasarkan kecocokan keyword
+                  if (content.includes(keyword)) {
+                      $(this).show();
+                  } else {
+                      $(this).hide();
+                  }
+              });
+          });
+        });
+
+        $(document).ready(function () {
+          // Toggle checkbox individual by clicking the card
+          $('#data-grid').on('click', '.card-body', function (e) {
+              if ($(e.target).is('input[type="checkbox"]')) return;
+              const checkbox = $(this).find('input[type="checkbox"]');
+              checkbox.prop('checked', !checkbox.prop('checked'));
+          });
+
+          // Handle "Check All"
+          $('#check-all').on('change', function () {
+              const checked = $(this).is(':checked');
+              $('#data-grid input[type="checkbox"]').prop('checked', checked);
+          });
+
+          // (Optional) Sync "Check All" if all individual checkboxes are manually clicked
+          $('#data-grid').on('change', 'input[type="checkbox"]', function () {
+              const all = $('#data-grid input[type="checkbox"]');
+              const checked = all.filter(':checked');
+              $('#check-all').prop('checked', all.length === checked.length);
+          });
+        });
+
+        $(document).ready(function() {
+          $('#id-ryn').select2({
+            dropdownParent: $('#modal_rayon')
+          });
+        });
+
+        $(document).ready(function() {
+          $('#opn-mdl').click(function() {
+            $('#id-ryn').val('').trigger('change');
+            $('#id-dctrs').val('').trigger('change');
+          });
+        });
+
+        $(document).ready(function() {
+          // Global variabel untuk menyimpan search query
+          let currentSearch = '';
+
+          // Ketika user selesai mengetik dan keluar dari input
+          $('#search').on('blur', function () {
+              currentSearch = $(this).val();
+
+              loadDoctorList(1, currentSearch);
+          });
+
+          // Delegasi event click pagination
+          $('#page-list').on('click', '.page-link', function (e) {
+              e.preventDefault();
+              let href = $(this).attr('href');
+              let page = new URLSearchParams(href.split('?')[1]).get('page');
+
+              loadDoctorList(page, currentSearch);
+          });
+
+          function loadDoctorList(page, search) {
+              $.ajax({
+                  url: window.location.pathname,
+                  data: {
+                      page: page,
+                      search: search
+                  },
+                  dataType: 'html',
+                  success: function (response) {
+                      $('#page-list').html($(response).find('#page-list').html());
+                      $('#page-list-2').html($(response).find('#page-list-2').html());
+                  },
+                  error: function () {
+                      alert('Gagal memuat data.');
+                  }
+              });
+          }
+        });
+
+        $(document).ready(function() {
+          var checkedRadio = $('input[name="date-or-days"]:checked');
+
+          if (checkedRadio.length > 0) {
+            var target = checkedRadio.attr('to');
+            $('.by-date-days').addClass('hidden').removeClass('flex');
+            $('#' + target).removeClass('hidden').addClass('flex');
+          }
+
+          $('input[name="date-or-days"]').on('change', function() {
+              $('.by-date-days').addClass('hidden').removeClass('flex');
+              
+              var c = $(this).attr('to');
+
+              $('#' + c).addClass('flex').removeClass('hidden');
+          });
+        });
+
+        $(document).ready(function() {
+          $('#togglePassword').on('click', function() {
+            var checkboxPassword = $('#check-password').is(':checked');
+            
+            if (checkboxPassword == true) {
+              $('#password-login').attr('type', 'text');
+            } else {
+              $('#password-login').attr('type', 'password');
+            }
+          });
+        });
+
+        $(document).ready(function() {
+          var checkedRadio = $('.check-tab:checked');
+
+          if (checkedRadio.length > 0) {
+            var tabId = checkedRadio.attr('data-tab');
+
+            $('#' + tabId).fadeIn(300).addClass('tab-active').removeClass('hidden');
+          }
+
+          $('.check-tab').on('change', function() {
+            var tabId = $(this).attr('data-tab');
+
+            $('.tab-content').fadeOut(300, function() {
+              $(this).removeClass('tab-active').addClass('hidden');
+
+              $('#' + tabId).fadeIn(300, function() {
+                $(this).addClass('tab-active').removeClass('hidden');
+              });
+            });
+          });
+        });
+
+        $(document).ready(function() {
+          $('#chldrn-btn-sbmt').on('click', function() {
+
+            var chld_first_name = $('#chld-frst-nm').val();
+            var chld_mddl_name = $('#chld-mdl-nm').val();
+            var chld_lst_name = $('#chld-lst-nm').val();
+            var chld_fll_name = $('#chld-fll-nm').val();
+            var chld_birthday = $('#chld-brth').val();
+            var chld_phone = $('#chld-phon').val();
+
+            $('#chldrn-list').append(`
+            <tr>
+              <th>${chld_first_name}</th>
+              <td>${chld_birthday}</td>
+              <td>
+                <button type="button" class="btn delete-input btn-xs p-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                </button>
+              </td>
+              <td class="hidden">
+                <input class="hidden" type="text" name="children_first_name" value="${chld_first_name}">
+                <input class="hidden" type="text" name="children_middle_name" value="${chld_mddl_name}">
+                <input class="hidden" type="text" name="children_last_name" value="${chld_lst_name}"> 
+                <input class="hidden" type="text" name="children_full_name" value="${chld_fll_name}"> 
+                <input class="hidden" type="text" name="children_birthday" value="${chld_birthday}"> 
+                <input class="hidden" type="text" name="children_phone" value="${chld_phone}">
+              </td>
+            </tr>
+            `);
+
+            $('#chld-frst-nm').val('');
+            $('#chld-mdl-nm').val('');
+            $('#chld-lst-nm').val('');
+            $('#chld-fll-nm').val('');
+            $('#chld-brth').val('');
+            $('#chld-phon').val('+62 ');
+
+          });
+
+          $('#sps-btn-sbmt').on('click', function() {
+
+            var sps_frst_name = $('#sps-frst-nm').val();
+            var sps_mddl_name = $('#sps-mdl-nm').val();
+            var sps_lst_name = $('#sps-lst-nm').val();
+            var sps_fll_name = $('#sps-fll-nm').val();
+            var sps_birth = $('#sps-brth').val();
+            var sps_phone = $('#sps-phon').val();
+            var sps_marriage = $('#sps-mrg-dt').val();
+
+            $('#sps-list').append(`
+            <tr>
+              <td>${sps_frst_name}</td>
+              <td>${sps_birth}</td>
+              <td>
+                <button type="button" class="btn delete-input btn-xs p-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                </button>
+              </td>
+              <td class="hidden">
+                <input class="hidden" type="text" name="spouse_first_name" value="${sps_frst_name}">
+                <input class="hidden" type="text" name="spouse_middle_name" value="${sps_mddl_name}">
+                <input class="hidden" type="text" name="spouse_last_name" value="${sps_lst_name}">
+                <input class="hidden" type="text" name="spouse_full_name" value="${sps_fll_name}">
+                <input class="hidden" type="text" name="spouse_birthday" value="${sps_birth}">
+                <input class="hidden" type="text" name="spouse_marriage_date" value="${sps_marriage}">
+                <input class="hidden" type="text" name="spouse_phone" value="${sps_phone}">
+              </td>
+            </tr>
+            `);
+
+            $('#sps-frst-nm').val('');
+            $('#sps-mdl-nm').val('');
+            $('#sps-lst-nm').val('');
+            $('#sps-fll-nm').val('');
+            $('#sps-brth').val('');
+            $('#sps-phon').val('+62 ');
+            $('#sps-mrg-dt').val('');
+
+          });
+
+          $('#add-interest').on('click', function() {
+            $('#interest-list').append(`
+            <tr>
+              <th>
+                <input name="interest-category" class="input input-sm" autocomplete="off">
+              </th>
+              <td>
+                <input name="interest-name" class="input input-sm" autocomplete="off">
+              </td>
+              <td>
+                <button type="button" class="btn delete-input btn-xs py-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            `);
+          });
+
+          $('#add-socmed').on('click', function() {
+            $('#socmed-list').append(`
+            <tr>
+              <th>
+                <input name="socmed-name" class="input input-sm" autocomplete="off">
+              </th>
+              <td>
+                <input name="socmed-account-name" class="input input-sm" autocomplete="off">
+              </td>
+              <td>
+                <button type="button" class="btn delete-input btn-xs py-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            `);
+          });
+
+          $('#branch-btn-close').on('click', function() {
+            $('#brnach-name-id').val('');
+            $('#brnach-date-id').val('');
+            $('#brnach-street1-id').val('');
+            $('#brnach-street2-id').val('');
+            $('#brnach-city-id').val('');
+            $('#brnach-state-id').val('');
+            $('#brnach-country-id').val('');
+            $('#brnach-zip-id').val('');
+          });
+
+          $('#add-branch').on('click', function() {
+            $('#branch-btn-close').removeClass('hidden');
+            branch_modal.showModal();
+          });
+
+          $('#branch-btn-sbmt').on('click', function() {
+
+            var branch_name = $('#brnach-name-id').val();
+            var branch_est_date = $('#brnach-date-id').val();
+            var branch_street_1 = $('#brnach-street1-id').val();
+            var branch_street_2 = $('#brnach-street2-id').val();
+            var branch_city = $('#brnach-city-id').val();
+            var branch_state = $('#brnach-state-id').val();
+            var branch_country = $('#brnach-country-id').val();
+            var branch_zip = $('#brnach-zip-id').val();
+
+            $('#branch-list').append(`
+            <div class="rounded-sm border-2 border-current glass p-2 space-y-2">
+              <div class="space-y-2">
+                <div class="flex items-center justify-start gap-2">
+                  <p class="w-1/3 text-md font-semibold text-left">Name</p>
+                  <p class="w-2/3 text-md font-semibold text-left">: ${branch_name}</p>  
+                </div>
+                <div class="flex items-center justify-start gap-2">
+                  <p class="w-1/3 text-md font-semibold text-left">Est Date</p>
+                  <p class="w-2/3 text-md font-semibold text-left">: ${branch_est_date}</p>
+                </div>
+              </div>
+              <div class="flex items-center justify-end gap-5">
+                <button type="button" class="btn btn-xs rounded-none rounded-r-sm rounded-l-sm delete-input py-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                </button>
+                <button type="button" class="btn btn-xs rounded-none rounded-r-sm rounded-l-sm edit-input py-4">
+                  <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                    <path fill-rule="evenodd" d="M11.32 6.176H5c-1.105 0-2 .949-2 2.118v10.588C3 20.052 3.895 21 5 21h11c1.105 0 2-.948 2-2.118v-7.75l-3.914 4.144A2.46 2.46 0 0 1 12.81 16l-2.681.568c-1.75.37-3.292-1.263-2.942-3.115l.536-2.839c.097-.512.335-.983.684-1.352l2.914-3.086Z" clip-rule="evenodd"/>
+                    <path fill-rule="evenodd" d="M19.846 4.318a2.148 2.148 0 0 0-.437-.692 2.014 2.014 0 0 0-.654-.463 1.92 1.92 0 0 0-1.544 0 2.014 2.014 0 0 0-.654.463l-.546.578 2.852 3.02.546-.579a2.14 2.14 0 0 0 .437-.692 2.244 2.244 0 0 0 0-1.635ZM17.45 8.721 14.597 5.7 9.82 10.76a.54.54 0 0 0-.137.27l-.536 2.84c-.07.37.239.696.588.622l2.682-.567a.492.492 0 0 0 .255-.145l4.778-5.06Z" clip-rule="evenodd"/>
+                  </svg>
+                </button>
+              </div>
+              <div id="hidden-data" class="hidden">
+                <input name="branch-name" class="hidden" type="text" value="${branch_name}">
+                <input name="branch-est-date" class="hidden" type="text" value="${branch_est_date}">
+                <input name="branch-street-1" class="hidden" type="text" value="${branch_street_1}">
+                <input name="branch-street-2" class="hidden" type="text" value="${branch_street_2}">
+                <input name="branch-city" class="hidden" type="text" value="${branch_city}">
+                <input name="branch-state" class="hidden" type="text" value="${branch_state}">
+                <input name="branch-country" class="hidden" type="text" value="${branch_country}">
+                <input name="branch-zip" class="hidden" type="text" value="${branch_zip}">
+              </div>
+            </div>
+            `);
+
+            $('#brnach-name-id').val('');
+            $('#brnach-date-id').val('');
+            $('#brnach-street1-id').val('');
+            $('#brnach-street2-id').val('');
+            $('#brnach-city-id').val('');
+            $('#brnach-state-id').val('');
+            $('#brnach-country-id').val('');
+            $('#brnach-zip-id').val('');     
+
+          });
+
+          $(document).on('click', '.edit-input', function() {
+            branch_modal.showModal();
+
+            const prnt = $(this).parent().next();
+            const brch_nm = prnt.find('input[name="branch-name"]').val();
+            const brch_est_dt = prnt.find('input[name="branch-est-date"]').val();
+            const brch_strt_1 = prnt.find('input[name="branch-street-1"]').val();
+            const brch_strt_2 = prnt.find('input[name="branch-street-1"]').val();
+            const brch_city = prnt.find('input[name="branch-city"]').val();
+            const brch_state = prnt.find('input[name="branch-state"]').val();
+            const brch_country = prnt.find('input[name="branch-country"]').val();
+            const brch_zp = prnt.find('input[name="branch-zip"]').val();
+
+            $('#brnach-name-id').val(brch_nm);
+            $('#brnach-date-id').val(brch_est_dt);
+            $('#brnach-street1-id').val(brch_strt_1);
+            $('#brnach-street2-id').val(brch_strt_2);
+            $('#brnach-city-id').val(brch_city);
+            $('#brnach-state-id').val(brch_state);
+            $('#brnach-country-id').val(brch_country);
+            $('#brnach-zip-id').val(brch_zp);
+
+            $(this).parent().parent().remove();
+
+            $('#branch-btn-close').addClass('hidden');
+          });
+
+          $(document).on('click', '.delete-input', function() {
+            $(this).parent().parent().remove();
+          });
+
+          $('#gu-id').on('change', function() {
+            $('#gu-tooltip-false').removeClass('flex').addClass('hidden');
+            $('#gu-tooltip-true').empty();
+            var thisPk = $(this).val();
+
+            $.ajax({
+                url: `/api/grade-user/${thisPk}/`,
+                method: 'GET',
+                success: function(data) {
+                  $('#gu-tooltip-true').removeClass('hidden').addClass('flex').append(`
+                    <div class="tooltip">
+                        <div class="tooltip-content">
+                            <div class="text-sm font-normal p-1">${data.description}</div>
+                        </div>
+                        <svg class="w-5 h-5 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                        </svg>                                          
+                    </div>
+                  `);
+                }
+            });
+          });
+
+          $('#gc-id').on('change', function() {
+            $('#gc-tooltip-false').removeClass('flex').addClass('hidden');
+            $('#gc-tooltip-true').empty();
+            var thisPk = $(this).val();
+
+            $.ajax({
+                url: `/api/grade-clinic/${thisPk}/`,
+                method: 'GET',
+                success: function(data) {
+                  $('#gc-tooltip-true').removeClass('hidden').addClass('flex').append(`
+                    <div class="tooltip">
+                        <div class="tooltip-content">
+                            <div class="text-sm font-normal p-1">${data.description}</div>
+                        </div>
+                        <svg class="w-5 h-5 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                        </svg>                                          
+                    </div>
+                  `);
+                }
+            });
+          });
+
+          $('#sal-id').on('change', function() {
+            $('#sal-tooltip-false').removeClass('flex').addClass('hidden');
+            $('#sal-tooltip-true').empty();
+            var thisPk = $(this).val();
+
+            $.ajax({
+                url: `/api/salutation/${thisPk}/`,
+                method: 'GET',
+                success: function(data) {
+                  $('#sal-tooltip-true').removeClass('hidden').addClass('flex').append(`
+                    <div class="tooltip">
+                        <div class="tooltip-content">
+                            <div class="text-sm font-normal p-1">${data.description}</div>
+                        </div>
+                        <svg class="w-5 h-5 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                        </svg>                                          
+                    </div>
+                  `);
+                }
+            });
+          });
+
+          $('#tit-id').on('change', function() {
+            $('#tit-tooltip-false').removeClass('flex').addClass('hidden');
+            $('#tit-tooltip-true').empty();
+            var thisPk = $(this).val();
+
+            $.ajax({
+                url: `/api/title/${thisPk}/`,
+                method: 'GET',
+                success: function(data) {
+                  $('#tit-tooltip-true').removeClass('hidden').addClass('flex').append(`
+                    <div class="tooltip">
+                        <div class="tooltip-content">
+                            <div class="text-sm font-normal p-1">${data.description}</div>
+                        </div>
+                        <svg class="w-5 h-5 cursor-pointer" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                        </svg>                                          
+                    </div>
+                  `);
+                }
+            });
+          });
+
+          $('#fn-id, #mn-id,  #ln-id').on('input', function() {
+            var firstName = $('#fn-id').val();
+            var middleName = $('#mn-id').val();
+            var lastName = $('#ln-id').val();
+
+            var fullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
+
+            $('#fl-id').attr('value', fullName);
+          });
+        });
+
+        $(document).ready(function() {
+            $('#add-bank').on('click', function() {
+              let count = $('#bank-details-id li').length;
+
+              if (count === 0) {
+                count = 1;
+              } else {
+                count += 1;
+              }
+
+              $('#bank-details-id').append(`
+                <li class="space-y-2">
+                    <div class="flex items-center justify-start gap-5">
+                        <p class="text-sm label font-mono font-semibold">${count}. Details Bank</p>
+                        <button class="btn btn-xs rounded-none rounded-l-sm rounded-r-sm" type="button" id="remove-bank-detail">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="grid lg:grid-cols-2 grid-cols-1 gap-2">
+                        <input type="text" class="input input-sm px-2" name="bank-name[]" id="" placeholder="Bank Name">
+                        <input type="number" class="input input-sm px-2" name="acc-num[]" id="" placeholder="Account Number">
+                        <input type="number" class="input input-sm px-2" name="tlp-num[]" id="" placeholder="Bank Telp Number">
+                        <input type="text" class="input input-sm px-2" name="swt-code[]" id="" placeholder="SWIFT Code">
+                    </div>
+                    <textarea name="bank-add[]" id="" class="textarea textarea-sm px-2 w-full" placeholder="Bank Address"></textarea>
+                </li>
+              `);
+            });
+        });
+
+        $(document).ready(function() {
+            $('#add-verif').on('click', function() {
+              let count = $('#verif-id li').length;
+
+              if (count === 0) {
+                count = 1;
+              } else {
+                count += 1;
+              }
+
+              $('#verif-id').append(`
+                <li class="space-y-2">
+                    <div class="flex items-center justify-start gap-5">
+                        <p class="text-sm label font-mono font-semibold">Verif ${count}</p>
+                        <button class="btn btn-xs rounded-none rounded-l-sm rounded-r-sm" type="button" id="remove-bank-detail">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="grid lg:grid-cols-2 grid-cols-1 gap-2">
+                        <input type="text" class="input input-sm px-2" name="verif[]" id="" placeholder="Verifications*" required>
+                        <input type="text" class="input input-sm px-2" name="verif-sts[]" id="" placeholder="Verification Status*" required>
+                    </div>
+                </li>
+              `);
+            });
+        });
+
+        $(document).on('click', '#remove-bank-detail', function() {
+          $(this).parent().parent().remove();
+        });
+
+        $(document).on('click', '#pic-ok', function() {
+          let count = $('#pics-id li').length;
+
+          if (count === 0) {
+            count = 1;
+          } else {
+            count += 1;
+          }
+
+          var pic = {
+            name: $('#name-pic').val(),
+            position: $('#pst-pic').val(),
+            company: $('#company-pic').val(),
+            address: {
+              street_1: $('#street-1-pic').val(),
+              street_2: $('#street-2-pic').val(),
+              city: $('#city-pic').val(),
+              state: $('#state-pic').val(),
+              fulladdress: $('#wrk-add-pic').val(),
+              country: $('#country-pic').val(),
+              zip: $('#zip-pic').val()
+            },
+            contact: {
+              telp_num: $('#tlp-pic').val(),
+              email: $('#eml-pic').val(),
+              wa_num: $('#wa-pic').val()
+            }
+          };
+          console.log(pic);
+
+          $('#pics-id').append(`
+            <li class="space-y-2">
+                <div class="flex items-center justify-start gap-5">
+                  <p class="text-sm label font-mono font-semibold">Pic ${count}</p>
+                  <button class="btn btn-xs rounded-none rounded-l-sm rounded-r-sm" type="button" id="remove-pic-detail">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                      </svg>
+                  </button>
+                </div>
+                <div class="grid lg:grid-cols-2 grid-cols-1 gap-2">
+                  <p class="text-sm text-alert border-1 border-primary shadow-sm p-1 rounded-sm lg:block">
+                      Pic Name: ${ pic.name }
+                  </p>
+                  <p class="text-sm text-alert border-1 border-primary shadow-sm p-1 rounded-sm lg:block">
+                      Pic Company: ${ pic.company }
+                  </p>
+                  <input type="hidden" class="input input-sm px-2" name="pics[]" value='${JSON.stringify(pic)}'>
+                </div>
+            </li>
+          `);
+
+          $("#form-pic").find("input, textarea, select").val("");
+        });
+
+        $(document).on('click', '#remove-pic-detail', function() {
+          $(this).parent().parent().remove();
+        });
+
+        $(document).on("click", "#pic-not-ok", function() {
+            $("#form-pic").find("input, textarea, select").val("");
+        });
+
+});
+
+// Minimal replacement for Flowbite's [data-dismiss-target] (alerts).
+$(function () {
+  $(document).on('click', '[data-dismiss-target]', function () {
+    $($(this).attr('data-dismiss-target')).remove();
+  });
+});

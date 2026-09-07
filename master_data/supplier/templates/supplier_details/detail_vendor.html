@@ -4,249 +4,164 @@
 {% block header %}
     {% include 'head/nav_1.html' %}
 {% endblock header %}
+
 {% block main %}
-<section class="m-5 flex gap-5 z-0">
-    <div class="lg:w-9/12 w-full">
-        <form action="." method="post" class="space-y-5">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-md btn-success">Submit</button>
-            <input type="text" name="metode" value="post" class="hidden">
-            <div class="w-full rounded-md border border-current p-5 space-y-5 glass mb-5">
-                <div class="border-base-100 bg-base-300 rounded-md m-5 p-5 grid lg:grid-cols-2 grid-cols-1 gap-5">
-                    <div class="flex items-center justify-start gap-5">
-                        <label for="name-id" class="label text-md font-semibold lg:block hidden w-1/4">Name*</label>
-                        <input type="text" id="name-id" name="name" class="input input-sm px-2 w-full lg:w-3/4" autocomplete="off" placeholder="Name" value="{{ data.0.vendor.name }}" required>
-                    </div>
-                    <div class="flex items-center justify-start gap-5">
-                        <label for="ety-id" class="label text-md font-semibold lg:block hidden w-1/4">Entity*</label>
-                        <input type="text" id="ety-id" name="entity" class="input input-sm px-2 w-full lg:w-3/4" placeholder="Entity" value="{{ data.0.vendor.entity }}" required>
-                    </div>
-                    <div class="flex items-center justify-start gap-5">
-                        <label for="clss-id" class="label text-md font-semibold lg:block hidden w-1/4">Classification</label>
-                        <select name="clss" id="clss-id" class="select select-sm px-2 w-full lg:w-3/4 cursor-pointer">
-                            <option value="">Select Classification</option>
-                            {% for d in data.0.class %}
-                                <option value="{{ d.pk }}" {% if d.pk == data.0.vendor.classification %}selected{% endif %}>{{ d.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="flex items-center justify-start gap-5">
-                        <label for="npwp-id" class="label text-md font-semibold lg:block hidden w-1/4">NPWP*</label>
-                        <input type="text" id="npwp-id" name="npwp" class="input input-sm px-2 w-full lg:w-3/4" autocomplete="off" placeholder="Npwp" value="{{ data.0.vendor.npwp }}" required>
-                    </div>
+<div class="page-wrap max-w-4xl">
+    <form action="." method="post" class="space-y-5">
+        {% csrf_token %}
+        <input type="hidden" name="metode" value="post">
+
+        <div class="flex items-center justify-between gap-3">
+            <h1 class="text-lg font-semibold tracking-tight">Vendor Detail</h1>
+            <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+        </div>
+
+        <div class="panel panel-pad">
+            <div class="form-grid">
+                <div class="field-row">
+                    <label for="name-id" class="field-label">Name *</label>
+                    <input type="text" id="name-id" name="name" class="input w-full" autocomplete="off" placeholder="Name" value="{{ data.0.vendor.name }}" required>
                 </div>
-                <hr class="border-b-2 border-current m-5">
-                <div id="wi-tab-id">
-                    <div class="grid lg:grid-cols-2 grid-cols-1 gap-10 p-5">
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-start gap-1 w-full border-b-2 border-current">
-                                <p class="text-md font-semibold font-sans uppercase">Address</p>
-                                <div class="tooltip tooltip-info font-semibold" data-tip="Only Full Adress is Mandatory">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 cursor-pointer">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="flex justify-center gap-5 items-start">
-                                <p class="w-1/4 font-semibold label lg:block hidden">Address Line</p>
-                                <ul class="lg:w-3/4 w-full space-y-2">
-                                    <li>
-                                        <input type="text" id="" name="street-1" class="input input-sm px-2 w-full" value="{{ data.0.vendor.address.street_1 }}" placeholder="Line 1...">
-                                    </li>
-                                    <li>
-                                        <input type="text" id="" name="street-2" class="input input-sm px-2 w-full" value="{{ data.0.vendor.address.street_2 }}" placeholder="Line 2...">
-                                    </li>
-                                    <li>
-                                        <input type="text" id="" name="city" class="input input-sm px-2 w-full" value="{{ data.0.vendor.address.city }}" placeholder="City...">
-                                    </li>
-                                    <li class="flex items-center justify-center gap-3">
-                                        <input type="text" id="" name="state" class="input input-sm px-2 w-full" value="{{ data.0.vendor.address.state }}" placeholder="State...">
-                                        <input type="text" id="" name="country" class="input input-sm px-2 w-full" value="{{ data.0.vendor.address.country }}" placeholder="Country...">
-                                        <input type="text" id="" name="zip" class="input input-sm px-2 w-full" value="{{ data.0.vendor.address.zip }}" placeholder="Zip...">
-                                    </li>
-                                </ul>
-                            </div>
-                            <textarea name="fll-address" type="text" class="textarea rounded-md w-full" placeholder="Full Address*" required>{{ data.0.vendor.address.full_address }}</textarea>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-start gap-1 w-full border-b-2 border-current">
-                                <p class="text-md font-semibold font-sans uppercase">Bank Account</p>
-                                <div class="tooltip tooltip-info font-semibold" data-tip="This is Optional Information, Not Mandatory">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 cursor-pointer">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-                                    </svg>
-                                </div>
-                            </div>
-                            <ul class="space-y-2 w-full" id="bank-details-id">
-                                {% for bank in data.0.vendor.bank_info %}
-                                    <li class="space-y-2">
-                                        <div class="flex items-center justify-start gap-5">
-                                            <p class="text-sm label font-mono font-semibold">{{ forloop.counter }}. Details Bank</p>
-                                            <button class="btn btn-xs rounded-none rounded-l-sm rounded-r-sm" type="button" id="remove-bank-detail">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <div class="grid lg:grid-cols-2 grid-cols-1 gap-2">
-                                            <input type="text" class="input input-sm px-2" name="bank-name[]" id="" value="{{ bank.bank_name }}" placeholder="Bank Name">
-                                            <input type="number" class="input input-sm px-2" name="acc-num[]" id="" value="{{ bank.account_number }}" placeholder="Account Number">
-                                            <input type="number" class="input input-sm px-2" name="tlp-num[]" id="" value="{{ bank.bank_tlp_number }}" placeholder="Bank Telp Number">
-                                            <input type="text" class="input input-sm px-2" name="swt-code[]" id="" value="{{ bank.swift_code }}" placeholder="SWIFT Code">
-                                        </div>
-                                        <textarea name="bank-add[]" id="" class="textarea textarea-sm px-2 w-full" placeholder="Bank Address">{{ bank.bank_address }}</textarea>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                            <button id="add-bank" class="btn btn-sm btn-success" type="button">Add Bank</button>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-start gap-1 w-full border-b-2 border-current">
-                                <p class="text-md font-semibold font-sans uppercase">Person In Contact</p>
-                                <div class="tooltip tooltip-info font-semibold" data-tip="All of ths field is mandatory, try to click it.">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 cursor-pointer">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-                                    </svg>
-                                </div>
-                            </div>
-                            <ul class="space-y-2 w-full" id="pics-id">
-                                {% for pic in data.0.pics %}
-                                    <li class="space-y-2">
-                                        <div class="flex items-center justify-start gap-5">
-                                            <p class="text-sm label font-mono font-semibold">Pic {{ forloop.counter }}</p>
-                                            <button class="btn btn-xs rounded-none rounded-l-sm rounded-r-sm" type="button" id="remove-pic-detail">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <div class="grid lg:grid-cols-2 grid-cols-1 gap-2">
-                                            <p class="text-sm text-alert border-1 border-primary shadow-sm p-1 rounded-sm lg:block">
-                                                Pic Name: {{ pic.name }}
-                                            </p>
-                                            <p class="text-sm text-alert border-1 border-primary shadow-sm p-1 rounded-sm lg:block">
-                                                Pic Company: {{ pic.company }}
-                                            </p>
-                                            {% comment %} <button class="btn btn-sm btn-success" type="button" id="edit-pic" onclick="my_modal_1.showModal()">Edit Pic</button> {% endcomment %}
-                                            <input type="hidden" class="input input-sm px-2" name="pics[]" value='{{ pic }}'>
-                                        </div>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                            <button class="btn btn-sm btn-success" type="button" onclick="my_modal_1.showModal()">Add PIC</button>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-start gap-1 w-full border-b-2 border-current">
-                                <p class="text-md font-semibold font-sans uppercase">Verifications</p>
-                                <div class="tooltip tooltip-info font-semibold" data-tip="All of this field is mandatory, give it a try.">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 cursor-pointer">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-                                    </svg>
-                                </div>
-                            </div>
-                            <ul class="space-y-2 w-full" id="verif-id">
-                                {% for ver in data.0.vendor.status %}
-                                    <li class="space-y-2">
-                                        <div class="flex items-center justify-start gap-5">
-                                            <p class="text-sm label font-mono font-semibold">Verif {{ forloop.counter }}</p>
-                                            <button class="btn btn-xs rounded-none rounded-l-sm rounded-r-sm" type="button" id="remove-bank-detail">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <div class="grid lg:grid-cols-2 grid-cols-1 gap-2">
-                                            <input type="text" class="input input-sm px-2" name="verif[]" id="" placeholder="Verifications*" value="{{ ver.verification }}" required>
-                                            <input type="text" class="input input-sm px-2" name="verif-sts[]" id="" placeholder="Verification Status*" value="{{ ver.verification_status }}" required>
-                                        </div>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                            <button class="btn btn-sm rounded-none rounded-l-sm rounded-r-sm btn-success" id="add-verif" type="button">Add Verif</button>
-                        </div>
-                    </div>
+                <div class="field-row">
+                    <label for="ety-id" class="field-label">Entity *</label>
+                    <input type="text" id="ety-id" name="entity" class="input w-full" placeholder="Entity" value="{{ data.0.vendor.entity }}" required>
                 </div>
-            </div>
-        </form>
-    </div>
-    <div class="w-3/12 lg:block hidden">
-        <!-- Log Activity -->
-    </div>
-    <dialog id="my_modal_1" class="modal">
-        <div class="modal-box w-11/12 max-w-7xl max-h-7xl">
-            <div class="modal-action">
-                <form id="form-pic" action="." method="dialog" class="space-y-5 w-full">
-                    <input type="text" name="metode" value="post" class="hidden">
-                    <div class="w-full rounded-md border border-current p-5 space-y-5 glass mb-5">
-                        <div class="border-base-100 bg-base-300 rounded-md m-5 p-5 grid lg:grid-cols-2 grid-cols-1 gap-5">
-                            <div class="flex items-center justify-start gap-5">
-                                <label for="name-id" class="label text-md font-semibold lg:block hidden w-1/4">Name</label>
-                                <input type="text" id="name-pic" name="name-pic" class="input input-sm px-2 w-full lg:w-3/4" autocomplete="off" placeholder="Name" required>
-                            </div>
-                            <div class="flex items-center justify-start gap-5">
-                                <label for="pst-id" class="label text-md font-semibold lg:block hidden w-1/4">Position</label>
-                                <input type="text" id="pst-pic" name="position-pic" class="input input-sm px-2 w-full lg:w-3/4" placeholder="Position" required>
-                            </div>
-                            <div class="flex items-center justify-start gap-5">
-                                <label for="company-id" class="label text-md font-semibold lg:block hidden w-1/4">Company</label>
-                                <input type="text" id="company-pic" name="company-pic" class="input input-sm px-2 w-full lg:w-3/4" placeholder="Company" required>
-                            </div>
-                        </div>
-                        <div id="wi-tab-id" class="">
-                            <div class="grid lg:grid-cols-2 grid-cols-1 gap-10 p-5">
-                                <div class="space-y-2">
-                                    <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">Address</p>
-                                    <div class="flex justify-center gap-5 items-start">
-                                        <p class="w-1/4 font-semibold label lg:block hidden">Address Line</p>
-                                        <ul class="lg:w-3/4 w-full space-y-2">
-                                            <li>
-                                                <input type="text" id="street-1-pic" name="street-1" class="input input-sm px-2 w-full" placeholder="Street 1...">
-                                            </li>
-                                            <li>
-                                                <input type="text" id="street-2-pic" name="street-2" class="input input-sm px-2 w-full" placeholder="Street 2...">
-                                            </li>
-                                            <li>
-                                                <input type="text" id="city-pic" name="city" class="input input-sm px-2 w-full" placeholder="City...">
-                                            </li>
-                                            <li class="flex items-center justify-center gap-3">
-                                                <input type="text" id="state-pic" name="state" class="input input-sm px-2 w-full" placeholder="State...">
-                                                <input type="text" id="country-pic" name="country" class="input input-sm px-2 w-full" placeholder="Country...">
-                                                <input type="text" id="zip-pic" name="zip" class="input input-sm px-2 w-full" placeholder="Zip...">
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <p class="block w-full border-b border-current text-md font-semibold font-sans">Full Address</p>
-                                    <textarea name="fll-work-address" id="wrk-add-pic" type="text" class="textarea rounded-md w-full"></textarea>
-                                </div>
-                                <div class="space-y-2">
-                                    <p class="w-full text-md border-b-2 border-current font-semibold font-sans uppercase">Contact</p>
-                                    <ul class="space-y-2 w-full">
-                                        <li class="flex items-center justify-between">
-                                            <label for="tlp-id" class="font-semibold label hidden lg:block">Telp. Numbernumberlabel>
-                                            <input type="number" id="tlp-pic" name="tlp-num" class="input input-sm px-2" placeholder="Telphone Number" value="+62" required>
-                                        </li>
-                                        <li class="flex items-center justify-between">
-                                            <label for="eml-id" class="font-semibold label hidden lg:block">Email</label>
-                                            <input type="email" id="eml-pic" name="eml" class="input input-sm px-2" placeholder="example@mycompany.com" required>
-                                        </li>
-                                        <li class="flex items-center justify-between">
-                                            <label for="wa-id" class="font-semibold label hidden lg:block">WhatsApp Number</label>
-                                            <input type="number" id="wa-pic" placeholder="WhatsApp Number" value="+62" name="wa-num" class="input input-sm px-2" required>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-end gap-5">
-                        <button id="pic-not-ok" type="button" class="btn btn-sm btn-error btn-submit" onclick="my_modal_1.close()">Cancel</button>
-                        <button id="pic-ok" type="button" class="btn btn-sm btn-accent btn-submit" onclick="my_modal_1.close()">Submit</button>
-                    </div>
-                </form>
+                <div class="field-row">
+                    <label for="clss-id" class="field-label">Classification</label>
+                    <select name="clss" id="clss-id" class="select w-full">
+                        <option value="">Select classification</option>
+                        {% for d in data.0.class %}
+                        <option value="{{ d.pk }}" {% if d.pk == data.0.vendor.classification %}selected{% endif %}>{{ d.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="field-row">
+                    <label for="npwp-id" class="field-label">NPWP *</label>
+                    <input type="text" id="npwp-id" name="npwp" class="input w-full" autocomplete="off" placeholder="NPWP" value="{{ data.0.vendor.npwp }}" required>
+                </div>
             </div>
         </div>
+
+        <div class="grid gap-5 lg:grid-cols-2">
+            <div class="panel panel-pad space-y-3">
+                <p class="panel-title">Address <span class="normal-case text-base-content/40">— full address is mandatory</span></p>
+                <input type="text" name="street-1" class="input input-sm w-full" value="{{ data.0.vendor.address.street_1 }}" placeholder="Line 1">
+                <input type="text" name="street-2" class="input input-sm w-full" value="{{ data.0.vendor.address.street_2 }}" placeholder="Line 2">
+                <input type="text" name="city" class="input input-sm w-full" value="{{ data.0.vendor.address.city }}" placeholder="City">
+                <div class="grid grid-cols-3 gap-2">
+                    <input type="text" name="state" class="input input-sm w-full" value="{{ data.0.vendor.address.state }}" placeholder="State">
+                    <input type="text" name="country" class="input input-sm w-full" value="{{ data.0.vendor.address.country }}" placeholder="Country">
+                    <input type="text" name="zip" class="input input-sm w-full" value="{{ data.0.vendor.address.zip }}" placeholder="Zip">
+                </div>
+                <textarea name="fll-address" class="textarea w-full" placeholder="Full address *" required>{{ data.0.vendor.address.full_address }}</textarea>
+            </div>
+
+            <div class="panel panel-pad space-y-3">
+                <p class="panel-title">Bank Account <span class="normal-case text-base-content/40">— optional</span></p>
+                <ul class="space-y-3" id="bank-details-id">
+                    {% for bank in data.0.vendor.bank_info %}
+                    <li class="space-y-2 rounded-field border border-neutral p-3">
+                        <div class="flex items-center justify-between">
+                            <p class="text-xs font-medium text-base-content/60">{{ forloop.counter }}. Bank details</p>
+                            <button class="btn btn-ghost btn-xs text-error" type="button" id="remove-bank-detail">Remove</button>
+                        </div>
+                        <div class="grid gap-2 sm:grid-cols-2">
+                            <input type="text" class="input input-sm w-full" name="bank-name[]" value="{{ bank.bank_name }}" placeholder="Bank Name">
+                            <input type="number" class="input input-sm w-full" name="acc-num[]" value="{{ bank.account_number }}" placeholder="Account Number">
+                            <input type="number" class="input input-sm w-full" name="tlp-num[]" value="{{ bank.bank_tlp_number }}" placeholder="Bank Telp Number">
+                            <input type="text" class="input input-sm w-full" name="swt-code[]" value="{{ bank.swift_code }}" placeholder="SWIFT Code">
+                        </div>
+                        <textarea name="bank-add[]" class="textarea textarea-sm w-full" placeholder="Bank Address">{{ bank.bank_address }}</textarea>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button id="add-bank" class="btn btn-sm btn-ghost" type="button">Add Bank</button>
+            </div>
+
+            <div class="panel panel-pad space-y-3">
+                <p class="panel-title">Person In Contact</p>
+                <ul class="space-y-2" id="pics-id">
+                    {% for pic in data.0.pics %}
+                    <li class="rounded-field border border-neutral p-3">
+                        <div class="flex items-center justify-between">
+                            <p class="text-xs font-medium text-base-content/60">PIC {{ forloop.counter }}</p>
+                            <button class="btn btn-ghost btn-xs text-error" type="button" id="remove-pic-detail">Remove</button>
+                        </div>
+                        <p class="mt-1 text-sm">{{ pic.name }} &middot; <span class="text-base-content/60">{{ pic.company }}</span></p>
+                        <input type="hidden" name="pics[]" value='{{ pic }}'>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button class="btn btn-sm btn-ghost" type="button" onclick="my_modal_1.showModal()">Add PIC</button>
+            </div>
+
+            <div class="panel panel-pad space-y-3">
+                <p class="panel-title">Verifications</p>
+                <ul class="space-y-2" id="verif-id">
+                    {% for ver in data.0.vendor.status %}
+                    <li class="space-y-2 rounded-field border border-neutral p-3">
+                        <div class="flex items-center justify-between">
+                            <p class="text-xs font-medium text-base-content/60">Verif {{ forloop.counter }}</p>
+                            <button class="btn btn-ghost btn-xs text-error" type="button" id="remove-bank-detail">Remove</button>
+                        </div>
+                        <div class="grid gap-2 sm:grid-cols-2">
+                            <input type="text" class="input input-sm w-full" name="verif[]" placeholder="Verification *" value="{{ ver.verification }}" required>
+                            <input type="text" class="input input-sm w-full" name="verif-sts[]" placeholder="Verification Status *" value="{{ ver.verification_status }}" required>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button class="btn btn-sm btn-ghost" id="add-verif" type="button">Add Verif</button>
+            </div>
+        </div>
+    </form>
+
+    <dialog id="my_modal_1" class="modal">
+        <div class="modal-box max-w-3xl border border-neutral">
+            <h3 class="text-sm font-semibold">Add PIC</h3>
+            <form id="form-pic" method="dialog" class="mt-4 space-y-5">
+                <input type="hidden" name="metode" value="post">
+                <div class="form-grid">
+                    <div class="field-row">
+                        <label class="field-label">Name</label>
+                        <input type="text" id="name-pic" name="name-pic" class="input input-sm w-full" autocomplete="off" placeholder="Name" required>
+                    </div>
+                    <div class="field-row">
+                        <label class="field-label">Position</label>
+                        <input type="text" id="pst-pic" name="position-pic" class="input input-sm w-full" placeholder="Position" required>
+                    </div>
+                    <div class="field-row">
+                        <label class="field-label">Company</label>
+                        <input type="text" id="company-pic" name="company-pic" class="input input-sm w-full" placeholder="Company" required>
+                    </div>
+                </div>
+                <div class="grid gap-5 lg:grid-cols-2">
+                    <div class="space-y-2">
+                        <p class="panel-title">Address</p>
+                        <input type="text" id="street-1-pic" name="street-1" class="input input-sm w-full" placeholder="Street 1">
+                        <input type="text" id="street-2-pic" name="street-2" class="input input-sm w-full" placeholder="Street 2">
+                        <input type="text" id="city-pic" name="city" class="input input-sm w-full" placeholder="City">
+                        <div class="grid grid-cols-3 gap-2">
+                            <input type="text" id="state-pic" name="state" class="input input-sm w-full" placeholder="State">
+                            <input type="text" id="country-pic" name="country" class="input input-sm w-full" placeholder="Country">
+                            <input type="text" id="zip-pic" name="zip" class="input input-sm w-full" placeholder="Zip">
+                        </div>
+                        <textarea name="fll-work-address" id="wrk-add-pic" class="textarea w-full" placeholder="Full address"></textarea>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="panel-title">Contact</p>
+                        <input type="number" id="tlp-pic" name="tlp-num" class="input input-sm w-full" placeholder="Telephone number" value="62" required>
+                        <input type="email" id="eml-pic" name="eml" class="input input-sm w-full" placeholder="example@mycompany.com" required>
+                        <input type="number" id="wa-pic" name="wa-num" class="input input-sm w-full" placeholder="WhatsApp number" value="62" required>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button id="pic-not-ok" type="button" class="btn btn-sm btn-ghost" onclick="my_modal_1.close()">Cancel</button>
+                    <button id="pic-ok" type="button" class="btn btn-sm btn-primary" onclick="my_modal_1.close()">Submit</button>
+                </div>
+            </form>
+        </div>
+        <form method="dialog" class="modal-backdrop"><button>close</button></form>
     </dialog>
-</section>
-<script>
-</script>
+</div>
 {% endblock main %}

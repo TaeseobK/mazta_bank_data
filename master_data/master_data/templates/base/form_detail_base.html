@@ -1,0 +1,14 @@
+{% extends 'base/form_base.html' %}
+
+{% block delete_form %}
+<form action="." method="post" id="delete-form" class="hidden">
+    {% csrf_token %}
+    <input type="hidden" name="metode" value="delete">
+</form>
+{% endblock %}
+
+{% block actions %}
+<button type="submit" class="btn btn-sm btn-primary">Submit</button>
+<button type="button" class="btn btn-sm btn-ghost text-error"
+        onclick="if(confirm('Delete this record?'))document.getElementById('delete-form').submit();">Delete</button>
+{% endblock %}

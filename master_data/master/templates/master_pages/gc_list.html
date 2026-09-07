@@ -1,47 +1,25 @@
-{% extends 'base/base_app.html' %}
-{% load static %}
+{% extends 'base/list_base.html' %}
 
-{% block header %}
-    {% include 'head/nav_1.html' %}
-    {% include 'head/nav_2.html' %}
-{% endblock header %}
+{% block table_head %}<th>Grade Name</th><th>Alias</th><th>Range Clinic</th>{% endblock %}
 
-{% block main %}
-<main class="lg:mx-10 mx-5 my-5 p-5 bg-base-200 rounded-md">
-    <table class="lg:table hidden table-zebra">
-        <thead>
-            <tr>
-                <th>Grade Name</th>
-                <th>Grade Alias</th>
-                <th>Range Clinic</th>
-            </tr>
-        </thead>
-        <tbody id="page-list">
-            {% for data in page_obj %}
-            <tr class="border-b border-current">
-                <th><a href="{% url 'master:detail_gc' data.grade.pk %}">{{ data.grade.name }}</a></th>
-                <td>{{ data.grade.alias }}</td>
-                <td> >= {{ data.grade.range_clinic.min_value }} Clinic, <= {{ data.grade.range_clinic.max_value }} Clinic </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div id="page-list-2" class="space-y-2 lg:hidden block">
-        {% for data in page_obj %}
-        <div class="rounded-sm bg-base-100 p-2">
-            <a href="{% url 'master:detail_gc' data.grade.pk %}" class="text-left text-md font-semibold">{{ data.grade.name }}</a>
-            <div class="flex items-center justify-start gap-5">
-                <ul class="w-1/4 text-xs font-semibold">
-                    <li>Alias</li>
-                    <li>Range</li>
-                </ul>
-                <ul class="w-3/4 text-xs font-semibold">
-                    <li> : {{ data.grade.alias }}</li>
-                    <li> : >= {{ data.grade.range_clinic.min_value }} Clinic, <= {{ data.grade.range_clinic.max_value }} Clinic </li>
-                </ul>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</main>
-{% endblock main %}
+{% block table_body %}
+{% for data in page_obj %}
+<tr>
+    <th><a href="{% url 'master:detail_gc' data.grade.pk %}">{{ data.grade.name }}</a></th>
+    <td>{{ data.grade.alias }}</td>
+    <td class="text-base-content/70">&ge; {{ data.grade.range_clinic.min_value }}, &le; {{ data.grade.range_clinic.max_value }} clinic</td>
+</tr>
+{% endfor %}
+{% endblock %}
+
+{% block cards %}
+{% for data in page_obj %}
+<div class="p-4">
+    <a href="{% url 'master:detail_gc' data.grade.pk %}" class="text-sm font-medium text-primary">{{ data.grade.name }}</a>
+    <dl class="mt-2 grid grid-cols-[4rem_1fr] gap-y-1 text-xs text-base-content/60">
+        <dt>Alias</dt><dd>{{ data.grade.alias }}</dd>
+        <dt>Range</dt><dd>&ge; {{ data.grade.range_clinic.min_value }}, &le; {{ data.grade.range_clinic.max_value }} clinic</dd>
+    </dl>
+</div>
+{% endfor %}
+{% endblock %}

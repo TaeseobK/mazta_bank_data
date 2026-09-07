@@ -1,35 +1,20 @@
-{% extends 'base/base_app.html' %}
-{% load static %}
+{% extends 'base/list_base.html' %}
 
-{% block header %}
-    {% include 'head/nav_1.html' %}
-    {% include 'head/nav_2.html' %}
-{% endblock header %}
+{% block table_head %}<th>Salutation</th><th>Short</th>{% endblock %}
 
-{% block main %}
-<main class="lg:mx-10 mx-5 my-5 p-5 bg-base-200 rounded-md">
-    <table class="lg:table hidden table-zebra">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Short Title</th>
-            </tr>
-        </thead>
-        <tbody id="page-list">
-            {% for data in page_obj %}
-            <tr class="border-b border-current">
-                <th><a href="{% url 'master:detail_salutation' data.salutation.pk %}" class="link link-hover">{{ data.salutation.salutation }}</a></th>
-                <td>{{ data.salutation.short_salutation }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div id="page-list-2" class="space-y-2 lg:hidden block">
-        {% for data in page_obj %}
-        <div class="rounded-sm bg-base-100 p-2">
-            <a href="{% url 'master:detail_salutation' data.salutation.pk %}" class="text-left text-md font-semibold">{{ data.salutation.salutation }} ({{ data.salutation.short_salutation }})</a>
-        </div>
-        {% endfor %}
-    </div>
-</main>
-{% endblock main %}
+{% block table_body %}
+{% for data in page_obj %}
+<tr>
+    <th><a href="{% url 'master:detail_salutation' data.salutation.pk %}">{{ data.salutation.salutation }}</a></th>
+    <td>{{ data.salutation.short_salutation }}</td>
+</tr>
+{% endfor %}
+{% endblock %}
+
+{% block cards %}
+{% for data in page_obj %}
+<div class="p-4">
+    <a href="{% url 'master:detail_salutation' data.salutation.pk %}" class="text-sm font-medium text-primary">{{ data.salutation.salutation }} ({{ data.salutation.short_salutation }})</a>
+</div>
+{% endfor %}
+{% endblock %}

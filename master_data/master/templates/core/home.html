@@ -4,72 +4,61 @@
 {% block header %}
     {% include 'head/nav_1.html' %}
 {% endblock header %}
+
 {% block main %}
-<section class="space-y-5 mt-5">
-    <div class="p-4 mx-5 rounded-md border-2 border-current backdrop-blur-sm bg-opacity-10 bg-base-300 thin-scrollbar">
-        <div class="m-5 p-5 rounded-md backdrop-blur-sm bg-opacity-80 bg-base-200 space-y-2">
-            <div class="bg-transparent space-y-2">
-                <div class="flex justify-center items-center px-2 gap-2">
-                    <p class="text-center font-bold text-md capitalize">Hi, </p>
-                    <p class="text-center font-bold text-md lower">{{ request.user.username }}</p>
-                </div>
-                <p class="text-center px-2 font-bold text-sm capitalize" data-aos="fade-up">You're now connected to
-                    {% for i in request.user.groups.all %}
-                        {% if i.name == "sales" %}
-                            Doctor Detail
-                        {% else %}
-                            Bank Data
-                        {% endif %}
-                    {% endfor %}
-                    , your data is in safe hands.</p>
-                <p class="text-center px-2 font-bold text-sm capitalize" data-aos="fade-left">Stay informed, stay healthy, and stay happy!</p>
+<div class="page-wrap space-y-6">
+    <div class="panel panel-pad">
+        <p class="text-sm text-base-content/80">
+            Hi, <span class="font-medium capitalize">{{ request.user.username }}</span> &mdash; you're connected to
+            {% for i in request.user.groups.all %}{% if i.name == "sales" %}Doctor Detail{% else %}Bank Data{% endif %}{% endfor %}.
+        </p>
+        <p class="mt-1 text-xs text-base-content/50">Stay informed, stay healthy, and stay happy.</p>
+    </div>
+
+    {% if request.user.groups.first.name == "sales" %}
+    <div class="panel">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-neutral p-4 sm:p-5">
+            <div>
+                <h2 class="text-sm font-semibold">Doctors by Rayon</h2>
+                <p class="text-xs text-base-content/55">Grouped into Priority and Not Priority</p>
             </div>
+            <label class="input input-sm flex items-center gap-2 border-neutral sm:max-w-xs">
+                <svg class="h-4 w-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                <input type="text" name="search" id="search" placeholder="Search..." class="grow">
+            </label>
+        </div>
+
+        <div class="flex flex-wrap gap-4 px-4 py-3 text-xs text-base-content/60 sm:px-5">
+            <span>Priority: <span class="text-base-content">{{ total.doctor_priority }}</span></span>
+            <span>Not Priority: <span class="text-base-content">{{ total.doctor_not_priority }}</span></span>
+            <span>Total: <span class="text-base-content">{{ total.total_doctor }}</span></span>
+        </div>
+
+        <div id="page-list" class="grid gap-3 p-4 sm:p-5 md:grid-cols-2 xl:grid-cols-3">
+            {% for d in data %}
+            <div id="lost-page" some="{{ d.rayon }}" onclick="modal_1.showModal()"
+                 class="cursor-pointer rounded-field border border-neutral bg-base-100 p-4 transition-colors hover:border-primary/50">
+                <p class="text-sm font-medium">{{ d.rayon }}</p>
+                <dl class="mt-2 grid grid-cols-[7rem_1fr] gap-y-1 text-xs text-base-content/60">
+                    <dt>Priority</dt><dd>{{ d.priority }}</dd>
+                    <dt>Not Priority</dt><dd>{{ d.not_priority }}</dd>
+                    <dt>Total</dt><dd>{{ d.total_doctor }}</dd>
+                </dl>
+            </div>
+            {% endfor %}
         </div>
     </div>
-    {% if request.user.groups.first.name == "sales" %}
-        <div class="p-4 mx-5 rounded-md border-2 border-current backdrop-blur-sm bg-opacity-10 bg-base-300 thin-scrollbar">
-            <p class="text-lg text-center font-semibold">The Doctors Groupped by Rayons</p>
-            <p class="text-sm text-center font-normal">The groupping include "Priority" and "Not Priority"</p>
-            <div class="w-full flex lg:flex-row my-5 flex-col items-center lg:justify-start justify-center gap-5">
-                <input type="text" name="search" id="search" class="input input-sm rounded-none rounded-l-sm rounded-r-sm" placeholder="Search...">
-                <div class="rounded-sm border-2 border-base-100 shadow-md py-1 px-2">
-                    <p class="text-sm font-semibold font-sans text-current bg-base">Priority : {{ total.doctor_priority }} Doctor | Not Priority : {{ total.doctor_not_priority }} Doctor | Total : {{ total.total_doctor }} Doctor</p>
-                </div>
-            </div>
-            <div id="page-list" class="card shadow-md py-2 px-2 lg:px-5 rounded-md backdrop-blur-sm bg-opacity-80 bg-base-200 grid lg:grid-cols-4 grid-cols-1 gap-5 lg:gap-10">
-                {% for d in data %}
-                <div class="card card-border cursor-pointer" id="lost-page" some="{{ d.rayon }}" onclick="modal_1.showModal()">
-                    <div class="card-body bg-base-100 shadow-lg py-2 px-1 rounded-sm">
-                        <p class="text-md font-bold text-pretty">{{ d.rayon }}</p>
-                        <div class="flex items-center justify-start gap-5 text-sm">
-                            <ul class="space-y-2">
-                                <li>Priority</li>
-                                <li>Not Priority</li>
-                                <li>Total</li>
-                            </ul>
-                            <ul class="space-y-2">
-                                <li>: {{ d.priority }} Doctor</li>
-                                <li>: {{ d.not_priority }} Doctor</li>
-                                <li>: {{ d.total_doctor }} Doctor</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
+
+    <dialog id="modal_1" class="modal">
+        <div class="modal-box max-w-4xl border border-neutral">
+            <p class="text-sm font-semibold" id="rayon_name"></p>
+            <div class="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-3" id="modal-data"></div>
+            <div class="modal-action">
+                <form method="dialog"><button class="btn btn-sm btn-ghost">Close</button></form>
             </div>
         </div>
-        <dialog id="modal_1" class="modal">
-            <div class="modal-box w-11/12 max-w-5xl border-2 border-primary">
-                <p class="text-md font-semibold block px-2" id="rayon_name"></p>
-                <div class="p-2 grid lg:grid-cols-3 grid-cols-1 gap-5" id="modal-data">
-                </div>
-                <div class="modal-action">
-                    <form action="." method="dialog">
-                        <button class="btn btn-sm btn-secondary rounded-none rounded-l-sm rounded-r-sm p-0 m-0 px-4">Close</button>
-                    </form>
-                </div>
-            </div>
-        </dialog>
+        <form method="dialog" class="modal-backdrop"><button>close</button></form>
+    </dialog>
     {% endif %}
-</section>
+</div>
 {% endblock main %}

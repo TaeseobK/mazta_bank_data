@@ -1,0 +1,31 @@
+{% extends 'base/base_app.html' %}
+{% load static %}
+
+{% block header %}
+    {% include 'head/nav_1.html' %}
+{% endblock header %}
+
+{% block main %}
+<div class="page-wrap max-w-3xl">
+    {% block delete_form %}{% endblock %}
+    <form action="." method="post" {% block form_attrs %}{% endblock %} class="space-y-5">
+        {% csrf_token %}
+        <input type="hidden" name="metode" value="post">
+        <div class="flex items-start justify-between gap-3">
+            <div>
+                <h1 class="text-lg font-semibold tracking-tight">{% block heading %}{{ page_name }}{% endblock %}</h1>
+                {% block subheading %}{% endblock %}
+            </div>
+            <div class="flex shrink-0 gap-2">
+                {% block actions %}
+                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+                {% endblock %}
+            </div>
+        </div>
+        <div class="panel panel-pad space-y-6">
+            {% block fields %}{% endblock %}
+        </div>
+    </form>
+    {% block extra %}{% endblock %}
+</div>
+{% endblock main %}

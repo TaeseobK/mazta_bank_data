@@ -1,57 +1,32 @@
-{% extends 'base/base_app.html' %}
-{% load static %}
+{% extends 'base/list_base.html' %}
 
-{% block header %}
-    {% include 'head/nav_1.html' %}
-    {% include 'head/nav_2.html' %}
-{% endblock header %}
+{% block table_head %}<th>Vendor Name</th><th>Entity</th><th>PIC</th><th>Classification</th>{% endblock %}
 
-{% block main %}
-<main class="lg:mx-10 mx-5 my-5 p-5 bg-base-200 rounded-md">
-    <table class="lg:table hidden table-zebra">
-        <thead>
-            <tr>
-                <th>Vendor Name</th>
-                <th>Entity</th>
-                <th>PIC</th>
-                <th>Classification</th>
-            </tr>
-        </thead>
-        <tbody id="page-list">
-            {% for data in page_obj %}
-            <tr class="border-b border-current">
-                <th><a href="{% url 'supplier:vendor_detail' data.pk %}">{{ data.name }}</a></th>
-                <td>{{ data.entity }}</td>
-                <td class="flex items-center justify-start gap-1">
-                    {% for d in data.pic %}
-                        <a href="{% url 'master:detail_pic' d.pk %}" class="rounded-sm border-2 shadow-md border-current bg-success p-1 text-sm font-semibold text-primary">
-                            {{ d.name }} - {{ d.contact.email }}
-                        </a>
-                    {% endfor %}
-                </td>
-                <td>{{ data.classification.name }}</td>
-            </tr>
+{% block table_body %}
+{% for data in page_obj %}
+<tr>
+    <th><a href="{% url 'supplier:vendor_detail' data.pk %}">{{ data.name }}</a></th>
+    <td>{{ data.entity }}</td>
+    <td>
+        <div class="flex flex-wrap gap-1">
+            {% for d in data.pic %}
+            <a href="{% url 'master:detail_pic' d.pk %}" class="rounded-field border border-neutral bg-base-300 px-2 py-0.5 text-xs">{{ d.name }} &middot; {{ d.contact.email }}</a>
             {% endfor %}
-        </tbody>
-    </table>
-    <div id="page-list-2" class="space-y-2 lg:hidden block">
-        {% for data in page_obj %}
-        <div class="rounded-sm bg-base-100 p-2">
-            <a href="{% url 'supplier:vendor_detail' data.pk %}" class="text-left text-md font-semibold">{{ data.name }}</a>
-            <div class="flex items-center justify-start gap-5">
-                <ul class="w-1/4 text-xs font-semibold">
-                    <li>Company</li>
-                    <li>Position</li>
-                    <li>Email</li>
-                </ul>
-                <ul class="w-3/4 text-xs font-semibold">
-                    <li> : {{ data.company }}</li>
-                    <li> : {{ data.position }}</li>
-                    <li> : {{ data.contact.email }}</li>
-                </ul>
-            </div>
         </div>
-        {% endfor %}
-    </div>
-</main>
-{% endblock main %}
+    </td>
+    <td>{{ data.classification.name }}</td>
+</tr>
+{% endfor %}
+{% endblock %}
+
+{% block cards %}
+{% for data in page_obj %}
+<div class="p-4">
+    <a href="{% url 'supplier:vendor_detail' data.pk %}" class="text-sm font-medium text-primary">{{ data.name }}</a>
+    <dl class="mt-2 grid grid-cols-[5rem_1fr] gap-y-1 text-xs text-base-content/60">
+        <dt>Entity</dt><dd>{{ data.entity }}</dd>
+        <dt>Class</dt><dd>{{ data.classification.name }}</dd>
+    </dl>
+</div>
+{% endfor %}
+{% endblock %}

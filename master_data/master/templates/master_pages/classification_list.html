@@ -1,33 +1,17 @@
-{% extends 'base/base_app.html' %}
-{% load static %}
+{% extends 'base/list_base.html' %}
 
-{% block header %}
-    {% include 'head/nav_1.html' %}
-    {% include 'head/nav_2.html' %}
-{% endblock header %}
+{% block table_head %}<th>Name</th>{% endblock %}
 
-{% block main %}
-<main class="lg:mx-10 mx-5 my-5 p-5 bg-base-200 rounded-md">
-    <table class="lg:table hidden table-zebra">
-        <thead>
-            <tr>
-                <th>Name</th>
-            </tr>
-        </thead>
-        <tbody id="page-list">
-            {% for data in page_obj %}
-            <tr class="border-b border-current">
-                <th><a href="{% url 'master:detail_classification' data.pk %}">{{ data.name }}</a></th>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div id="page-list-2" class="space-y-2 lg:hidden block">
-        {% for data in page_obj %}
-        <div class="rounded-sm bg-base-100 p-2">
-            <a href="{% url 'master:detail_classification' data.pk %}" class="text-left text-md font-semibold">{{ data.name }}</a>
-        </div>
-        {% endfor %}
-    </div>
-</main>
-{% endblock main %}
+{% block table_body %}
+{% for data in page_obj %}
+<tr><th><a href="{% url 'master:detail_classification' data.pk %}">{{ data.name }}</a></th></tr>
+{% endfor %}
+{% endblock %}
+
+{% block cards %}
+{% for data in page_obj %}
+<div class="p-4">
+    <a href="{% url 'master:detail_classification' data.pk %}" class="text-sm font-medium text-primary">{{ data.name }}</a>
+</div>
+{% endfor %}
+{% endblock %}
