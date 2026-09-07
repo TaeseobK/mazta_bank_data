@@ -4,7 +4,7 @@
 {% block shell %}
 <div class="grid min-h-screen lg:grid-cols-[1fr_1.1fr]">
     <div class="hidden flex-col justify-between bg-ink p-10 text-[color:var(--color-neutral-content)] lg:flex">
-        <span class="font-display text-xl font-bold tracking-[0.24em] text-[color:var(--color-rx-tint)]">MAZTA</span>
+        <span class="text-xl font-semibold tracking-wide text-white">MAZTA</span>
         <div>
             <h1 class="max-w-sm text-3xl leading-tight text-white">The doctor formulary for Mazta field teams.</h1>
             <p class="mt-3 max-w-sm text-sm text-white/60">Priority calls, rayon coverage, and doctor records — one working index.</p>
@@ -17,7 +17,7 @@
             {% csrf_token %}
             <input type="hidden" name="metode" value="post">
             <div class="lg:hidden">
-                <span class="font-display text-lg font-bold tracking-[0.22em] text-rx">MAZTA</span>
+                <span class="text-lg font-semibold tracking-wide text-rx">MAZTA</span>
             </div>
             <div>
                 <h2 class="text-xl">Sign in</h2>

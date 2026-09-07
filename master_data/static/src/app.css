@@ -14,18 +14,18 @@
   color-scheme: light;
 
   --color-base-100: #fcfcfa;   /* paper */
-  --color-base-200: #f2f4f1;   /* recessed paper */
-  --color-base-300: #e4efe9;   /* rx-tint: panels, table head, chart header */
+  --color-base-200: #f4f5f3;   /* recessed */
+  --color-base-300: #ecefec;   /* table head, quiet fill — neutral, not tinted */
   --color-base-content: #14261f; /* ink */
 
-  --color-primary: #0f6b4b;    /* rx — apothecary green */
+  --color-primary: #0f6b4b;    /* apothecary green — actions & links only */
   --color-primary-content: #fcfcfa;
-  --color-secondary: #14261f;  /* ink */
-  --color-secondary-content: #e4efe9;
+  --color-secondary: #14261f;
+  --color-secondary-content: #eef1ee;
   --color-accent: #0f6b4b;
   --color-accent-content: #fcfcfa;
   --color-neutral: #14261f;    /* the ink rail */
-  --color-neutral-content: #cdd8d1;
+  --color-neutral-content: #cbd4ce;
 
   --color-info: #0f6b4b;
   --color-info-content: #fcfcfa;
@@ -46,44 +46,30 @@
 
 @theme {
   --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Archivo", "IBM Plex Sans", ui-sans-serif, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
-  --color-line: #d9e0db;
-  --color-slate: #5a6b63;
+  --color-line: #e2e5e2;
+  --color-slate: #5b6b63;
   --color-ink: #14261f;
   --color-rx: #0f6b4b;
-  --color-rx-tint: #e4efe9;
-  --color-alert: #a8321e;
 }
 
 @layer base {
-  html {
-    font-size: 13px;
-  }
   body {
     @apply bg-base-100 text-ink font-sans antialiased;
+    font-size: 15px;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
-  h1, h2, h3 {
-    font-family: var(--font-display);
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    font-stretch: 112%;
-  }
-  a {
-    @apply transition-colors;
-  }
-  ::selection {
-    background: var(--color-rx);
-    color: #fff;
-  }
-  *::-webkit-scrollbar { width: 10px; height: 10px; }
-  *::-webkit-scrollbar-thumb { background: var(--color-line); }
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.125rem; }
+  h3 { font-size: 1rem; }
+  h1, h2, h3 { font-weight: 600; line-height: 1.25; }
+  ::selection { background: var(--color-rx); color: #fff; }
 }
 
 @layer components {
 
-  /* ---- app frame ------------------------------------------------ */
+  /* ---- app frame --------------------------------------------------- */
   .app-shell {
     @apply lg:grid;
     grid-template-columns: 224px 1fr;
@@ -104,11 +90,7 @@
     }
   }
   .rail-brand {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-stretch: 125%;
-    letter-spacing: 0.24em;
-    @apply px-6 pt-6 pb-5 text-lg text-[color:var(--color-rx-tint)];
+    @apply px-6 pt-6 pb-5 text-lg font-semibold tracking-wide text-white;
   }
   .id-badge {
     @apply mx-4 mb-6 rounded-[3px] border border-white/10 bg-white/[0.03] px-3 py-2.5;
@@ -117,17 +99,15 @@
   .id-badge__rayon { @apply mt-0.5 block text-xs text-[color:var(--color-neutral-content)]; }
 
   .rail-group {
-    @apply px-6 pt-5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/35;
+    @apply px-6 pt-5 pb-1 text-xs font-semibold text-white/40;
   }
   .rail-link {
     @apply mx-3 block rounded-[3px] px-3 py-1.5 text-sm text-[color:var(--color-neutral-content)] hover:bg-white/5 hover:text-white;
   }
   .rail-link[aria-current="page"] {
-    @apply bg-white/[0.07] text-white;
-    box-shadow: inset 2px 0 0 var(--color-rx);
+    @apply bg-white/10 text-white;
   }
 
-  /* mobile top bar */
   .topbar {
     @apply flex items-center justify-between gap-3 border-b border-line bg-ink px-4 py-2.5 text-white lg:hidden;
   }
@@ -140,18 +120,14 @@
   }
   .content-head h1 { @apply text-2xl; }
 
-  /* ---- ledger (list pages) ------------------------------------- */
+  /* ---- list pages ------------------------------------------------- */
   .ledger {
     @apply overflow-hidden border border-line bg-base-100;
   }
   .ledger-row {
-    @apply flex items-center gap-4 border-b border-line px-4 py-3 transition-colors last:border-b-0;
-    box-shadow: inset 0 0 0 0 var(--color-rx);
+    @apply flex items-center gap-4 border-b border-line px-4 py-3 last:border-b-0;
   }
-  .ledger-row:hover {
-    @apply bg-base-300/40;
-    box-shadow: inset 2px 0 0 0 var(--color-rx);
-  }
+  .ledger-row:hover { @apply bg-base-200; }
   .ledger-name { @apply block text-sm font-medium text-ink; }
   .ledger-code { @apply mt-0.5 block font-mono text-xs text-slate; }
   .ledger-meta { @apply hidden shrink-0 text-xs text-slate sm:block; }
@@ -164,50 +140,34 @@
   .data-table tbody td {
     @apply border-b border-line px-4 py-3 text-left align-top font-normal;
   }
-  .data-table tbody tr:hover { @apply bg-base-300/40; }
+  .data-table tbody tr:hover { @apply bg-base-200; }
   .data-table a { @apply font-medium text-rx hover:underline; }
 
-  /* ---- priority language -------------------------------------- */
+  /* ---- priority: a quiet dot + label, not a filled chip ---------- */
   .prio {
-    @apply inline-flex shrink-0 items-center gap-1.5 text-xs font-semibold;
+    @apply inline-flex shrink-0 items-center gap-1.5 text-xs;
   }
-  .prio--on {
-    @apply rounded-[2px] bg-rx px-2 py-1 text-white;
-  }
+  .prio--on { @apply font-medium text-rx; }
   .prio--on::before {
     content: "";
-    @apply h-2 w-2 rounded-full bg-white/85;
+    @apply h-1.5 w-1.5 rounded-full bg-rx;
   }
-  .prio--off {
-    @apply px-2 py-1 text-slate;
-  }
+  .prio--off { @apply text-slate; }
 
-  /* ---- chart header (doctor detail) -------------------------- */
+  /* ---- chart header (doctor detail) ----------------------------- */
   .chart-header {
-    @apply border border-line bg-base-300 px-5 py-4;
+    @apply border border-line bg-base-200 px-5 py-4;
   }
   .chart-header h1 { @apply text-xl leading-tight; }
   .chart-header__meta { @apply mt-1 text-xs text-slate; }
   .chart-header__meta .mono { @apply font-mono; }
-  .chart-stamp {
-    animation: stamp 220ms cubic-bezier(0.2, 0.9, 0.3, 1) 1;
-  }
-  @keyframes stamp {
-    from { transform: scale(1.06); opacity: 0; }
-    to   { transform: scale(1); opacity: 1; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .chart-stamp { animation: none; }
-  }
 
-  /* ---- panels + forms --------------------------------------- */
+  /* ---- panels + forms ------------------------------------------ */
   .panel { @apply border border-line bg-base-100; }
   .panel-pad { @apply p-5 sm:p-6; }
 
   .section-label {
-    @apply mb-3 inline-block text-sm font-semibold text-ink;
-    border-bottom: 2px solid var(--color-rx);
-    padding-bottom: 2px;
+    @apply mb-3 block border-b border-line pb-1.5 text-sm font-semibold text-ink;
   }
   .field { @apply flex flex-col gap-1; }
   .field > label,
@@ -224,8 +184,7 @@
   .input:focus-within {
     outline: none;
     border-color: var(--color-rx);
-    box-shadow: inset 0 -2px 0 0 var(--color-rx);
   }
 
-  .btn { font-weight: 600; }
+  .btn { font-weight: 500; }
 }

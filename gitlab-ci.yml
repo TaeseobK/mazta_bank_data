@@ -10,14 +10,13 @@ deploy_stagging:
     - ssh $STAG_USER$STAG_HOST << 'EOF'
         cd /stagging_pusatdata
         git pull
-        pip install pipenv
-        pipenv shell
-        pipenv install -r requirements.txt
-        pipenv run python server/manage.py makemigrations
-        pipenv run python server/manage.py migrate
-        pipenv run python server/manage.py migrate sales --database=sales
-        pipenv run python server/manage.py migrate master --database=master
-        pipenv run python server/manage.py migrate
+        pip install uv
+        uv sync --no-dev
+        uv run python server/manage.py makemigrations
+        uv run python server/manage.py migrate
+        uv run python server/manage.py migrate sales --database=sales
+        uv run python server/manage.py migrate master --database=master
+        uv run python server/manage.py migrate
         exit
         sudo systemctl restart gunicorn
       EOF
