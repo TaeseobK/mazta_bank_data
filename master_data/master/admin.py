@@ -1,54 +1,11 @@
 from django.contrib import admin
+from master_data.admin_utils import auto_admin
 from .models import *
 
-class ClinicAdmin(admin.ModelAdmin) :
-    list_display = [field.name for field in ClinicGrade._meta.get_fields() if field.name not in ['id', 'created_at']]
-    list_filter = ('alias', 'name')
-    list_display_links = [field.name for field in ClinicGrade._meta.get_fields() if field.name not in ['id', 'created_at']]
-    search_fields = [field.name for field in ClinicGrade._meta.get_fields() if field.get_internal_type() == 'CharField']
-
-class UserAdmin(admin.ModelAdmin) :
-    list_display = [field.name for field in UserGrade._meta.get_fields() if field.name not in ['id', 'created_at']]
-    list_filter = ('alias', 'name')
-    list_display_links = [field.name for field in UserGrade._meta.get_fields() if field.name not in ['id', 'created_at']]
-    search_fields = [field.name for field in UserGrade._meta.get_fields() if field.get_internal_type() == 'CharField']
-
-class TitleAdmin(admin.ModelAdmin) :
-    list_display = [field.name for field in Title._meta.get_fields() if field.name not in ['id', 'created_at']]
-    list_filter = ('name',)
-    list_display_links = [field.name for field in Title._meta.get_fields() if field.name not in ['id', 'created_at']]
-    search_fields = [field.name for field in Title._meta.get_fields() if field.get_internal_type() == 'CharField']
-
-class SalutationAdmin(admin.ModelAdmin) :
-    list_display = [field.name for field in Salutation._meta.get_fields() if field.name not in ['id', 'created_at']]
-    list_filter = ('salutation',)
-    list_display_links = [field.name for field in Salutation._meta.get_fields() if field.name not in ['id', 'created_at']]
-    search_fields = [field.name for field in Salutation._meta.get_fields() if field.get_internal_type() == 'CharField']
-
-class SpecialistAdmin(admin.ModelAdmin) :
-    list_display = [field.name for field in Specialist._meta.get_fields() if field.name not in ['id', 'created_at']]
-    list_filter = ('short_name',)
-    list_display_links = [field.name for field in Specialist._meta.get_fields() if field.name not in ['id', 'created_at']]
-    search_fields = [field.name for field in Specialist._meta.get_fields() if field.get_internal_type() == 'CharField']
-
-class PicAdmin(admin.ModelAdmin) :
-    list_display = [field.name for field in Pic._meta.get_fields() if field.name not in ['id', 'created_at']]
-    list_filter = ('name',)
-    list_display_links = [field.name for field in Pic._meta.get_fields() if field.name not in ['id', 'created_at']]
-    search_fields = [field.name for field in Pic._meta.get_fields() if field.get_internal_type() == 'CharField']
-
-class ClassificationAdmin(admin.ModelAdmin) :
-    list_display = [field.name for field in Classification._meta.get_fields() if field.name not in ['id', 'created_at']]
-    list_filter = ('name',)
-    list_display_links = [field.name for field in Classification._meta.get_fields() if field.name not in ['id', 'created_at']]
-    search_fields = [field.name for field in Classification._meta.get_fields() if field.get_internal_type() == 'CharField']
-
-
-admin.site.register(Specialist, SpecialistAdmin)
-admin.site.register(Title, TitleAdmin)
-admin.site.register(ClinicGrade, ClinicAdmin)
-admin.site.register(UserGrade, UserAdmin)
-admin.site.register(Salutation, SalutationAdmin)
-
-admin.site.register(Pic, PicAdmin)
-admin.site.register(Classification, ClassificationAdmin)
+admin.site.register(Specialist, auto_admin(Specialist, list_filter=('short_name',)))
+admin.site.register(Title, auto_admin(Title, list_filter=('name',)))
+admin.site.register(ClinicGrade, auto_admin(ClinicGrade, list_filter=('alias', 'name')))
+admin.site.register(UserGrade, auto_admin(UserGrade, list_filter=('alias', 'name')))
+admin.site.register(Salutation, auto_admin(Salutation, list_filter=('salutation',)))
+admin.site.register(Pic, auto_admin(Pic, list_filter=('name',)))
+admin.site.register(Classification, auto_admin(Classification, list_filter=('name',)))

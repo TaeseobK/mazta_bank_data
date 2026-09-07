@@ -320,7 +320,7 @@ def create_zip_file(output_dir, files):
 def sfb() :
     w = datetime.now().time()
 
-    if 16 <= w.hour <= 17 :
+    if 0 <= w.hour <= 1 :
         return "generate"
     
     elif 1 <= w.hour <= 2 :
@@ -334,44 +334,36 @@ def sfb() :
 
 # ----------------------------------------
 
+APPS_TO_BACKUP = [
+    {"app": "master", "database": "master"},
+    {"app": "sales", "database": "sales"},
+    {"app": "supplier", "database": "supplier"},
+    {"app": "human_resource", "database": "human_resource"},
+    {"app": "auth", "database": "default"},
+]
+
+
 # Class for backups
 class Command(BaseCommand) :
     help = "Save Database to Excel File (.xslx)"
 
     def handle(self, *args, **kwargs):
-        w = datetime.now().time()
+        action = sfb()
+        jobs = {
+            "generate": self.backup_db,
+            "backup": lambda: self.backup_database(APPS_TO_BACKUP),
+            "fullname": self.full_name,
+            "rayon": self.nam_rayon,
+        }
+        job = jobs.get(action)
 
-        if sfb() == "generate" :
-            print(f"Begin process to generate excel at {w.hour} o'clock.")
-            logging.info(f"Begin generate excel at {datetime.now()}")
-            self.backup_db()
-        
-        elif sfb() == "backup" :
-            print(f"Begin process to backup database at {w.hour} o'clock.")
-            logging.info(f"Begin backup databases at {datetime.now()}")
-            apps_to_backup = [
-                {"app": "master", "database": "master"},
-                {"app": "sales", "database": "sales"},
-                {"app": "supplier", "database": "supplier"},
-                {"app": "human_resource", "database": "human_resource"},
-                {"app": "auth", "database": "default"},
-            ]
+        if job is None :
+            print(f"Pass, now is {datetime.now().hour} o'clock.")
+            return
 
-            self.backup_database(apps_to_backup)
-        
-        elif sfb() == "fullname" :
-            print(f"Begin generating full name for the database at {datetime.now().time()}.")
-            logging.info(f"Begin generating full name for databases at {datetime.now().time()}.")
-            self.full_name()
-        
-        elif sfb() == "rayon" :
-            print(f"Begin generating rayon_name for the database at {datetime.now().time()}.")
-            logging.info(f"Begin generating rayon_name for databases at {datetime.now().time()}.")
-            self.nam_rayon()
-
-        else :
-            print(f"Pass, now is {w.hour} o'clock.")
-            pass
+        print(f"Begin {action} at {datetime.now()}")
+        logging.info(f"Begin {action} at {datetime.now()}")
+        job()
 
     def backup_db(self):
         try:

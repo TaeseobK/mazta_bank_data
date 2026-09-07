@@ -146,14 +146,9 @@ DATABASES = {
     },
 }
 
-DATABASE_ROUTERS = [
-    'human_resource.routers.HumanResourceRouter',
-    'master.routers.MasterRouter',
-    'sales.routers.SalesRouter',
-    'supplier.routers.SupplierRouter',
-]
+DATABASE_ROUTERS = ['master_data.routers.AppRouter']
 
-AUTO_LOGOUT_TIME = int(60 * 60)
+AUTO_LOGOUT_TIME = 3600
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
