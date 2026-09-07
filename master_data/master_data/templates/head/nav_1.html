@@ -1,82 +1,62 @@
 {% load static %}
-<nav class="sticky top-0 z-30 w-full border-b border-neutral bg-base-200/90 backdrop-blur">
-    <div class="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4 sm:px-6">
-        <a href="{% url 'master:home' %}" class="flex items-center gap-2.5 shrink-0">
-            <img src="{% static 'icon/mazta_logo.png' %}" alt="Mazta Farma" class="h-7 w-7 rounded-full bg-white p-0.5">
-            <span class="text-sm font-semibold tracking-tight">Mazta Farma</span>
-        </a>
+<input id="rail-toggle" type="checkbox" class="peer/rail hidden" />
 
-        {% if page_name %}
-        <span class="hidden text-sm text-base-content/55 sm:inline">/</span>
-        <span class="hidden truncate text-sm font-medium capitalize text-base-content/80 sm:inline">{{ page_name }}</span>
+<div class="topbar">
+    <label for="rail-toggle" class="flex cursor-pointer items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+        <span class="font-display font-bold tracking-[0.22em] text-[color:var(--color-rx-tint)]">MAZTA</span>
+    </label>
+    <span class="truncate text-xs text-white/60">{{ page_name }}</span>
+</div>
+
+<label for="rail-toggle" class="fixed inset-0 z-30 hidden bg-black/40 peer-checked/rail:block lg:!hidden"></label>
+
+<nav class="rail peer-checked/rail:flex">
+    <a href="{% url 'master:home' %}" class="rail-brand block">MAZTA</a>
+
+    {% if request.user.is_authenticated %}
+    <div class="id-badge">
+        <span class="id-badge__name">{{ request.user.get_full_name|default:request.user.username }}</span>
+        {% if request.session.detail.kode_rayon %}
+        <span class="id-badge__rayon">Rayon {{ request.session.detail.kode_rayon }}</span>
+        {% elif request.user.is_superuser %}
+        <span class="id-badge__rayon">Administrator</span>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="flex-1 overflow-y-auto pb-6">
+        {% if request.user.is_superuser or request.user.is_staff %}
+        {% for group in request.user.groups.all %}
+            {% if group.name == "sales" %}
+            <p class="rail-group">Master</p>
+            <a class="rail-link" href="{% url 'master:gc_list' %}">Grade Clinic</a>
+            <a class="rail-link" href="{% url 'master:gu_list' %}">Grade User</a>
+            <a class="rail-link" href="{% url 'master:title_list' %}">Title</a>
+            <a class="rail-link" href="{% url 'master:salutation_list' %}">Salutation</a>
+            <a class="rail-link" href="{% url 'master:specialist_list' %}">Specialist</a>
+            {% endif %}
+            {% if group.name == "supplier" %}
+            <p class="rail-group">Master</p>
+            <a class="rail-link" href="{% url 'master:pic_list' %}">PIC</a>
+            <a class="rail-link" href="{% url 'master:classification_list' %}">Classifications</a>
+            {% endif %}
+        {% endfor %}
         {% endif %}
 
-        <div class="ml-auto flex items-center gap-2">
-            {% if not login and not title == 'Profile' %}
-            <div class="drawer w-auto">
-                <input id="my-drawer" type="checkbox" class="drawer-toggle" />
-                <div class="drawer-content">
-                    <label for="my-drawer" class="btn btn-sm btn-ghost gap-2 font-medium">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76v3.99c0 1.6 3.02 2.9 6.75 2.9s6.75-1.3 6.75-2.9v-3.99m-13.5 0c0 1.6 3.02 2.9 6.75 2.9s6.75-1.3 6.75-2.9m-13.5 0V8.51m13.5 4.25V8.51m0 0c0 1.6-3.02 2.9-6.75 2.9S2.25 10.11 2.25 8.51m13.5 0c0-1.6-3.02-2.9-6.75-2.9S2.25 6.91 2.25 8.51" />
-                        </svg>
-                        Databases
-                    </label>
-                </div>
-                <div class="drawer-side z-40">
-                    <label for="my-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
-                    <div class="flex h-full w-72 flex-col gap-1 border-r border-neutral bg-base-200 p-4">
-                        <p class="px-2 pb-2 text-xs font-semibold uppercase tracking-wide text-base-content/50">Databases</p>
+        <p class="rail-group">Transaction</p>
+        {% for group in request.user.groups.all %}
+            {% if group.name == "sales" %}<a class="rail-link" href="{% url 'sales:doctor_list' %}">Doctors</a>{% endif %}
+            {% if group.name == "supplier" %}<a class="rail-link" href="{% url 'supplier:vendor_list' %}">Vendors</a>{% endif %}
+        {% endfor %}
+    </div>
 
-                        {% if request.user.is_superuser or request.user.is_staff %}
-                        <p class="px-2 pt-3 text-xs font-medium uppercase tracking-wide text-base-content/40">Master</p>
-                        {% for group in request.user.groups.all %}
-                            {% if group.name == "sales" %}
-                                <a href="{% url 'master:gc_list' %}" class="rounded-field px-2 py-1.5 text-sm hover:bg-base-300">Grade Clinic</a>
-                                <a href="{% url 'master:gu_list' %}" class="rounded-field px-2 py-1.5 text-sm hover:bg-base-300">Grade User</a>
-                                <a href="{% url 'master:title_list' %}" class="rounded-field px-2 py-1.5 text-sm hover:bg-base-300">Title</a>
-                                <a href="{% url 'master:salutation_list' %}" class="rounded-field px-2 py-1.5 text-sm hover:bg-base-300">Salutation</a>
-                                <a href="{% url 'master:specialist_list' %}" class="rounded-field px-2 py-1.5 text-sm hover:bg-base-300">Specialist</a>
-                            {% endif %}
-                            {% if group.name == "supplier" %}
-                                <a href="{% url 'master:pic_list' %}" class="rounded-field px-2 py-1.5 text-sm hover:bg-base-300">PIC</a>
-                                <a href="{% url 'master:classification_list' %}" class="rounded-field px-2 py-1.5 text-sm hover:bg-base-300">Classifications</a>
-                            {% endif %}
-                        {% endfor %}
-                        {% endif %}
-
-                        <p class="px-2 pt-4 text-xs font-medium uppercase tracking-wide text-base-content/40">Transaction</p>
-                        {% for group in request.user.groups.all %}
-                            {% if group.name == "sales" %}
-                                <a href="{% url 'sales:doctor_list' %}" class="rounded-field px-2 py-1.5 text-sm hover:bg-base-300">Doctor List</a>
-                            {% endif %}
-                            {% if group.name == "supplier" %}
-                                <a href="{% url 'supplier:vendor_list' %}" class="rounded-field px-2 py-1.5 text-sm hover:bg-base-300">Vendor List</a>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-
-            <div class="dropdown dropdown-end {% if not user.is_authenticated %}hidden{% endif %}">
-                <div tabindex="0" role="button" class="btn btn-sm btn-ghost gap-2">
-                    <span class="hidden text-sm font-medium sm:inline">{{ request.user.username }}</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a7.5 7.5 0 0 1 15 0" />
-                    </svg>
-                </div>
-                <ul tabindex="0" class="dropdown-content menu z-40 mt-2 w-48 rounded-box border border-neutral bg-base-200 p-1.5 shadow-lg">
-                    <li><a href="{% url 'master:profile' %}">Profile</a></li>
-                    <li><a target="_blank"
-                        {% if request.user.is_staff and request.user.groups.all.0 %}
-                            {% for group in request.user.groups.all %}{% if group.name == "sales" %}href="{% static 'files/dokumentasi_program_admin.pdf' %}"{% endif %}{% endfor %}
-                        {% else %}
-                            {% for group in request.user.groups.all %}{% if group.name == "sales" %}href="{% static 'files/dokumentasi_program_user.pdf' %}"{% endif %}{% endfor %}
-                        {% endif %}>Guide Book</a></li>
-                    <li><a href="{% url 'master:logout' %}" class="text-error">Log Out</a></li>
-                </ul>
-            </div>
-        </div>
+    <div class="border-t border-white/10 px-3 py-3">
+        <a class="rail-link mx-0" href="{% url 'master:profile' %}">Profile</a>
+        <a class="rail-link mx-0" target="_blank"
+            {% for group in request.user.groups.all %}{% if group.name == "sales" %}{% if request.user.is_staff %}href="{% static 'files/dokumentasi_program_admin.pdf' %}"{% else %}href="{% static 'files/dokumentasi_program_user.pdf' %}"{% endif %}{% endif %}{% endfor %}>Guide book</a>
+        <a class="rail-link mx-0 hover:text-white" href="{% url 'master:logout' %}">Log out</a>
     </div>
 </nav>

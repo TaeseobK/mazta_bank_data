@@ -1,32 +1,30 @@
 {% load static %}
-<div class="mx-auto flex max-w-6xl flex-wrap items-center gap-3 px-4 pt-6 sm:px-6">
-    <label class="input input-sm flex flex-1 items-center gap-2 border-neutral bg-base-200 sm:max-w-xs">
-        <svg class="h-4 w-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
-        <input type="text" name="search" id="search" value="{{ search_query }}" placeholder="Search..." class="grow" />
+<div class="flex flex-wrap items-center gap-2">
+    <label class="input input-sm flex items-center gap-2 border-line bg-base-100">
+        <svg class="h-3.5 w-3.5 text-slate" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <input type="text" name="search" id="search" value="{{ search_query }}" placeholder="Search" class="grow" />
     </label>
 
     {% if request.user.is_staff and title == "Doctor List" %}
-    <a href="{% url 'sales:download_doctor_data' %}" class="btn btn-sm btn-ghost">Download Data</a>
+    <a href="{% url 'sales:download_doctor_data' %}" class="btn btn-sm btn-ghost">Download data</a>
     {% endif %}
 
-    <div class="{% if not 'bco' in request.user.username and not 'gmail' in request.user.username %}hidden{% endif %}">
-        <a role="button" id="opn-mdl" href="{% url 'sales:switch_rayon' %}" class="btn btn-sm btn-ghost">Switch Rayon</a>
-    </div>
+    {% if 'bco' in request.user.username or 'gmail' in request.user.username %}
+    <a role="button" id="opn-mdl" href="{% url 'sales:switch_rayon' %}" class="btn btn-sm btn-ghost">Switch rayon</a>
+    {% endif %}
 
-    <div class="ml-auto flex items-center gap-2">
-        {% if api == "False" %}
-        <span class="text-xs tabular-nums text-base-content/60">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
-        <div class="join">
-            <a class="btn btn-sm join-item {% if not page_obj.has_previous %}btn-disabled{% endif %}" {% if page_obj.has_previous %}href="?search={{ search_query|urlencode }}&page={{ page_obj.previous_page_number }}"{% endif %}>&lsaquo;</a>
-            <a class="btn btn-sm join-item {% if not page_obj.has_next %}btn-disabled{% endif %}" {% if page_obj.has_next %}href="?search={{ search_query|urlencode }}&page={{ page_obj.next_page_number }}"{% endif %}>&rsaquo;</a>
-        </div>
-        {% if new_url %}<a href="{{ new_url }}" class="btn btn-sm btn-primary">New</a>{% endif %}
-        {% elif api == "True" %}
-        <span class="text-xs tabular-nums text-base-content/60">{{ current_page }} / {{ last_page }}</span>
-        <div class="join">
-            <a class="btn btn-sm join-item {% if not prev_page %}btn-disabled{% endif %}" {% if prev_page %}href="?search={{ search_query|urlencode }}&page={{ current_page|add:-1 }}"{% endif %}>&lsaquo;</a>
-            <a class="btn btn-sm join-item {% if not next_page %}btn-disabled{% endif %}" {% if next_page %}href="?search={{ search_query|urlencode }}&page={{ current_page|add:1 }}"{% endif %}>&rsaquo;</a>
-        </div>
-        {% endif %}
+    {% if api == "False" %}
+    <span class="px-1 font-mono text-xs text-slate">{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</span>
+    <div class="join">
+        <a class="btn btn-sm join-item {% if not page_obj.has_previous %}btn-disabled{% endif %}" {% if page_obj.has_previous %}href="?search={{ search_query|urlencode }}&page={{ page_obj.previous_page_number }}"{% endif %}>&lsaquo;</a>
+        <a class="btn btn-sm join-item {% if not page_obj.has_next %}btn-disabled{% endif %}" {% if page_obj.has_next %}href="?search={{ search_query|urlencode }}&page={{ page_obj.next_page_number }}"{% endif %}>&rsaquo;</a>
     </div>
+    {% if new_url %}<a href="{{ new_url }}" class="btn btn-sm btn-primary">New</a>{% endif %}
+    {% elif api == "True" %}
+    <span class="px-1 font-mono text-xs text-slate">{{ current_page }}/{{ last_page }}</span>
+    <div class="join">
+        <a class="btn btn-sm join-item {% if not prev_page %}btn-disabled{% endif %}" {% if prev_page %}href="?search={{ search_query|urlencode }}&page={{ current_page|add:-1 }}"{% endif %}>&lsaquo;</a>
+        <a class="btn btn-sm join-item {% if not next_page %}btn-disabled{% endif %}" {% if next_page %}href="?search={{ search_query|urlencode }}&page={{ current_page|add:1 }}"{% endif %}>&rsaquo;</a>
+    </div>
+    {% endif %}
 </div>

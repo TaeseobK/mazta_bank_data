@@ -1,24 +1,20 @@
 {% extends 'base/base_app.html' %}
 {% load static %}
 
-{% block header %}
-    {% include 'head/nav_1.html' %}
-{% endblock header %}
-
 {% block main %}
-<div class="page-wrap max-w-3xl space-y-6">
+<div class="mx-auto max-w-5xl max-w-3xl space-y-6">
 
     <section class="panel panel-pad">
         <h2 class="text-sm font-semibold">Profile</h2>
-        <p class="mt-1 text-xs text-base-content/55">This information may be displayed publicly.</p>
+        <p class="mt-1 text-xs text-slate">This information may be displayed publicly.</p>
         <form action="." method="post" enctype="multipart/form-data" class="mt-5 space-y-4">
             {% csrf_token %}
             <input type="hidden" name="metode" value="change_usrnm">
-            <div class="field-row sm:max-w-xs">
+            <div class="field sm:max-w-xs">
                 <label for="usrnm-id" class="field-label">Username *</label>
                 <input type="text" id="usrnm-id" name="usrnm" value="{{ data.user.username }}" class="input w-full" placeholder="Username" required>
             </div>
-            <div class="field-row">
+            <div class="field">
                 <label for="abt-id" class="field-label">About</label>
                 <textarea name="abt" id="abt-id" class="textarea w-full">{{ data.profile.about }}</textarea>
                 <p class="field-help">Write a few sentences about yourself.</p>
@@ -31,43 +27,43 @@
 
     <section class="panel panel-pad">
         <h2 class="text-sm font-semibold">Personal Information</h2>
-        <p class="mt-1 text-xs text-base-content/55">Use a permanent address where you can receive mail.</p>
+        <p class="mt-1 text-xs text-slate">Use a permanent address where you can receive mail.</p>
         <form action="." method="post" enctype="multipart/form-data" class="mt-5 space-y-4">
             {% csrf_token %}
             <input type="hidden" name="metode" value="profile_update">
             <div class="form-grid">
-                <div class="field-row">
+                <div class="field">
                     <label for="frst-nm-id" class="field-label">First Name *</label>
                     <input type="text" id="frst-nm-id" name="nw-frstnm" value="{{ data.user.first_name }}" class="input w-full" placeholder="John" required>
                 </div>
-                <div class="field-row">
+                <div class="field">
                     <label for="lst-nm-id" class="field-label">Last Name *</label>
                     <input type="text" id="lst-nm-id" name="nw-lstnm" value="{{ data.user.last_name }}" class="input w-full" placeholder="Doe" required>
                 </div>
             </div>
-            <div class="field-row sm:max-w-md">
+            <div class="field sm:max-w-md">
                 <label for="eml-id" class="field-label">Email Address *</label>
                 <input type="text" id="eml-id" name="eml" value="{{ data.user.email }}" class="input w-full" required>
             </div>
             <div class="form-grid sm:grid-cols-3">
-                <div class="field-row">
+                <div class="field">
                     <label for="ctry-id" class="field-label">Country</label>
                     <input type="text" id="ctry-id" name="ctry" value="{{ data.profile.addresses.country }}" class="input w-full">
                 </div>
-                <div class="field-row">
+                <div class="field">
                     <label for="cty-id" class="field-label">City</label>
                     <input type="text" id="cty-id" name="cty" value="{{ data.profile.addresses.city }}" class="input w-full">
                 </div>
-                <div class="field-row">
+                <div class="field">
                     <label for="stt-id" class="field-label">State</label>
                     <input type="text" id="stt-id" name="stt" value="{{ data.profile.addresses.state }}" class="input w-full">
                 </div>
-                <div class="field-row">
+                <div class="field">
                     <label for="zp-id" class="field-label">Zip / Postal Code</label>
                     <input type="text" id="zp-id" name="zp" value="{{ data.profile.addresses.zip }}" class="input w-full">
                 </div>
             </div>
-            <div class="field-row">
+            <div class="field">
                 <label for="flladdrs-id" class="field-label">Full Address</label>
                 <textarea name="flladdrs" id="flladdrs-id" class="textarea w-full">{{ data.profile.addresses.full_address }}</textarea>
             </div>
@@ -79,25 +75,25 @@
 
     <section class="panel panel-pad">
         <h2 class="text-sm font-semibold">Security</h2>
-        <p class="mt-1 text-xs text-base-content/55">Change your password after the admin gives you a default one.</p>
+        <p class="mt-1 text-xs text-slate">Change your password after the admin gives you a default one.</p>
         <button class="btn btn-sm btn-ghost mt-4" type="button" onclick="change_password_modal.showModal()">Change Password</button>
     </section>
 
     <dialog id="change_password_modal" class="modal modal-bottom sm:modal-middle">
-        <div class="modal-box max-w-sm border border-neutral">
+        <div class="modal-box max-w-sm border border-line">
             <h3 class="text-sm font-semibold">Change your password</h3>
             <form action="." method="post" class="mt-4 space-y-4">
                 {% csrf_token %}
                 <input type="hidden" name="metode" value="change_pw">
-                <div class="field-row">
+                <div class="field">
                     <label for="old-psswrd-id" class="field-label">Old Password *</label>
                     <input type="password" id="old-psswrd-id" name="old-psswrd" class="input w-full" required>
                 </div>
-                <div class="field-row">
+                <div class="field">
                     <label for="nw-psswrd-id" class="field-label">New Password *</label>
                     <input type="password" id="nw-psswrd-id" name="nw-psswrd" class="input w-full" required>
                 </div>
-                <div class="field-row">
+                <div class="field">
                     <label for="cnfrm-psswrd-id" class="field-label">Confirm Password *</label>
                     <input type="password" id="cnfrm-psswrd-id" name="cnfrm-psswrd" class="input w-full" required>
                 </div>

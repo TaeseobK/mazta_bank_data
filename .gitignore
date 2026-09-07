@@ -25,6 +25,7 @@ save_db.sh
 
 theme
 databases
+.codegraph
 
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/

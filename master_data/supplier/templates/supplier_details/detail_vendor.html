@@ -1,12 +1,8 @@
 {% extends 'base/base_app.html' %}
 {% load static %}
 
-{% block header %}
-    {% include 'head/nav_1.html' %}
-{% endblock header %}
-
 {% block main %}
-<div class="page-wrap max-w-4xl">
+<div class="mx-auto max-w-4xl">
     <form action="." method="post" class="space-y-5">
         {% csrf_token %}
         <input type="hidden" name="metode" value="post">
@@ -18,15 +14,15 @@
 
         <div class="panel panel-pad">
             <div class="form-grid">
-                <div class="field-row">
+                <div class="field">
                     <label for="name-id" class="field-label">Name *</label>
                     <input type="text" id="name-id" name="name" class="input w-full" autocomplete="off" placeholder="Name" value="{{ data.0.vendor.name }}" required>
                 </div>
-                <div class="field-row">
+                <div class="field">
                     <label for="ety-id" class="field-label">Entity *</label>
                     <input type="text" id="ety-id" name="entity" class="input w-full" placeholder="Entity" value="{{ data.0.vendor.entity }}" required>
                 </div>
-                <div class="field-row">
+                <div class="field">
                     <label for="clss-id" class="field-label">Classification</label>
                     <select name="clss" id="clss-id" class="select w-full">
                         <option value="">Select classification</option>
@@ -35,7 +31,7 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="field-row">
+                <div class="field">
                     <label for="npwp-id" class="field-label">NPWP *</label>
                     <input type="text" id="npwp-id" name="npwp" class="input w-full" autocomplete="off" placeholder="NPWP" value="{{ data.0.vendor.npwp }}" required>
                 </div>
@@ -44,7 +40,7 @@
 
         <div class="grid gap-5 lg:grid-cols-2">
             <div class="panel panel-pad space-y-3">
-                <p class="panel-title">Address <span class="normal-case text-base-content/40">— full address is mandatory</span></p>
+                <p class="section-label">Address <span class="normal-case text-slate">— full address is mandatory</span></p>
                 <input type="text" name="street-1" class="input input-sm w-full" value="{{ data.0.vendor.address.street_1 }}" placeholder="Line 1">
                 <input type="text" name="street-2" class="input input-sm w-full" value="{{ data.0.vendor.address.street_2 }}" placeholder="Line 2">
                 <input type="text" name="city" class="input input-sm w-full" value="{{ data.0.vendor.address.city }}" placeholder="City">
@@ -57,12 +53,12 @@
             </div>
 
             <div class="panel panel-pad space-y-3">
-                <p class="panel-title">Bank Account <span class="normal-case text-base-content/40">— optional</span></p>
+                <p class="section-label">Bank Account <span class="normal-case text-slate">— optional</span></p>
                 <ul class="space-y-3" id="bank-details-id">
                     {% for bank in data.0.vendor.bank_info %}
-                    <li class="space-y-2 rounded-field border border-neutral p-3">
+                    <li class="space-y-2 border border-line p-3">
                         <div class="flex items-center justify-between">
-                            <p class="text-xs font-medium text-base-content/60">{{ forloop.counter }}. Bank details</p>
+                            <p class="text-xs font-medium text-slate">{{ forloop.counter }}. Bank details</p>
                             <button class="btn btn-ghost btn-xs text-error" type="button" id="remove-bank-detail">Remove</button>
                         </div>
                         <div class="grid gap-2 sm:grid-cols-2">
@@ -79,15 +75,15 @@
             </div>
 
             <div class="panel panel-pad space-y-3">
-                <p class="panel-title">Person In Contact</p>
+                <p class="section-label">Person In Contact</p>
                 <ul class="space-y-2" id="pics-id">
                     {% for pic in data.0.pics %}
-                    <li class="rounded-field border border-neutral p-3">
+                    <li class="border border-line p-3">
                         <div class="flex items-center justify-between">
-                            <p class="text-xs font-medium text-base-content/60">PIC {{ forloop.counter }}</p>
+                            <p class="text-xs font-medium text-slate">PIC {{ forloop.counter }}</p>
                             <button class="btn btn-ghost btn-xs text-error" type="button" id="remove-pic-detail">Remove</button>
                         </div>
-                        <p class="mt-1 text-sm">{{ pic.name }} &middot; <span class="text-base-content/60">{{ pic.company }}</span></p>
+                        <p class="mt-1 text-sm">{{ pic.name }} &middot; <span class="text-slate">{{ pic.company }}</span></p>
                         <input type="hidden" name="pics[]" value='{{ pic }}'>
                     </li>
                     {% endfor %}
@@ -96,12 +92,12 @@
             </div>
 
             <div class="panel panel-pad space-y-3">
-                <p class="panel-title">Verifications</p>
+                <p class="section-label">Verifications</p>
                 <ul class="space-y-2" id="verif-id">
                     {% for ver in data.0.vendor.status %}
-                    <li class="space-y-2 rounded-field border border-neutral p-3">
+                    <li class="space-y-2 border border-line p-3">
                         <div class="flex items-center justify-between">
-                            <p class="text-xs font-medium text-base-content/60">Verif {{ forloop.counter }}</p>
+                            <p class="text-xs font-medium text-slate">Verif {{ forloop.counter }}</p>
                             <button class="btn btn-ghost btn-xs text-error" type="button" id="remove-bank-detail">Remove</button>
                         </div>
                         <div class="grid gap-2 sm:grid-cols-2">
@@ -117,27 +113,27 @@
     </form>
 
     <dialog id="my_modal_1" class="modal">
-        <div class="modal-box max-w-3xl border border-neutral">
+        <div class="modal-box max-w-3xl border border-line">
             <h3 class="text-sm font-semibold">Add PIC</h3>
             <form id="form-pic" method="dialog" class="mt-4 space-y-5">
                 <input type="hidden" name="metode" value="post">
                 <div class="form-grid">
-                    <div class="field-row">
+                    <div class="field">
                         <label class="field-label">Name</label>
                         <input type="text" id="name-pic" name="name-pic" class="input input-sm w-full" autocomplete="off" placeholder="Name" required>
                     </div>
-                    <div class="field-row">
+                    <div class="field">
                         <label class="field-label">Position</label>
                         <input type="text" id="pst-pic" name="position-pic" class="input input-sm w-full" placeholder="Position" required>
                     </div>
-                    <div class="field-row">
+                    <div class="field">
                         <label class="field-label">Company</label>
                         <input type="text" id="company-pic" name="company-pic" class="input input-sm w-full" placeholder="Company" required>
                     </div>
                 </div>
                 <div class="grid gap-5 lg:grid-cols-2">
                     <div class="space-y-2">
-                        <p class="panel-title">Address</p>
+                        <p class="section-label">Address</p>
                         <input type="text" id="street-1-pic" name="street-1" class="input input-sm w-full" placeholder="Street 1">
                         <input type="text" id="street-2-pic" name="street-2" class="input input-sm w-full" placeholder="Street 2">
                         <input type="text" id="city-pic" name="city" class="input input-sm w-full" placeholder="City">
@@ -149,7 +145,7 @@
                         <textarea name="fll-work-address" id="wrk-add-pic" class="textarea w-full" placeholder="Full address"></textarea>
                     </div>
                     <div class="space-y-2">
-                        <p class="panel-title">Contact</p>
+                        <p class="section-label">Contact</p>
                         <input type="number" id="tlp-pic" name="tlp-num" class="input input-sm w-full" placeholder="Telephone number" value="62" required>
                         <input type="email" id="eml-pic" name="eml" class="input input-sm w-full" placeholder="example@mycompany.com" required>
                         <input type="number" id="wa-pic" name="wa-num" class="input input-sm w-full" placeholder="WhatsApp number" value="62" required>

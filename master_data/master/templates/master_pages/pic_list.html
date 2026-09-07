@@ -17,7 +17,7 @@
 {% for data in page_obj %}
 <div class="p-4">
     <a href="{% url 'master:detail_pic' data.pk %}" class="text-sm font-medium text-primary">{{ data.name }}</a>
-    <dl class="mt-2 grid grid-cols-[5rem_1fr] gap-y-1 text-xs text-base-content/60">
+    <dl class="mt-2 grid grid-cols-[5rem_1fr] gap-y-1 text-xs text-slate">
         <dt>Company</dt><dd>{{ data.company }}</dd>
         <dt>Position</dt><dd>{{ data.position }}</dd>
         <dt>Email</dt><dd>{{ data.contact.email }}</dd>

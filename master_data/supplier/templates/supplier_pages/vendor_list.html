@@ -10,7 +10,7 @@
     <td>
         <div class="flex flex-wrap gap-1">
             {% for d in data.pic %}
-            <a href="{% url 'master:detail_pic' d.pk %}" class="rounded-field border border-neutral bg-base-300 px-2 py-0.5 text-xs">{{ d.name }} &middot; {{ d.contact.email }}</a>
+            <a href="{% url 'master:detail_pic' d.pk %}" class="border border-line bg-base-300 px-2 py-0.5 text-xs">{{ d.name }} &middot; {{ d.contact.email }}</a>
             {% endfor %}
         </div>
     </td>
@@ -23,7 +23,7 @@
 {% for data in page_obj %}
 <div class="p-4">
     <a href="{% url 'supplier:vendor_detail' data.pk %}" class="text-sm font-medium text-primary">{{ data.name }}</a>
-    <dl class="mt-2 grid grid-cols-[5rem_1fr] gap-y-1 text-xs text-base-content/60">
+    <dl class="mt-2 grid grid-cols-[5rem_1fr] gap-y-1 text-xs text-slate">
         <dt>Entity</dt><dd>{{ data.entity }}</dd>
         <dt>Class</dt><dd>{{ data.classification.name }}</dd>
     </dl>

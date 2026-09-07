@@ -4,37 +4,37 @@
 
 {% block fields %}
 <div class="form-grid">
-    <div class="field-row">
+    <div class="field">
         <label for="gd-id" class="field-label">Grade Name</label>
         <input type="text" id="gd-id" name="name" value="{{ data.name }}" class="input w-full" placeholder="Grade name" required>
     </div>
-    <div class="field-row">
+    <div class="field">
         <label for="ga-id" class="field-label">Grade Alias</label>
         <input type="text" id="ga-id" name="alias" value="{{ data.alias }}" class="input w-full" placeholder="Grade alias" required>
     </div>
 </div>
 
 <div>
-    <p class="panel-title mb-3">Range Clinic</p>
+    <p class="section-label mb-3">Range Clinic</p>
     <div class="form-grid">
-        <div class="field-row">
+        <div class="field">
             <label for="max-id" class="field-label">Max Value</label>
             <label class="input flex w-full items-center gap-2">
                 <input type="number" id="max-id" name="max-value" value="{{ data.range_clinic.max_value }}" class="grow" required>
-                <span class="text-xs text-base-content/50">Clinic</span>
+                <span class="text-xs text-slate">Clinic</span>
             </label>
         </div>
-        <div class="field-row">
+        <div class="field">
             <label for="min-id" class="field-label">Min Value</label>
             <label class="input flex w-full items-center gap-2">
                 <input type="number" id="min-id" name="min-value" value="{{ data.range_clinic.min_value }}" class="grow" required>
-                <span class="text-xs text-base-content/50">Clinic</span>
+                <span class="text-xs text-slate">Clinic</span>
             </label>
         </div>
     </div>
 </div>
 
-<div class="field-row">
+<div class="field">
     <label class="field-label">Description</label>
     <textarea name="description" class="textarea w-full">{{ data.description }}</textarea>
 </div>

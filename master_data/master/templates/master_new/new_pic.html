@@ -14,15 +14,15 @@
 
 {% block fields %}
 <div class="form-grid">
-    <div class="field-row">
+    <div class="field">
         <label for="name-id" class="field-label">Name</label>
         <input type="text" id="name-id" name="name" class="input w-full" autocomplete="off" placeholder="Name" required>
     </div>
-    <div class="field-row">
+    <div class="field">
         <label for="pst-id" class="field-label">Position</label>
         <input type="text" id="pst-id" name="position" class="input w-full" placeholder="Position" required>
     </div>
-    <div class="field-row">
+    <div class="field">
         <label for="company-id" class="field-label">Company</label>
         <input type="text" id="company-id" name="company" class="input w-full" placeholder="Company" required>
     </div>
@@ -31,7 +31,7 @@
 <div id="wi-tab-id">
     <div class="grid gap-6 lg:grid-cols-2">
         <div class="space-y-3">
-            <p class="panel-title">Address</p>
+            <p class="section-label">Address</p>
             <input type="text" name="street-1" class="input input-sm w-full" placeholder="Street 1">
             <input type="text" name="street-2" class="input input-sm w-full" placeholder="Street 2">
             <input type="text" name="city" class="input input-sm w-full" placeholder="City">
@@ -43,16 +43,16 @@
             <textarea name="fll-work-address" id="wrk-add-id" class="textarea w-full" placeholder="Full address"></textarea>
         </div>
         <div class="space-y-3">
-            <p class="panel-title">Contact</p>
-            <div class="field-row">
+            <p class="section-label">Contact</p>
+            <div class="field">
                 <label for="tlp-id" class="field-label">Telp. Number</label>
                 <input type="text" id="tlp-id" name="tlp-num" class="input input-sm w-full" placeholder="Telephone number" value="+62 " required>
             </div>
-            <div class="field-row">
+            <div class="field">
                 <label for="eml-id" class="field-label">Email</label>
                 <input type="email" id="eml-id" name="eml" class="input input-sm w-full" placeholder="example@mycompany.com" required>
             </div>
-            <div class="field-row">
+            <div class="field">
                 <label for="wa-id" class="field-label">WhatsApp Number</label>
                 <input type="text" id="wa-id" name="wa-num" class="input input-sm w-full" placeholder="WhatsApp number" value="+62 " required>
             </div>

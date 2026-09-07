@@ -1,24 +1,19 @@
 {% extends 'base/base_app.html' %}
-{% load static %}
-
-{% block header %}
-    {% include 'head/nav_1.html' %}
-{% endblock header %}
 
 {% block main %}
-<div class="page-wrap max-w-3xl">
+<div class="max-w-xl">
     {% block delete_form %}{% endblock %}
     <form action="." method="post" {% block form_attrs %}{% endblock %} class="space-y-5">
         {% csrf_token %}
         <input type="hidden" name="metode" value="post">
-        <div class="flex items-start justify-between gap-3">
+        <div class="content-head">
             <div>
-                <h1 class="text-lg font-semibold tracking-tight">{% block heading %}{{ page_name }}{% endblock %}</h1>
+                <h1 class="text-xl">{% block heading %}{{ page_name }}{% endblock %}</h1>
                 {% block subheading %}{% endblock %}
             </div>
             <div class="flex shrink-0 gap-2">
                 {% block actions %}
-                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+                <button type="submit" class="btn btn-sm btn-primary">Save</button>
                 {% endblock %}
             </div>
         </div>

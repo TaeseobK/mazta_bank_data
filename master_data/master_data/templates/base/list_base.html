@@ -1,28 +1,25 @@
 {% extends 'base/base_app.html' %}
-{% load static %}
-
-{% block header %}
-    {% include 'head/nav_1.html' %}
-    {% include 'head/nav_2.html' %}
-{% endblock header %}
 
 {% block main %}
-<div class="page-wrap">
-    <div class="panel overflow-hidden">
-        <div class="hidden overflow-x-auto lg:block">
-            <table class="data-table">
-                <thead><tr>{% block table_head %}{% endblock %}</tr></thead>
-                <tbody id="page-list">
-                    {% block table_body %}{% endblock %}
-                </tbody>
-            </table>
-        </div>
-        <div id="page-list-2" class="divide-y divide-neutral/60 lg:hidden">
-            {% block cards %}{% endblock %}
-        </div>
-        {% if not page_obj %}
-        <p class="p-8 text-center text-sm text-base-content/50">Nothing to show.</p>
-        {% endif %}
+<div class="content-head">
+    <h1>{% block list_title %}{{ page_name }}{% endblock %}</h1>
+    {% include 'head/nav_2.html' %}
+</div>
+
+<div class="ledger">
+    <div class="hidden overflow-x-auto lg:block">
+        <table class="data-table">
+            <thead><tr>{% block table_head %}{% endblock %}</tr></thead>
+            <tbody id="page-list">
+                {% block table_body %}{% endblock %}
+            </tbody>
+        </table>
     </div>
+    <div id="page-list-2" class="lg:hidden">
+        {% block cards %}{% endblock %}
+    </div>
+    {% if not page_obj %}
+    <p class="px-4 py-10 text-center text-sm text-slate">No records yet.</p>
+    {% endif %}
 </div>
 {% endblock main %}

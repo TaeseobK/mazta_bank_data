@@ -1,34 +1,35 @@
 {% extends 'base/list_base.html' %}
 
+{% block list_title %}Doctors{% endblock %}
+
 {% block table_head %}
-<th>Doctor Name</th><th>Old Code</th><th>Priority</th><th>Cover</th><th>Updated</th><th>Created</th>
+<th>Doctor</th><th>Cover</th><th>Updated</th><th class="text-right">Priority</th>
 {% endblock %}
 
 {% block table_body %}
 {% for data in page_obj %}
 <tr>
     <th>
-        <a {% if request.user.is_staff %}{% if data.dr %}href="{% url 'sales:doctor_detail_admin' data.dr.pk %}"{% else %}href="#"{% endif %}{% else %}href="{% url 'sales:doctor_detail_sales' request.session.detail.id_user data.data.id_dokter %}"{% endif %}>{{ data.data.nama_dokter }}</a>
+        <a class="ledger-name" {% if request.user.is_staff %}{% if data.dr %}href="{% url 'sales:doctor_detail_admin' data.dr.pk %}"{% else %}href="#"{% endif %}{% else %}href="{% url 'sales:doctor_detail_sales' request.session.detail.id_user data.data.id_dokter %}"{% endif %}>{{ data.data.nama_dokter }}</a>
+        <span class="ledger-code">{{ data.data.kode_pelanggan_old|default:"—" }}</span>
     </th>
-    <td>{{ data.data.kode_pelanggan_old }}</td>
-    <td>{{ data.priority }}</td>
     <td>{{ data.cover.rayon }}</td>
-    <td class="text-base-content/60">{{ data.last_update }}</td>
-    <td class="text-base-content/60">{{ data.created_at }}</td>
+    <td class="text-slate">{{ data.last_update }}</td>
+    <td class="text-right">
+        {% if data.priority %}<span class="prio prio--on">Priority</span>{% else %}<span class="prio prio--off">Not priority</span>{% endif %}
+    </td>
 </tr>
 {% endfor %}
 {% endblock %}
 
 {% block cards %}
 {% for data in page_obj %}
-<div class="p-4">
-    <a class="text-sm font-medium text-primary" {% if request.user.is_staff %}{% if data.dr %}href="{% url 'sales:doctor_detail_admin' data.dr.pk %}"{% else %}href="#"{% endif %}{% else %}href="{% url 'sales:doctor_detail_sales' request.session.detail.id_user data.data.id_dokter %}"{% endif %}>{{ data.data.nama_dokter }}</a>
-    <dl class="mt-2 grid grid-cols-[5rem_1fr] gap-y-1 text-xs text-base-content/60">
-        <dt>Old Code</dt><dd>{{ data.data.kode_pelanggan }}</dd>
-        <dt>Priority</dt><dd>{{ data.priority }}</dd>
-        <dt>Cover</dt><dd>{{ data.cover.rayon }}</dd>
-        <dt>Updated</dt><dd>{{ data.last_update }}</dd>
-    </dl>
+<div class="ledger-row">
+    <div class="min-w-0 flex-1">
+        <a class="ledger-name truncate" {% if request.user.is_staff %}{% if data.dr %}href="{% url 'sales:doctor_detail_admin' data.dr.pk %}"{% else %}href="#"{% endif %}{% else %}href="{% url 'sales:doctor_detail_sales' request.session.detail.id_user data.data.id_dokter %}"{% endif %}>{{ data.data.nama_dokter }}</a>
+        <span class="ledger-code">{{ data.data.kode_pelanggan|default:"—" }} · {{ data.cover.rayon }}</span>
+    </div>
+    {% if data.priority %}<span class="prio prio--on">Priority</span>{% else %}<span class="prio prio--off">Not priority</span>{% endif %}
 </div>
 {% endfor %}
 {% endblock %}

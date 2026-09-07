@@ -1,135 +1,231 @@
 @import "tailwindcss";
 
-/* Scan Django templates and the extracted jQuery (which builds markup with
-   utility classes in template literals). */
 @source "../../**/templates/**/*.html";
 @source "./app.js";
 
 @plugin "daisyui" {
-  themes: mazta --default;
+  themes: formulary --default;
   logs: false;
 }
 
 @plugin "daisyui/theme" {
-  name: "mazta";
+  name: "formulary";
   default: true;
-  color-scheme: dark;
+  color-scheme: light;
 
-  --color-base-100: #0f1115;
-  --color-base-200: #16181d;
-  --color-base-300: #1e2128;
-  --color-base-content: #e6e8eb;
+  --color-base-100: #fcfcfa;   /* paper */
+  --color-base-200: #f2f4f1;   /* recessed paper */
+  --color-base-300: #e4efe9;   /* rx-tint: panels, table head, chart header */
+  --color-base-content: #14261f; /* ink */
 
-  --color-primary: #3ea6a0;
-  --color-primary-content: #04110f;
-  --color-secondary: #6366f1;
-  --color-secondary-content: #eef0ff;
-  --color-accent: #3ea6a0;
-  --color-accent-content: #04110f;
-  --color-neutral: #262a31;
-  --color-neutral-content: #c9ccd1;
+  --color-primary: #0f6b4b;    /* rx — apothecary green */
+  --color-primary-content: #fcfcfa;
+  --color-secondary: #14261f;  /* ink */
+  --color-secondary-content: #e4efe9;
+  --color-accent: #0f6b4b;
+  --color-accent-content: #fcfcfa;
+  --color-neutral: #14261f;    /* the ink rail */
+  --color-neutral-content: #cdd8d1;
 
-  --color-info: #3b82c4;
-  --color-info-content: #eaf2fb;
-  --color-success: #3f9d78;
-  --color-success-content: #eafaf2;
-  --color-warning: #c99a3f;
-  --color-warning-content: #201a0d;
-  --color-error: #cf5f5f;
-  --color-error-content: #fbeaea;
+  --color-info: #0f6b4b;
+  --color-info-content: #fcfcfa;
+  --color-success: #0f6b4b;
+  --color-success-content: #fcfcfa;
+  --color-warning: #8a5a05;
+  --color-warning-content: #fbf0da;
+  --color-error: #a8321e;
+  --color-error-content: #fbebe8;
 
-  --radius-selector: 0.375rem;
-  --radius-field: 0.375rem;
-  --radius-box: 0.5rem;
+  --radius-selector: 0.25rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.25rem;
   --border: 1px;
   --depth: 0;
   --noise: 0;
 }
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-    Roboto, sans-serif;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Archivo", "IBM Plex Sans", ui-sans-serif, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --color-line: #d9e0db;
+  --color-slate: #5a6b63;
+  --color-ink: #14261f;
+  --color-rx: #0f6b4b;
+  --color-rx-tint: #e4efe9;
+  --color-alert: #a8321e;
 }
 
 @layer base {
+  html {
+    font-size: 13px;
+  }
   body {
-    @apply bg-base-100 text-base-content font-sans antialiased;
+    @apply bg-base-100 text-ink font-sans antialiased;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    font-stretch: 112%;
   }
   a {
     @apply transition-colors;
   }
-  /* thin, quiet scrollbars */
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-neutral) transparent;
+  ::selection {
+    background: var(--color-rx);
+    color: #fff;
   }
-  *::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-  *::-webkit-scrollbar-thumb {
-    background-color: var(--color-neutral);
-    border-radius: 9999px;
-  }
+  *::-webkit-scrollbar { width: 10px; height: 10px; }
+  *::-webkit-scrollbar-thumb { background: var(--color-line); }
 }
 
-/* Shared component layer: the 31 page templates lean on these so the look
-   stays consistent without copy-pasted utility soup. */
 @layer components {
-  .page-wrap {
-    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 py-6;
+
+  /* ---- app frame ------------------------------------------------ */
+  .app-shell {
+    @apply lg:grid;
+    grid-template-columns: 224px 1fr;
+    min-height: 100vh;
   }
-  .panel {
-    @apply bg-base-200 border border-neutral rounded-box;
+  .rail {
+    @apply hidden flex-col bg-ink text-[color:var(--color-neutral-content)] lg:flex;
+    position: sticky;
+    top: 0;
+    height: 100vh;
   }
-  .panel-pad {
-    @apply p-5 sm:p-6;
+  @media (max-width: 1023px) {
+    .rail {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 40;
+      width: 15rem;
+    }
   }
-  .panel-title {
-    @apply text-sm font-semibold tracking-wide uppercase text-base-content/70;
+  .rail-brand {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-stretch: 125%;
+    letter-spacing: 0.24em;
+    @apply px-6 pt-6 pb-5 text-lg text-[color:var(--color-rx-tint)];
+  }
+  .id-badge {
+    @apply mx-4 mb-6 rounded-[3px] border border-white/10 bg-white/[0.03] px-3 py-2.5;
+  }
+  .id-badge__name { @apply block text-sm font-medium text-white; }
+  .id-badge__rayon { @apply mt-0.5 block text-xs text-[color:var(--color-neutral-content)]; }
+
+  .rail-group {
+    @apply px-6 pt-5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/35;
+  }
+  .rail-link {
+    @apply mx-3 block rounded-[3px] px-3 py-1.5 text-sm text-[color:var(--color-neutral-content)] hover:bg-white/5 hover:text-white;
+  }
+  .rail-link[aria-current="page"] {
+    @apply bg-white/[0.07] text-white;
+    box-shadow: inset 2px 0 0 var(--color-rx);
   }
 
-  /* tables */
-  .data-table {
-    @apply w-full border-collapse text-sm;
+  /* mobile top bar */
+  .topbar {
+    @apply flex items-center justify-between gap-3 border-b border-line bg-ink px-4 py-2.5 text-white lg:hidden;
   }
+
+  .content {
+    @apply min-w-0 px-5 py-7 sm:px-8;
+  }
+  .content-head {
+    @apply mb-6 flex flex-wrap items-baseline justify-between gap-3;
+  }
+  .content-head h1 { @apply text-2xl; }
+
+  /* ---- ledger (list pages) ------------------------------------- */
+  .ledger {
+    @apply overflow-hidden border border-line bg-base-100;
+  }
+  .ledger-row {
+    @apply flex items-center gap-4 border-b border-line px-4 py-3 transition-colors last:border-b-0;
+    box-shadow: inset 0 0 0 0 var(--color-rx);
+  }
+  .ledger-row:hover {
+    @apply bg-base-300/40;
+    box-shadow: inset 2px 0 0 0 var(--color-rx);
+  }
+  .ledger-name { @apply block text-sm font-medium text-ink; }
+  .ledger-code { @apply mt-0.5 block font-mono text-xs text-slate; }
+  .ledger-meta { @apply hidden shrink-0 text-xs text-slate sm:block; }
+
+  .data-table { @apply w-full border-collapse text-sm; }
   .data-table thead th {
-    @apply text-left font-medium text-xs uppercase tracking-wide
-      text-base-content/55 px-4 py-3 border-b border-neutral;
+    @apply border-b border-line bg-base-300 px-4 py-2.5 text-left text-xs font-semibold text-slate;
   }
   .data-table tbody th,
   .data-table tbody td {
-    @apply px-4 py-3 border-b border-neutral/60 font-normal align-top;
+    @apply border-b border-line px-4 py-3 text-left align-top font-normal;
   }
-  .data-table tbody tr {
-    @apply transition-colors;
+  .data-table tbody tr:hover { @apply bg-base-300/40; }
+  .data-table a { @apply font-medium text-rx hover:underline; }
+
+  /* ---- priority language -------------------------------------- */
+  .prio {
+    @apply inline-flex shrink-0 items-center gap-1.5 text-xs font-semibold;
   }
-  .data-table tbody tr:hover {
-    @apply bg-base-300/40;
+  .prio--on {
+    @apply rounded-[2px] bg-rx px-2 py-1 text-white;
   }
-  .data-table a {
-    @apply text-primary hover:text-primary/80;
+  .prio--on::before {
+    content: "";
+    @apply h-2 w-2 rounded-full bg-white/85;
+  }
+  .prio--off {
+    @apply px-2 py-1 text-slate;
   }
 
-  /* stacked card list (mobile fallback for tables) */
-  .stack-card {
-    @apply rounded-field bg-base-200 border border-neutral p-4;
+  /* ---- chart header (doctor detail) -------------------------- */
+  .chart-header {
+    @apply border border-line bg-base-300 px-5 py-4;
   }
-  .stack-card + .stack-card {
-    @apply mt-2;
+  .chart-header h1 { @apply text-xl leading-tight; }
+  .chart-header__meta { @apply mt-1 text-xs text-slate; }
+  .chart-header__meta .mono { @apply font-mono; }
+  .chart-stamp {
+    animation: stamp 220ms cubic-bezier(0.2, 0.9, 0.3, 1) 1;
+  }
+  @keyframes stamp {
+    from { transform: scale(1.06); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .chart-stamp { animation: none; }
   }
 
-  /* forms */
-  .field-row {
-    @apply flex flex-col gap-1.5;
+  /* ---- panels + forms --------------------------------------- */
+  .panel { @apply border border-line bg-base-100; }
+  .panel-pad { @apply p-5 sm:p-6; }
+
+  .section-label {
+    @apply mb-3 inline-block text-sm font-semibold text-ink;
+    border-bottom: 2px solid var(--color-rx);
+    padding-bottom: 2px;
   }
+  .field { @apply flex flex-col gap-1; }
+  .field > label,
   .field-label {
-    @apply text-xs font-medium uppercase tracking-wide text-base-content/60;
+    @apply text-xs font-medium text-slate;
   }
-  .field-help {
-    @apply text-xs text-base-content/45;
+  .field-help { @apply text-xs text-slate/70; }
+  .form-grid { @apply grid gap-x-6 gap-y-4 sm:grid-cols-2; }
+
+  .input, .select, .textarea {
+    @apply border-line bg-base-100;
   }
-  .form-grid {
-    @apply grid gap-x-6 gap-y-5 sm:grid-cols-2;
+  .input:focus, .select:focus, .textarea:focus,
+  .input:focus-within {
+    outline: none;
+    border-color: var(--color-rx);
+    box-shadow: inset 0 -2px 0 0 var(--color-rx);
   }
+
+  .btn { font-weight: 600; }
 }

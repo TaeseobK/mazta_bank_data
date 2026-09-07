@@ -3,11 +3,11 @@
 {% block heading %}Classification Detail{% endblock %}
 
 {% block fields %}
-<div class="field-row sm:max-w-sm">
+<div class="field sm:max-w-sm">
     <label for="csn-id" class="field-label">Classification Name</label>
     <input type="text" id="csn-id" name="class-name" value="{{ data.name }}" class="input w-full" placeholder="Classification name" required>
 </div>
-<div class="field-row">
+<div class="field">
     <label class="field-label">Description</label>
     <textarea name="description" class="textarea w-full">{{ data.description }}</textarea>
 </div>

@@ -15,7 +15,7 @@
 {% for data in page_obj %}
 <div class="p-4">
     <a href="{% url 'master:detail_title' data.pk %}" class="text-sm font-medium text-primary">{{ data.name }}</a>
-    <p class="mt-1 text-xs text-base-content/60">Short: {{ data.short_name }}</p>
+    <p class="mt-1 text-xs text-slate">Short: {{ data.short_name }}</p>
 </div>
 {% endfor %}
 {% endblock %}

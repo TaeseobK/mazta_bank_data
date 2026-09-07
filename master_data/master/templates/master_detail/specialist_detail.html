@@ -4,16 +4,16 @@
 
 {% block fields %}
 <div class="form-grid">
-    <div class="field-row">
+    <div class="field">
         <label for="gd-id" class="field-label">Full</label>
         <input type="text" id="gd-id" name="full-name" value="{{ data.full }}" class="input w-full" placeholder="Specialist full name" required>
     </div>
-    <div class="field-row">
+    <div class="field">
         <label for="ga-id" class="field-label">Short</label>
         <input type="text" id="ga-id" name="short-name" value="{{ data.short_name }}" class="input w-full" placeholder="Specialist short name" required>
     </div>
 </div>
-<div class="field-row">
+<div class="field">
     <label class="field-label">Description</label>
     <textarea name="description" class="textarea w-full">{{ data.description }}</textarea>
 </div>

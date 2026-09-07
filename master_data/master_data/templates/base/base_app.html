@@ -1,35 +1,38 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" data-theme="mazta">
+<html lang="en" data-theme="formulary">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'src/styles.css' %}" type="text/css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="{% static 'icon/icon.png' %}">
-    <title>Mazta Data Bank &middot; {{ title }}</title>
+    <title>Mazta Formulary &middot; {{ title }}</title>
 </head>
 <body class="min-h-screen">
     <script>window.CSRF_TOKEN = "{{ csrf_token }}";</script>
 
-    {% block header %}{% endblock header %}
-
-    {% if messages %}
-    <div class="fixed inset-x-0 top-3 z-50 flex flex-col items-center gap-2 px-4">
-        {% for message in messages %}
-        <div id="alert-1" role="alert"
-             class="alert alert-{{ message.tags }} w-full max-w-xl border border-neutral shadow-sm">
-            <span class="text-sm">{{ message|safe }}</span>
-            <button type="button" class="btn btn-ghost btn-xs" data-dismiss-target="#alert-1" aria-label="Close">&times;</button>
-        </div>
-        {% endfor %}
+    {% block shell %}
+    <div class="app-shell">
+        {% include 'head/nav_1.html' %}
+        <main class="content min-w-0">
+            {% if messages %}
+            <div class="mb-5 space-y-2">
+                {% for message in messages %}
+                <div id="alert-1" role="alert" class="alert alert-{{ message.tags }} border border-line text-sm">
+                    <span>{{ message|safe }}</span>
+                    <button type="button" class="btn btn-ghost btn-xs" data-dismiss-target="#alert-1" aria-label="Close">&times;</button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% block main %}{% endblock main %}
+        </main>
     </div>
-    {% endif %}
-
-    {% block main %}{% endblock main %}
+    {% endblock shell %}
     {% block footer %}{% endblock footer %}
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

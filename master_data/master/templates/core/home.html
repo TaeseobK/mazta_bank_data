@@ -1,56 +1,44 @@
 {% extends 'base/base_app.html' %}
 {% load static %}
 
-{% block header %}
-    {% include 'head/nav_1.html' %}
-{% endblock header %}
-
 {% block main %}
-<div class="page-wrap space-y-6">
-    <div class="panel panel-pad">
-        <p class="text-sm text-base-content/80">
-            Hi, <span class="font-medium capitalize">{{ request.user.username }}</span> &mdash; you're connected to
-            {% for i in request.user.groups.all %}{% if i.name == "sales" %}Doctor Detail{% else %}Bank Data{% endif %}{% endfor %}.
-        </p>
-        <p class="mt-1 text-xs text-base-content/50">Stay informed, stay healthy, and stay happy.</p>
+<div class="mx-auto max-w-5xl">
+    <div class="content-head">
+        <div>
+            <h1 class="text-2xl">Hi, {{ request.user.get_full_name|default:request.user.username }}</h1>
+            <p class="mt-1 text-sm text-slate">
+                {% for i in request.user.groups.all %}{% if i.name == "sales" %}Your doctor coverage, by rayon.{% else %}Vendor and bank data.{% endif %}{% endfor %}
+            </p>
+        </div>
     </div>
 
     {% if request.user.groups.first.name == "sales" %}
-    <div class="panel">
-        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-neutral p-4 sm:p-5">
-            <div>
-                <h2 class="text-sm font-semibold">Doctors by Rayon</h2>
-                <p class="text-xs text-base-content/55">Grouped into Priority and Not Priority</p>
-            </div>
-            <label class="input input-sm flex items-center gap-2 border-neutral sm:max-w-xs">
-                <svg class="h-4 w-4 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
-                <input type="text" name="search" id="search" placeholder="Search..." class="grow">
-            </label>
-        </div>
+    <div class="mb-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+        <span><span class="font-mono text-rx">{{ total.doctor_priority }}</span> priority</span>
+        <span><span class="font-mono text-slate">{{ total.doctor_not_priority }}</span> not priority</span>
+        <span class="text-slate">·</span>
+        <span><span class="font-mono">{{ total.total_doctor }}</span> total</span>
+        <label class="input input-sm ml-auto flex items-center gap-2 border-line sm:max-w-xs">
+            <svg class="h-3.5 w-3.5 text-slate" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+            <input type="text" name="search" id="search" placeholder="Filter rayon" class="grow">
+        </label>
+    </div>
 
-        <div class="flex flex-wrap gap-4 px-4 py-3 text-xs text-base-content/60 sm:px-5">
-            <span>Priority: <span class="text-base-content">{{ total.doctor_priority }}</span></span>
-            <span>Not Priority: <span class="text-base-content">{{ total.doctor_not_priority }}</span></span>
-            <span>Total: <span class="text-base-content">{{ total.total_doctor }}</span></span>
-        </div>
-
-        <div id="page-list" class="grid gap-3 p-4 sm:p-5 md:grid-cols-2 xl:grid-cols-3">
-            {% for d in data %}
-            <div id="lost-page" some="{{ d.rayon }}" onclick="modal_1.showModal()"
-                 class="cursor-pointer rounded-field border border-neutral bg-base-100 p-4 transition-colors hover:border-primary/50">
-                <p class="text-sm font-medium">{{ d.rayon }}</p>
-                <dl class="mt-2 grid grid-cols-[7rem_1fr] gap-y-1 text-xs text-base-content/60">
-                    <dt>Priority</dt><dd>{{ d.priority }}</dd>
-                    <dt>Not Priority</dt><dd>{{ d.not_priority }}</dd>
-                    <dt>Total</dt><dd>{{ d.total_doctor }}</dd>
-                </dl>
+    <div id="page-list" class="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+        {% for d in data %}
+        <button type="button" id="lost-page" some="{{ d.rayon }}" onclick="modal_1.showModal()"
+                class="border border-line bg-base-100 p-4 text-left transition-colors hover:border-rx">
+            <p class="text-sm font-medium">{{ d.rayon }}</p>
+            <div class="mt-3 flex h-1.5 overflow-hidden bg-base-300">
+                <span class="bg-rx" style="width: {% widthratio d.priority d.total_doctor 100 %}%"></span>
             </div>
-            {% endfor %}
-        </div>
+            <p class="mt-2 font-mono text-xs text-slate">{{ d.priority }} / {{ d.total_doctor }} covered</p>
+        </button>
+        {% endfor %}
     </div>
 
     <dialog id="modal_1" class="modal">
-        <div class="modal-box max-w-4xl border border-neutral">
+        <div class="modal-box max-w-4xl border border-line">
             <p class="text-sm font-semibold" id="rayon_name"></p>
             <div class="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-3" id="modal-data"></div>
             <div class="modal-action">

@@ -7,7 +7,7 @@
 <tr>
     <th><a href="{% url 'master:detail_gu' data.pk %}">{{ data.name }}</a></th>
     <td>{{ data.alias }}</td>
-    <td class="text-base-content/70">&ge; {{ data.range_user.min.value }} {{ data.range_user.min.measure }}, &le; {{ data.range_user.max.value }} {{ data.range_user.max.measure }}</td>
+    <td class="text-slate">&ge; {{ data.range_user.min.value }} {{ data.range_user.min.measure }}, &le; {{ data.range_user.max.value }} {{ data.range_user.max.measure }}</td>
 </tr>
 {% endfor %}
 {% endblock %}
@@ -16,7 +16,7 @@
 {% for data in page_obj %}
 <div class="p-4">
     <a href="{% url 'master:detail_gu' data.pk %}" class="text-sm font-medium text-primary">{{ data.name }}</a>
-    <dl class="mt-2 grid grid-cols-[4rem_1fr] gap-y-1 text-xs text-base-content/60">
+    <dl class="mt-2 grid grid-cols-[4rem_1fr] gap-y-1 text-xs text-slate">
         <dt>Alias</dt><dd>{{ data.alias }}</dd>
         <dt>Range</dt><dd>&ge; {{ data.range_user.min.value }} {{ data.range_user.min.measure }}, &le; {{ data.range_user.max.value }} {{ data.range_user.max.measure }}</dd>
     </dl>

@@ -7,7 +7,7 @@
 <tr>
     <th><a href="{% url 'master:detail_gc' data.grade.pk %}">{{ data.grade.name }}</a></th>
     <td>{{ data.grade.alias }}</td>
-    <td class="text-base-content/70">&ge; {{ data.grade.range_clinic.min_value }}, &le; {{ data.grade.range_clinic.max_value }} clinic</td>
+    <td class="text-slate">&ge; {{ data.grade.range_clinic.min_value }}, &le; {{ data.grade.range_clinic.max_value }} clinic</td>
 </tr>
 {% endfor %}
 {% endblock %}
@@ -16,7 +16,7 @@
 {% for data in page_obj %}
 <div class="p-4">
     <a href="{% url 'master:detail_gc' data.grade.pk %}" class="text-sm font-medium text-primary">{{ data.grade.name }}</a>
-    <dl class="mt-2 grid grid-cols-[4rem_1fr] gap-y-1 text-xs text-base-content/60">
+    <dl class="mt-2 grid grid-cols-[4rem_1fr] gap-y-1 text-xs text-slate">
         <dt>Alias</dt><dd>{{ data.grade.alias }}</dd>
         <dt>Range</dt><dd>&ge; {{ data.grade.range_clinic.min_value }}, &le; {{ data.grade.range_clinic.max_value }} clinic</dd>
     </dl>
