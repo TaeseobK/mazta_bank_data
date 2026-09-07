@@ -67,7 +67,7 @@ def remove_duplicates(text) :
 
 @api_login_required
 def doctor_list(request):
-    id_user = (request.session.get('detail') or {}).get('id_user')
+    id_user = rayon_user_id(request)
     request.session['back_url'] = request.get_full_path()
     search = request.GET.get('search', '')
     page = request.GET.get('page', '1')
@@ -198,7 +198,7 @@ If you break it, git blame will find you.
 
 @api_login_required
 def doctor_detail(request, user_id, doc_id) :
-    id_user = (request.session.get('detail') or {}).get('id_user')
+    id_user = rayon_user_id(request)
     api_url = f"{settings.API_JAMET}/master-data-dokter/detail/{id_user}"
     
     response = requests.get(api_url)
@@ -284,7 +284,7 @@ def doctor_detail(request, user_id, doc_id) :
                 metode = request.POST.get('metode')
 
                 if data[0]['doctor'] :
-                    if data[0]['doctor'].rayon.get('id') == (request.session.get('detail') or {}).get('id_user') :
+                    if data[0]['doctor'].rayon.get('id') == rayon_user_id(request) :
                         pass
 
                     else :

@@ -2,6 +2,12 @@ from django.contrib import messages
 from functools import wraps
 from django.shortcuts import redirect
 
+
+def rayon_user_id(request) :
+    """id_user from the API session 'detail' payload, or None if it's missing."""
+    return (request.session.get('detail') or {}).get('id_user')
+
+
 def group_required(*group_names) :
     def decorator(view_func) :
         @wraps(view_func)
