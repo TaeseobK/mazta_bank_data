@@ -1,23 +1,24 @@
 {% extends 'base/base_app.html' %}
 
 {% block main %}
-<div class="max-w-xl">
+<div class="form-shell">
     {% block delete_form %}{% endblock %}
-    <form action="." method="post" {% block form_attrs %}{% endblock %} class="space-y-5">
+    <form action="." method="post" {% block form_attrs %}{% endblock %} class="space-y-6">
         {% csrf_token %}
         <input type="hidden" name="metode" value="post">
-        <div class="content-head">
-            <div>
-                <h1 class="text-xl">{% block heading %}{{ page_name }}{% endblock %}</h1>
+        <div class="page-head">
+            <div class="page-head__main">
+                <h1>{% block heading %}{{ page_name }}{% endblock %}</h1>
                 {% block subheading %}{% endblock %}
+                {% block note %}{% endblock %}
             </div>
-            <div class="flex shrink-0 gap-2">
+            <div class="page-head__actions">
                 {% block actions %}
                 <button type="submit" class="btn btn-sm btn-primary">Save</button>
                 {% endblock %}
             </div>
         </div>
-        <div class="panel panel-pad space-y-6">
+        <div class="form-body">
             {% block fields %}{% endblock %}
         </div>
     </form>

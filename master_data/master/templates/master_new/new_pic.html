@@ -2,6 +2,8 @@
 
 {% block heading %}New PIC{% endblock %}
 
+{% block note %}<p class="page-head__note">A person in contact at a vendor or clinic &mdash; name, role, and how to reach them.</p>{% endblock %}
+
 {% block actions %}
 {% if data.0.doctor %}
     {% if data.0.doctor.rayon.id == request.session.detail.id_user %}

@@ -1,8 +1,11 @@
 {% extends 'base/base_app.html' %}
 
 {% block main %}
-<div class="content-head">
-    <h1>{% block list_title %}{{ page_name }}{% endblock %}</h1>
+<div class="page-head">
+    <div class="page-head__main">
+        <h1>{% block list_title %}{{ page_name }}{% endblock %}</h1>
+        {% block list_note %}{% endblock %}
+    </div>
     {% include 'head/nav_2.html' %}
 </div>
 
